@@ -1,0 +1,251 @@
+K 25
+svn:wc:ra_dav:version-url
+V 28
+/svn/!svn/ver/1399/trunk/res
+END
+css2_1.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1177/trunk/res/css2_1.grammar
+END
+css.css
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/552/trunk/res/css.css
+END
+small-xml-file.xml
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/99/trunk/res/small-xml-file.xml
+END
+xml.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/1276/trunk/res/xml.grammar
+END
+proto.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/1177/trunk/res/proto.grammar
+END
+example1.srgs
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/524/trunk/res/example1.srgs
+END
+mini_css.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1275/trunk/res/mini_css.grammar
+END
+erb.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/1274/trunk/res/erb.grammar
+END
+example.html
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1263/trunk/res/example.html
+END
+objc.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1145/trunk/res/objc.grammar
+END
+nonascii.html
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/119/trunk/res/nonascii.html
+END
+xpath_grammar.txt
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/2/trunk/res/xpath_grammar.txt
+END
+rubyhash.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1177/trunk/res/rubyhash.grammar
+END
+apple-boss.json
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/527/trunk/res/apple-boss.json
+END
+nyt.html
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/1171/trunk/res/nyt.html
+END
+example.css
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/1264/trunk/res/example.css
+END
+svn-commands.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1392/trunk/res/svn-commands.txt
+END
+xml_grammar.txt
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/68/trunk/res/xml_grammar.txt
+END
+nspredicate.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/1275/trunk/res/nspredicate.grammar
+END
+yahoo.json
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/527/trunk/res/yahoo.json
+END
+yahoo_with_comments.json
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/543/trunk/res/yahoo_with_comments.json
+END
+html.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1264/trunk/res/html.grammar
+END
+html.css
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/1263/trunk/res/html.css
+END
+javascript.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/1177/trunk/res/javascript.grammar
+END
+yahoo-small.json
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/2/trunk/res/yahoo-small.json
+END
+json.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1316/trunk/res/json.grammar
+END
+json_with_comments.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/1276/trunk/res/json_with_comments.grammar
+END
+json_with_comments.css
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/543/trunk/res/json_with_comments.css
+END
+json.css
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/473/trunk/res/json.css
+END
+nasty.html
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/198/trunk/res/nasty.html
+END
+date.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1107/trunk/res/date.grammar
+END
+SRGSGrammar.txt
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/24/trunk/res/SRGSGrammar.txt
+END
+apple-boss.xml
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/527/trunk/res/apple-boss.xml
+END
+json_with_discards.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/1276/trunk/res/json_with_discards.grammar
+END
+stuff.txt
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/38/trunk/res/stuff.txt
+END
+c.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/986/trunk/res/c.grammar
+END
+xpath1_0.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1224/trunk/res/xpath1_0.grammar
+END
+json-old.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/363/trunk/res/json-old.grammar
+END
+javascript_ll.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/893/trunk/res/javascript_ll.txt
+END
+css.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/1177/trunk/res/css.grammar
+END
+arithmetic.grammar
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/1399/trunk/res/arithmetic.grammar
+END

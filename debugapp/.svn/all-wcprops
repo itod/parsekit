@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/1405/trunk/debugapp
+END
+main.m
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/583/trunk/debugapp/main.m
+END
+DebugAppMainMenu.xib
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/647/trunk/debugapp/DebugAppMainMenu.xib
+END
+JSONAssembler.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/1405/trunk/debugapp/JSONAssembler.m
+END
+DebugAppDelegate.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/1171/trunk/debugapp/DebugAppDelegate.h
+END
+DebugApp-Info.plist
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/1173/trunk/debugapp/DebugApp-Info.plist
+END
+DebugAppDelegate.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/1365/trunk/debugapp/DebugAppDelegate.m
+END
+JSONAssembler.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/1171/trunk/debugapp/JSONAssembler.h
+END

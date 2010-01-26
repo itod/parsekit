@@ -1,0 +1,347 @@
+K 25
+svn:wc:ra_dav:version-url
+V 28
+/svn/!svn/ver/1410/trunk/src
+END
+NSString+ParseKitAdditions.m
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/1404/trunk/src/NSString+ParseKitAdditions.m
+END
+PKDifference.m
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1398/trunk/src/PKDifference.m
+END
+PKCharacterAssembly.m
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/1405/trunk/src/PKCharacterAssembly.m
+END
+PKWhitespace.m
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1115/trunk/src/PKWhitespace.m
+END
+PKParser.m
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/1404/trunk/src/PKParser.m
+END
+PKLiteral.m
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/1404/trunk/src/PKLiteral.m
+END
+PKWhitespaceState.m
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/1405/trunk/src/PKWhitespaceState.m
+END
+PKEmpty.m
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/1171/trunk/src/PKEmpty.m
+END
+PKLetter.m
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/1171/trunk/src/PKLetter.m
+END
+RegexKitLite.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/862/trunk/src/RegexKitLite.h
+END
+PKTokenArraySource.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/1171/trunk/src/PKTokenArraySource.m
+END
+PKDigit.m
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/1170/trunk/src/PKDigit.m
+END
+PKReader.m
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/1404/trunk/src/PKReader.m
+END
+RegexKitLite.m
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1404/trunk/src/RegexKitLite.m
+END
+PKSymbol.m
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/1404/trunk/src/PKSymbol.m
+END
+PKIntersection.m
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1398/trunk/src/PKIntersection.m
+END
+PKCaseInsensitiveLiteral.m
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/1170/trunk/src/PKCaseInsensitiveLiteral.m
+END
+PKTokenizer.m
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/1400/trunk/src/PKTokenizer.m
+END
+PKSymbolNode.m
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1170/trunk/src/PKSymbolNode.m
+END
+PKTokenizerState.m
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/1213/trunk/src/PKTokenizerState.m
+END
+PKWordState.m
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/1405/trunk/src/PKWordState.m
+END
+PKPattern.m
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/1404/trunk/src/PKPattern.m
+END
+PKSymbolRootNode.m
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/1404/trunk/src/PKSymbolRootNode.m
+END
+PKAssembly.m
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1405/trunk/src/PKAssembly.m
+END
+PKAlternation.m
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/1225/trunk/src/PKAlternation.m
+END
+PKToken.m
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/1170/trunk/src/PKToken.m
+END
+PKTrackException.m
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/1171/trunk/src/PKTrackException.m
+END
+PKUppercaseWord.m
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/1404/trunk/src/PKUppercaseWord.m
+END
+PKSpecificChar.m
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1170/trunk/src/PKSpecificChar.m
+END
+PKQuotedString.m
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1170/trunk/src/PKQuotedString.m
+END
+PKDelimitState.m
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1404/trunk/src/PKDelimitState.m
+END
+PKNumber.m
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/1177/trunk/src/PKNumber.m
+END
+PKNumberState.m
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/1252/trunk/src/PKNumberState.m
+END
+NSArray+ParseKitAdditions.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/1170/trunk/src/NSArray+ParseKitAdditions.h
+END
+PKQuoteState.m
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1170/trunk/src/PKQuoteState.m
+END
+PKGrammarParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/1275/trunk/src/PKGrammarParser.h
+END
+NSArray+ParseKitAdditions.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/1405/trunk/src/NSArray+ParseKitAdditions.m
+END
+PKComment.m
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/1170/trunk/src/PKComment.m
+END
+PKCommentState.m
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1409/trunk/src/PKCommentState.m
+END
+PKGrammarParser.m
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/1276/trunk/src/PKGrammarParser.m
+END
+PKNegation.m
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1152/trunk/src/PKNegation.m
+END
+PKTrack.m
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/1405/trunk/src/PKTrack.m
+END
+PKSymbolState.m
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/1410/trunk/src/PKSymbolState.m
+END
+PKCollectionParser.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/1225/trunk/src/PKCollectionParser.m
+END
+PKSequence.m
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1405/trunk/src/PKSequence.m
+END
+PKTerminal.m
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/1403/trunk/src/PKTerminal.m
+END
+PKWord.m
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/1170/trunk/src/PKWord.m
+END
+PKSingleLineCommentState.m
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/1404/trunk/src/PKSingleLineCommentState.m
+END
+PKChar.m
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/1170/trunk/src/PKChar.m
+END
+PKTokenAssembly.m
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/1405/trunk/src/PKTokenAssembly.m
+END
+PKLowercaseWord.m
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/1404/trunk/src/PKLowercaseWord.m
+END
+PKRepetition.m
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1405/trunk/src/PKRepetition.m
+END
+NSString+ParseKitAdditions.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/1171/trunk/src/NSString+ParseKitAdditions.h
+END
+PKParserFactory.m
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/1405/trunk/src/PKParserFactory.m
+END
+PKMultiLineCommentState.m
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/1404/trunk/src/PKMultiLineCommentState.m
+END
+PKDelimitedString.m
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/1404/trunk/src/PKDelimitedString.m
+END
+PKAny.m
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/1178/trunk/src/PKAny.m
+END
