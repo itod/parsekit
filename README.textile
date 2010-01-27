@@ -172,8 +172,11 @@ slash chars now produce individual Symbol tokens rather than causing the tokeniz
 h3. Parsing
 
 ParseKit also includes a collection of token parser subclasses (of the abstract PKParser class) including collection parsers such as PKAlternation, PKSequence, and PKRepetition as well as terminal parsers including PKWord, PKNum, PKSymbol, PKQuotedString, etc. Also included are parser subclasses which work in individual chars such as PKChar, PKDigit, and PKSpecificChar. These char parsers are useful for things like RegEx parsing. Generally speaking though, the token parsers will be more useful and interesting.
+
 The parser classes represent a **Composite** pattern. Programs can build a composite parser, in **Objective-C** (rather than a separate language like with lex&yacc), from a collection of terminal parsers composed into alternations, sequences, and repetitions to represent an infinite number of languages.
+
 Parsers built from ParseKit are **non-deterministic, recursive descent parsers**, which basically means they trade some performance for ease of user programming and simplicity of implementation.
+
 Here is an example of how one might build a parser for a simple voice-search command language (note: ParseKit does not include any kind of speech recognition technology). The language consists of:
 
 <pre>search google for? <search-term></pre>
