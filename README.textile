@@ -11,7 +11,7 @@ The ParseKit Framework offers 3 basic services of general interest to Cocoa deve
 
 h2. More documentation:
 
-* "Instructions for including ParseKit in your iPhone OS app":iphone.html
+* "Instructions for including ParseKit in your iPhone OS app":http://parsekit.com/iphone.html
 
 h2. Projects using ParseKit:
 
