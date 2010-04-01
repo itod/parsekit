@@ -80,6 +80,11 @@
 
     NSString *s = [self bufferedString];
     if (matched) {
+        if ([s hasSuffix:@"."]) {
+            s = [s substringToIndex:[s length] - 1];
+            [r unread];
+        }
+        
         PKToken *tok = [PKToken tokenWithTokenType:PKTokenTypeURL stringValue:s floatValue:0.0];
         tok.offset = offset;
         return tok;
@@ -184,7 +189,7 @@
     BOOL hasOpenParen = NO;
     
     for (;;) {
-        if (PKEOF == c || isspace(c) || '<' == c || '>' == c || '.' == c) {
+        if (PKEOF == c || isspace(c) || '<' == c || '>' == c) {
             break;
         } else if (')' == c) {
             if (hasOpenParen) {
