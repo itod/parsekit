@@ -422,6 +422,51 @@
 }
 
 
+- (void)testFakeWWW {
+    s = @"wwwp://➡.ws/䨹";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testFakeWW {
+    s = @"wwp://google.com/䨹";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testFakeW {
+    s = @"wp://google.com/䨹";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
 - (void)testTagExampleComTag {
     s = @"<tag>http://example.com</tag>";
     t.string = s;

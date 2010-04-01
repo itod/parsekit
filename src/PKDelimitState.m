@@ -181,7 +181,6 @@
             }
         }
 
-
         // check if char is not in allowed character set (if given)
         if (characterSet && ![characterSet characterIsMember:c]) {
             if (allowsUnbalancedStrings) {

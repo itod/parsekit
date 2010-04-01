@@ -56,7 +56,15 @@
     BOOL matched = NO;
     if (allowsWWWPrefix && 'w' == c) {
         matched = [self parseWWWFromReader:r];
-    } else {
+
+        if (!matched) {
+            [r unread:[[self bufferedString] length]];
+            [self resetWithReader:r];
+            c = cin;
+        }
+    }
+    
+    if (!matched) {
         matched = [self parseSchemeFromReader:r];
     }
     if (matched) {

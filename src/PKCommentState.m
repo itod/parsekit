@@ -128,7 +128,7 @@
             return tok;
         } else {
             if ([symbol length] > 1) {
-                symbol = [symbol substringToIndex:[symbol length] -1];
+                symbol = [symbol substringToIndex:[symbol length] - 1];
             } else {
                 break;
             }
