@@ -51,6 +51,11 @@
     
     NSString *s = [self bufferedString];
     if (matched) {
+        if ([s hasSuffix:@"."]) {
+            s = [s substringToIndex:[s length] - 1];
+            [r unread];
+        }
+        
         PKToken *tok = [PKToken tokenWithTokenType:PKTokenTypeEmail stringValue:s floatValue:0.0];
         tok.offset = offset;
         return tok;
@@ -70,7 +75,7 @@
             result = NO;
             break;
         } else if ('@' == c && hasAtLeastOneChar) {
-            [self append:c];
+            //[self append:c];
             result = YES;
             break;
         } else {

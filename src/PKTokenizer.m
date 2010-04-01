@@ -60,8 +60,8 @@
         self.URLState        = [[[PKURLState alloc] init] autorelease];
         self.emailState      = [[[PKEmailState alloc] init] autorelease];
         
-        URLState.fallbackState = wordState;
-        //emailState.fallbackState = wordState;
+        URLState.fallbackState = emailState;
+        emailState.fallbackState = wordState;
         
         self.tokenizerStates = [NSMutableArray arrayWithCapacity:STATE_COUNT];
         

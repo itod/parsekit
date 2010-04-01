@@ -154,7 +154,7 @@ typedef enum {
     @property   email
     @brief      True if this token is an email address. getter=isEmail
 */
-@property (nonatomic, readonly, getter=isEmailString) BOOL email;
+@property (nonatomic, readonly, getter=isEmail) BOOL email;
 
 /*!
     @property   tokenType
