@@ -34,7 +34,7 @@
         self.children = [NSMutableDictionary dictionary];
 
         // this private property is an optimization. 
-        // cache the NSString for the char to prevent it being constantly recreated in -determinAncestry
+        // cache the NSString for the char to prevent it being constantly recreated in -determineAncestry
         self.string = [NSString stringWithFormat:@"%C", character];
 
         [self determineAncestry];

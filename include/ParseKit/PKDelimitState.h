@@ -49,7 +49,8 @@
 
 /*!
     @property   balancesEOFTerminatedStrings
-    @brief      if true, this state will append a matching end delimiter marker (e.g. <tt>--></tt> or <tt>%></tt>) to strings terminated by EOF. Default is NO.
+    @brief      if YES, this state will append a matching end delimiter marker (e.g. <tt>--></tt> or <tt>%></tt>) to strings terminated by EOF. 
+    @details	Default is NO.
 */
 @property (nonatomic) BOOL balancesEOFTerminatedStrings;
 

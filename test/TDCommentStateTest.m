@@ -35,7 +35,6 @@
     t.string = s;
     tok = [commentState nextTokenFromReader:r startingWith:'/' tokenizer:t];
     TDEqualObjects(tok, [PKToken EOFToken]);
-    TDEquals(tok.offset, (NSUInteger)-1);
     TDEquals([r read], PKEOF);
 }
 
@@ -114,7 +113,6 @@
     tok = [t nextToken];
     TDEquals(tok, [PKToken EOFToken]);
     TDEqualObjects(tok.stringValue, [[PKToken EOFToken] stringValue]);
-    TDEquals(tok.offset, (NSUInteger)-1);
 }
 
 

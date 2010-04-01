@@ -62,6 +62,8 @@
 #import <ParseKit/PKNumberState.h>
 #import <ParseKit/PKQuoteState.h>
 #import <ParseKit/PKDelimitState.h>
+#import <ParseKit/PKURLState.h>
+#import <ParseKit/PKEmailState.h>
 #import <ParseKit/PKCommentState.h>
 #import <ParseKit/PKSingleLineCommentState.h>
 #import <ParseKit/PKMultiLineCommentState.h>

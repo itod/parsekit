@@ -57,6 +57,11 @@
         self.whitespaceState = [[[PKWhitespaceState alloc] init] autorelease];
         self.wordState       = [[[PKWordState alloc] init] autorelease];
         self.delimitState    = [[[PKDelimitState alloc] init] autorelease];
+        self.URLState        = [[[PKURLState alloc] init] autorelease];
+        self.emailState      = [[[PKEmailState alloc] init] autorelease];
+        
+        URLState.fallbackState = wordState;
+        //emailState.fallbackState = wordState;
         
         self.tokenizerStates = [NSMutableArray arrayWithCapacity:STATE_COUNT];
         
@@ -89,6 +94,8 @@
     self.whitespaceState = nil;
     self.wordState = nil;
     self.delimitState = nil;
+    self.URLState = nil;
+    self.emailState = nil;
     [super dealloc];
 }
 
@@ -140,7 +147,7 @@
 
 - (void)setReader:(PKReader *)r {
     if (reader != r) {
-        [reader release];
+        [reader autorelease];
         reader = [r retain];
         reader.string = string;
     }
@@ -149,7 +156,7 @@
 
 - (void)setString:(NSString *)s {
     if (string != s) {
-        [string release];
+        [string autorelease];
         string = [s retain];
     }
     reader.string = string;
@@ -159,7 +166,7 @@
 #pragma mark -
 
 - (PKTokenizerState *)tokenizerStateFor:(PKUniChar)c {
-    if (c < 0 || c > 255) {
+    if (c < 0 || c >= STATE_COUNT) {
         // customization above 255 is not supported, so fetch default.
         return [self defaultTokenizerStateFor:c];
     } else {
@@ -167,6 +174,7 @@
         return [tokenizerStates objectAtIndex:c];
     }
 }
+
 
 - (PKTokenizerState *)defaultTokenizerStateFor:(PKUniChar)c {
     if (c >= 0 && c <= ' ') {            // From:  0 to: 32    From:0x00 to:0x20
@@ -196,11 +204,11 @@
     } else if (c >= 58 && c <= 64) {
         return symbolState;
     } else if (c >= 'A' && c <= 'Z') {   // From: 65 to: 90    From:0x41 to:0x5A
-        return wordState;
+        return URLState;
     } else if (c >= 91 && c <= 96) {
         return symbolState;
     } else if (c >= 'a' && c <= 'z') {   // From: 97 to:122    From:0x61 to:0x7A
-        return wordState;
+        return URLState;
     } else if (c >= 123 && c <= 191) {
         return symbolState;
     } else if (c >= 0xC0 && c <= 0xFF) { // From:192 to:255    From:0xC0 to:0xFF
@@ -233,6 +241,8 @@
 @synthesize whitespaceState;
 @synthesize wordState;
 @synthesize delimitState;
+@synthesize URLState;
+@synthesize emailState;
 @synthesize string;
 @synthesize reader;
 @synthesize tokenizerStates;

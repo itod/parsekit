@@ -24,6 +24,8 @@
 @class PKWhitespaceState;
 @class PKWordState;
 @class PKDelimitState;
+@class PKURLState;
+@class PKEmailState;
 @class PKReader;
 
 /*!
@@ -36,8 +38,8 @@
 @code
      From     To    State
         0    ' '    whitespaceState
-      'a'    'z'    wordState
-      'A'    'Z'    wordState
+      'a'    'z'    URLState
+      'A'    'Z'    URLState
       160    255    wordState
       '0'    '9'    numberState
       '-'    '-'    numberState
@@ -61,6 +63,8 @@
     PKWhitespaceState *whitespaceState;
     PKWordState *wordState;
     PKDelimitState *delimitState;
+    PKURLState *URLState;
+    PKEmailState *emailState;
 }
 
 /*!
@@ -153,4 +157,7 @@
     @brief      The state this tokenizer uses to build delimited strings.
 */
 @property (nonatomic, retain) PKDelimitState *delimitState;
+
+@property (nonatomic, retain) PKURLState *URLState;
+@property (nonatomic, retain) PKEmailState *emailState;
 @end

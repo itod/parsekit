@@ -128,7 +128,6 @@
     tok = [t nextToken];
     TDNotNil(tok);
     TDTrue(tok == eof);
-    TDEquals(tok.offset, (NSUInteger)PKEOF);
 }
 
 
@@ -157,7 +156,6 @@
     tok = [t nextToken];
     TDNotNil(tok);
     TDTrue(tok == eof);
-    TDEquals(tok.offset, (NSUInteger)PKEOF);
 }
 
 
@@ -194,7 +192,6 @@
     tok = [t nextToken];
     TDNotNil(tok);
     TDTrue(tok == eof);
-    TDEquals(tok.offset, (NSUInteger)PKEOF);
 }
 
 
