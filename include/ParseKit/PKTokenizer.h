@@ -26,6 +26,7 @@
 @class PKDelimitState;
 @class PKURLState;
 @class PKEmailState;
+@class PKTwitterState;
 @class PKReader;
 
 /*!
@@ -44,6 +45,7 @@
       '0'    '9'    numberState
       '-'    '-'    numberState
       '.'    '.'    numberState
+      '@'    '@'    twitterState
       '"'    '"'    quoteState
      '\''   '\''    quoteState
       '/'    '/'    commentState
@@ -65,6 +67,7 @@
     PKDelimitState *delimitState;
     PKURLState *URLState;
     PKEmailState *emailState;
+    PKTwitterState *twitterState;
 }
 
 /*!
@@ -160,4 +163,5 @@
 
 @property (nonatomic, retain) PKURLState *URLState;
 @property (nonatomic, retain) PKEmailState *emailState;
+@property (nonatomic, retain) PKTwitterState *twitterState;
 @end

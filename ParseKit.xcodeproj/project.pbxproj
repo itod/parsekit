@@ -99,6 +99,11 @@
 		D3385FDA0FCFB1FF003BF729 /* TDPredicateEvaluator.m in Sources */ = {isa = PBXBuildFile; fileRef = D3385FD80FCFB1FF003BF729 /* TDPredicateEvaluator.m */; };
 		D3385FDE0FCFB227003BF729 /* TDPredicateEvaluatorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D3385FDC0FCFB227003BF729 /* TDPredicateEvaluatorTest.m */; };
 		D338E5BB0FF5DDCB003DE6AA /* TDDifferenceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D338E5BA0FF5DDCB003DE6AA /* TDDifferenceTest.m */; };
+		D33DC195116562DB004CE58C /* TDTwitterStateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D33DC194116562DB004CE58C /* TDTwitterStateTest.m */; };
+		D33DC1991165634F004CE58C /* PKTwitterState.m in Sources */ = {isa = PBXBuildFile; fileRef = D33DC1971165634F004CE58C /* PKTwitterState.m */; };
+		D33DC19B1165634F004CE58C /* PKTwitterState.m in Sources */ = {isa = PBXBuildFile; fileRef = D33DC1971165634F004CE58C /* PKTwitterState.m */; };
+		D33DC1A011656952004CE58C /* PKTwitterState.h in Headers */ = {isa = PBXBuildFile; fileRef = D33DC19F11656952004CE58C /* PKTwitterState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D33DC1A111656952004CE58C /* PKTwitterState.h in Headers */ = {isa = PBXBuildFile; fileRef = D33DC19F11656952004CE58C /* PKTwitterState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D341850C0E520D640081B0DC /* ParseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* ParseKit.framework */; };
 		D34BAC230FF87F8600D7773A /* TDParserFactoryTest3.m in Sources */ = {isa = PBXBuildFile; fileRef = D34BAC220FF87F8600D7773A /* TDParserFactoryTest3.m */; };
 		D34BAC4B0FF892C200D7773A /* XPathParserGrammarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D34BAC4A0FF892C200D7773A /* XPathParserGrammarTest.m */; };
@@ -783,6 +788,10 @@
 		D3385FDC0FCFB227003BF729 /* TDPredicateEvaluatorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDPredicateEvaluatorTest.m; path = test/TDPredicateEvaluatorTest.m; sourceTree = "<group>"; };
 		D338E5B90FF5DDCB003DE6AA /* TDDifferenceTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDDifferenceTest.h; path = test/TDDifferenceTest.h; sourceTree = "<group>"; };
 		D338E5BA0FF5DDCB003DE6AA /* TDDifferenceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDDifferenceTest.m; path = test/TDDifferenceTest.m; sourceTree = "<group>"; };
+		D33DC193116562DB004CE58C /* TDTwitterStateTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDTwitterStateTest.h; path = test/TDTwitterStateTest.h; sourceTree = "<group>"; };
+		D33DC194116562DB004CE58C /* TDTwitterStateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDTwitterStateTest.m; path = test/TDTwitterStateTest.m; sourceTree = "<group>"; };
+		D33DC1971165634F004CE58C /* PKTwitterState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PKTwitterState.m; path = src/PKTwitterState.m; sourceTree = "<group>"; };
+		D33DC19F11656952004CE58C /* PKTwitterState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PKTwitterState.h; path = include/ParseKit/PKTwitterState.h; sourceTree = "<group>"; };
 		D34185040E520D3F0081B0DC /* DebugApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DebugApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D34BAC210FF87F8600D7773A /* TDParserFactoryTest3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDParserFactoryTest3.h; path = test/TDParserFactoryTest3.h; sourceTree = "<group>"; };
 		D34BAC220FF87F8600D7773A /* TDParserFactoryTest3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDParserFactoryTest3.m; path = test/TDParserFactoryTest3.m; sourceTree = "<group>"; };
@@ -1546,6 +1555,8 @@
 				D35F4A8511643630003811F3 /* PKEmailState.m */,
 				D35F4A8C11643662003811F3 /* PKURLState.h */,
 				D35F4A8611643630003811F3 /* PKURLState.m */,
+				D33DC19F11656952004CE58C /* PKTwitterState.h */,
+				D33DC1971165634F004CE58C /* PKTwitterState.m */,
 				D3541F890DFB108300429B4F /* symbol */,
 			);
 			name = states;
@@ -1587,6 +1598,8 @@
 				D35F4AA11164380C003811F3 /* TDURLStateTest.m */,
 				D35F4AB811643979003811F3 /* TDEmailStateTest.h */,
 				D35F4AB911643979003811F3 /* TDEmailStateTest.m */,
+				D33DC193116562DB004CE58C /* TDTwitterStateTest.h */,
+				D33DC194116562DB004CE58C /* TDTwitterStateTest.m */,
 			);
 			name = "tokenizer states";
 			sourceTree = "<group>";
@@ -2404,6 +2417,7 @@
 				D3376D5910093A1600E4602E /* PKGrammarParser.h in Headers */,
 				D35F4A8D11643662003811F3 /* PKEmailState.h in Headers */,
 				D35F4A8E11643662003811F3 /* PKURLState.h in Headers */,
+				D33DC1A111656952004CE58C /* PKTwitterState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2514,6 +2528,7 @@
 				D37A28681013942A00E936B7 /* PKGrammarParser.h in Headers */,
 				D35F4A8F11643662003811F3 /* PKEmailState.h in Headers */,
 				D35F4A9011643662003811F3 /* PKURLState.h in Headers */,
+				D33DC1A011656952004CE58C /* PKTwitterState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2885,6 +2900,7 @@
 				D3376D5A10093A1600E4602E /* PKGrammarParser.m in Sources */,
 				D35F4A8711643630003811F3 /* PKEmailState.m in Sources */,
 				D35F4A8811643630003811F3 /* PKURLState.m in Sources */,
+				D33DC19B1165634F004CE58C /* PKTwitterState.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3109,6 +3125,7 @@
 				D319E42E106D8A31008C63DD /* TDArithmeticAssembler.m in Sources */,
 				D35F4AA21164380C003811F3 /* TDURLStateTest.m in Sources */,
 				D35F4ABA11643979003811F3 /* TDEmailStateTest.m in Sources */,
+				D33DC195116562DB004CE58C /* TDTwitterStateTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3171,6 +3188,7 @@
 				D37A28671013942300E936B7 /* PKGrammarParser.m in Sources */,
 				D35F4A8911643630003811F3 /* PKEmailState.m in Sources */,
 				D35F4A8A11643630003811F3 /* PKURLState.m in Sources */,
+				D33DC1991165634F004CE58C /* PKTwitterState.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

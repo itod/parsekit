@@ -37,7 +37,8 @@ typedef enum {
     PKTokenTypeDelimitedString,
     PKTokenTypeAny,
     PKTokenTypeURL,
-    PKTokenTypeEmail
+    PKTokenTypeEmail,
+    PKTokenTypeTwitter
 } PKTokenType;
 
 /*!
@@ -59,6 +60,7 @@ typedef enum {
     BOOL delimitedString;
     BOOL URL;
     BOOL email;
+    BOOL twitter;
     
     id value;
     NSUInteger offset;
@@ -155,6 +157,12 @@ typedef enum {
     @brief      True if this token is an email address. getter=isEmail
 */
 @property (nonatomic, readonly, getter=isEmail) BOOL email;
+
+/*!
+    @property   twitter
+    @brief      True if this token is an twitter handle. getter=isTwitter
+*/
+@property (nonatomic, readonly, getter=isTwitter) BOOL twitter;
 
 /*!
     @property   tokenType

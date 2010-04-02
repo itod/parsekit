@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 
 #define RUN_ALL_TEST_CASES 0
-#define SOLO_TEST_CASE @"TDURLStateTest"
+#define SOLO_TEST_CASE @"TDTwitterStateTest"
 
 @interface SenTestSuite (TDAdditions)
 - (void)addSuitesForClassNames:(NSArray *)classNames;
@@ -47,6 +47,7 @@ SenTestSuite *TDTokensTestSuite() {
                            @"TDDelimitStateTest",
                            @"TDURLStateTest",
                            @"TDEmailStateTest",
+                           @"TDTwitterStateTest",
                            @"TDTokenizerStateTest",
 #ifdef TARGET_OS_SNOW_LEOPARD
                            @"TDTokenizerBlocksTest",

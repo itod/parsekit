@@ -21,12 +21,19 @@
     @details    This state will collect characters until it sees a match to the character that the tokenizer used to switch to this state. For example, if a tokenizer uses a double- quote character to enter this state, then <tt>-nextToken</tt> will search for another double-quote until it finds one or finds the end of the reader.
 */
 @interface PKQuoteState : PKTokenizerState {
+    BOOL allowsEOFTerminatedQuotes;
     BOOL balancesEOFTerminatedQuotes;
 }
 
 /*!
+    @property   allowsEOFTerminatedQuotes
+    @brief      if YES, this state will consider unbalanced quoted strings (quoted strings terminated by EOF) as a quoted string rather than a <tt>'</tt> or <tt>"</tt> symbol token followed by zero or more tokens. Default is YES.
+*/
+@property (nonatomic) BOOL allowsEOFTerminatedQuotes;
+
+/*!
     @property   balancesEOFTerminatedQuotes
-    @brief      if true, this state will append a matching quote char (<tt>'</tt> or <tt>"</tt>) to strings terminated by EOF. Default is NO.
+    @brief      if YES, this state will append a matching quote char (<tt>'</tt> or <tt>"</tt>) to strings terminated by EOF. Default is NO.
 */
 @property (nonatomic) BOOL balancesEOFTerminatedQuotes;
 @end

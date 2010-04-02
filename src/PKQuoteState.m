@@ -25,9 +25,18 @@
 - (void)resetWithReader:(PKReader *)r;
 - (void)append:(PKUniChar)c;
 - (NSString *)bufferedString;
+- (PKTokenizerState *)nextTokenizerStateFor:(PKUniChar)c tokenizer:(PKTokenizer *)t;
 @end
 
 @implementation PKQuoteState
+
+- (id)init {
+    if (self = [super init]) {
+        self.allowsEOFTerminatedQuotes = YES;
+    }
+    return self;
+}
+
 
 - (void)dealloc {
     [super dealloc];
@@ -43,9 +52,14 @@
     do {
         c = [r read];
         if (PKEOF == c) {
-            c = cin;
-            if (balancesEOFTerminatedQuotes) {
-                [self append:c];
+            if (allowsEOFTerminatedQuotes) {
+                c = cin;
+                if (balancesEOFTerminatedQuotes) {
+                    [self append:c];
+                }
+            } else {
+                [r unread:[[self bufferedString] length]];
+                return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
             }
         } else {
             [self append:c];
@@ -58,5 +72,6 @@
     return tok;
 }
 
+@synthesize allowsEOFTerminatedQuotes;
 @synthesize balancesEOFTerminatedQuotes;
 @end

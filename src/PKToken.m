@@ -97,6 +97,7 @@ static PKTokenEOF *EOFToken = nil;
 @property (nonatomic, readwrite, getter=isDelimitedString) BOOL delimitedString;
 @property (nonatomic, readwrite, getter=isURL) BOOL URL;
 @property (nonatomic, readwrite, getter=isEmail) BOOL email;
+@property (nonatomic, readwrite, getter=isTwitter) BOOL twitter;
 
 @property (nonatomic, readwrite) CGFloat floatValue;
 @property (nonatomic, readwrite, copy) NSString *stringValue;
@@ -135,6 +136,7 @@ static PKTokenEOF *EOFToken = nil;
         self.delimitedString = (PKTokenTypeDelimitedString == t);
         self.URL = (PKTokenTypeURL == t);
         self.email = (PKTokenTypeEmail == t);
+        self.twitter = (PKTokenTypeTwitter == t);
     }
     return self;
 }
@@ -223,6 +225,8 @@ static PKTokenEOF *EOFToken = nil;
         typeString = @"URL";
     } else if (self.isEmail) {
         typeString = @"Email";
+    } else if (self.isTwitter) {
+        typeString = @"Twitter";
     }
     return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, 0x00AB, self.value, 0x00BB];
 }
@@ -241,6 +245,7 @@ static PKTokenEOF *EOFToken = nil;
 @synthesize delimitedString;
 @synthesize URL;
 @synthesize email;
+@synthesize twitter;
 @synthesize floatValue;
 @synthesize stringValue;
 @synthesize tokenType;
