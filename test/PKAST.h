@@ -21,7 +21,7 @@
     NSMutableArray *children;
 }
 
-+ (id)ASTWithToken:(PKToken *)tok;
++ (PKAST *)ASTWithToken:(PKToken *)tok;
 
 - (id)initWithToken:(PKToken *)tok;
 

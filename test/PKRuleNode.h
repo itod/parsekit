@@ -18,7 +18,7 @@
     NSString *name;
 }
 
-+ (id)ruleNodeWithName:(NSString *)s;
++ (PKRuleNode *)ruleNodeWithName:(NSString *)s;
 
 // designated initializer
 - (id)initWithName:(NSString *)s;

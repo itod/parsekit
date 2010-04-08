@@ -33,7 +33,7 @@
     @param      s string to be worked on
     @result     an initialized autoreleased assembly
 */
-+ (id)assemblyWithString:(NSString *)s;
++ (PKAssembly *)assemblyWithString:(NSString *)s;
 
 /*!
     @brief      Designated Initializer. Initializes an assembly with a given string.

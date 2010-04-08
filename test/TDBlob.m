@@ -18,12 +18,12 @@
 
 @implementation TDBlob
 
-+ (id)blob {
++ (TDBlob *)blob {
     return [self blobWithStartMarker:nil];
 }
 
 
-+ (id)blobWithStartMarker:(NSString *)s {
++ (TDBlob *)blobWithStartMarker:(NSString *)s {
     return [[[self alloc] initWithString:s] autorelease];
 }
 

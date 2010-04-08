@@ -17,7 +17,7 @@
 
 @implementation PKDigit
 
-+ (id)digit {
++ (PKDigit *)digit {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 

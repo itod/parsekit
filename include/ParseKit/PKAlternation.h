@@ -27,7 +27,7 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKAlternation</tt> parser.
     @result     an initialized autoreleased <tt>PKAlternation</tt> parser.
 */
-+ (id)alternation;
++ (PKAlternation *)alternation;
 
-+ (id)alternationWithSubparsers:(PKParser *)p1, ...;
++ (PKAlternation *)alternationWithSubparsers:(PKParser *)p1, ...;
 @end

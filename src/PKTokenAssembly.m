@@ -27,18 +27,23 @@
 
 @implementation PKTokenAssembly
 
-+ (id)assemblyWithTokenizer:(PKTokenizer *)t {
++ (PKTokenAssembly *)assemblyWithTokenizer:(PKTokenizer *)t {
     return [[[self alloc] initWithTokenzier:t] autorelease];
+}
+
+
++ (PKTokenAssembly *)assemblyWithTokenArray:(NSArray *)a {
+    return [[[self alloc] initWithTokenArray:a] autorelease];
+}
+
+
++ (PKTokenAssembly *)assemblyWithString:(NSString *)s {
+    return (PKTokenAssembly *)[super assemblyWithString:s];
 }
 
 
 - (id)initWithTokenzier:(PKTokenizer *)t {
     return [self initWithString:t.string tokenzier:t tokenArray:nil];
-}
-
-
-+ (id)assemblyWithTokenArray:(NSArray *)a {
-    return [[[self alloc] initWithTokenArray:a] autorelease];
 }
 
 

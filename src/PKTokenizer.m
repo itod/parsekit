@@ -30,12 +30,12 @@
 
 @implementation PKTokenizer
 
-+ (id)tokenizer {
++ (PKTokenizer *)tokenizer {
     return [self tokenizerWithString:nil];
 }
 
 
-+ (id)tokenizerWithString:(NSString *)s {
++ (PKTokenizer *)tokenizerWithString:(NSString *)s {
     return [[[self alloc] initWithString:s] autorelease];
 }
 

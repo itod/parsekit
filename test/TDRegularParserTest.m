@@ -17,7 +17,7 @@
 @implementation TDRegularParserTest
 
 - (void)setUp {
-    p = [TDRegularParser parser];
+    p = (TDRegularParser *)[TDRegularParser parser];
 }
 
 

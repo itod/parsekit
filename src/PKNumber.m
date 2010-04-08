@@ -17,7 +17,7 @@
 
 @implementation PKNumber
 
-+ (id)number {
++ (PKNumber *)number {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 

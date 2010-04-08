@@ -18,7 +18,7 @@
 @interface TDLetterTest : SenTestCase {
     NSString *s;
     PKCharacterAssembly *a;
-    PKChar *p;
+    PKLetter *p;
     PKAssembly *result;
 }
 

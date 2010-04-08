@@ -18,7 +18,7 @@
 @interface TDSpecificCharTest : SenTestCase {
     NSString *s;
     PKCharacterAssembly *a;
-    PKChar *p;
+    PKSpecificChar *p;
     PKAssembly *result;
 }
 

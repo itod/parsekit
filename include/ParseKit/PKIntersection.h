@@ -35,7 +35,7 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKIntersection</tt> parser.
     @result     an initialized autoreleased <tt>PKIntersection</tt> parser.
 */
-+ (id)intersection;
++ (PKIntersection *)intersection;
 
-+ (id)intersectionWithSubparsers:(PKParser *)p1, ...;
++ (PKIntersection *)intersectionWithSubparsers:(PKParser *)p1, ...;
 @end

@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKQuotedString</tt> object.
     @result     an initialized autoreleased <tt>PKQuotedString</tt> object
 */
-+ (id)quotedString;
++ (PKQuotedString *)quotedString;
 @end

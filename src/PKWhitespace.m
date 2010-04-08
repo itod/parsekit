@@ -17,7 +17,7 @@
 
 @implementation PKWhitespace
 
-+ (id)whitespace {
++ (PKWhitespace *)whitespace {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 

@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKWord</tt> object.
     @result     an initialized autoreleased <tt>PKWord</tt> object
 */
-+ (id)word;
++ (PKWord *)word;
 @end

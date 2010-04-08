@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKAny</tt> object.
     @result     an initialized autoreleased <tt>PKAny</tt> object
 */
-+ (id)any;
++ (PKAny *)any;
 @end

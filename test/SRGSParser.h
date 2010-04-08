@@ -17,7 +17,7 @@
 @interface SRGSParser : PKSequence {
     PKCollectionParser *selfIdentHeader;
     PKCollectionParser *ruleName;
-    PKCollectionParser *tagFormat;
+    PKParser *tagFormat;
     PKCollectionParser *lexiconURI;
     PKCollectionParser *weight;
     PKCollectionParser *repeat;
@@ -47,17 +47,17 @@
     PKCollectionParser *specialRuleRef;
     PKCollectionParser *repeatOperator;
     
-    PKCollectionParser *baseURI;
+    PKParser *baseURI;
     PKCollectionParser *languageCode;
-    PKCollectionParser *ABNF_URI;
-    PKCollectionParser *ABNF_URI_with_Media_Type;
+    PKParser *ABNF_URI;
+    PKParser *ABNF_URI_with_Media_Type;
 }
 - (id)parse:(NSString *)s;
 - (PKAssembly *)assemblyWithString:(NSString *)s;
 
 @property (nonatomic, retain) PKCollectionParser *selfIdentHeader;
 @property (nonatomic, retain) PKCollectionParser *ruleName;
-@property (nonatomic, retain) PKCollectionParser *tagFormat;
+@property (nonatomic, retain) PKParser *tagFormat;
 @property (nonatomic, retain) PKCollectionParser *lexiconURI;
 @property (nonatomic, retain) PKCollectionParser *weight;
 @property (nonatomic, retain) PKCollectionParser *repeat;
@@ -87,8 +87,8 @@
 @property (nonatomic, retain) PKCollectionParser *specialRuleRef;
 @property (nonatomic, retain) PKCollectionParser *repeatOperator;
 
-@property (nonatomic, retain) PKCollectionParser *baseURI;
+@property (nonatomic, retain) PKParser *baseURI;
 @property (nonatomic, retain) PKCollectionParser *languageCode;
-@property (nonatomic, retain) PKCollectionParser *ABNF_URI;
-@property (nonatomic, retain) PKCollectionParser *ABNF_URI_with_Media_Type;
+@property (nonatomic, retain) PKParser *ABNF_URI;
+@property (nonatomic, retain) PKParser *ABNF_URI_with_Media_Type;
 @end

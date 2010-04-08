@@ -42,7 +42,7 @@
     PKParser *quotedStringParser;
     PKCollectionParser *unquotedStringParser;
     PKCollectionParser *reservedWordParser;
-    PKCollectionParser *nonReservedWordParser;
+    PKParser *nonReservedWordParser;
     PKPattern *reservedWordPattern;
     PKParser *numberParser;
 
@@ -76,7 +76,7 @@
 @property (nonatomic, retain) PKParser *quotedStringParser;
 @property (nonatomic, retain) PKCollectionParser *unquotedStringParser;
 @property (nonatomic, retain) PKCollectionParser *reservedWordParser;
-@property (nonatomic, retain) PKCollectionParser *nonReservedWordParser;
+@property (nonatomic, retain) PKParser *nonReservedWordParser;
 @property (nonatomic, retain) PKPattern *reservedWordPattern;
 @property (nonatomic, retain) PKParser *numberParser;
 @end

@@ -79,7 +79,7 @@ typedef enum {
     @param      n the number falue of this token.
     @result     an autoreleased initialized token.
 */
-+ (id)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n;
++ (PKToken *)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n;
 
 /*!
     @brief      Designated initializer. Constructs a token of the indicated type and associated string or numeric values.

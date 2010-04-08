@@ -58,7 +58,7 @@
 
 @implementation PKExclusion
 
-+ (id)exclusion {
++ (PKExclusion *)exclusion {
     return [[[self alloc] init] autorelease];
 }
 

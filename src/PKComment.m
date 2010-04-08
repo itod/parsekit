@@ -17,7 +17,7 @@
 
 @implementation PKComment
 
-+ (id)comment {
++ (PKComment *)comment {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 

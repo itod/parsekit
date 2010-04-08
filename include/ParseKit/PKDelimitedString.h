@@ -28,9 +28,9 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKDelimitedString</tt> object.
     @result     an initialized autoreleased <tt>PKDelimitedString</tt> object
 */
-+ (id)delimitedString;
++ (PKDelimitedString *)delimitedString;
 
-+ (id)delimitedStringWithStartMarker:(NSString *)start;
++ (PKDelimitedString *)delimitedStringWithStartMarker:(NSString *)start;
 
-+ (id)delimitedStringWithStartMarker:(NSString *)start endMarker:(NSString *)end;
++ (PKDelimitedString *)delimitedStringWithStartMarker:(NSString *)start endMarker:(NSString *)end;
 @end

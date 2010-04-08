@@ -23,7 +23,7 @@
 
 @implementation PKParseTree
 
-+ (id)parseTree {
++ (PKParseTree *)parseTree {
     return [[[self alloc] init] autorelease];
 }
 

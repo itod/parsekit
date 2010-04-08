@@ -100,6 +100,36 @@
 }
 
 
+- (void)testFooComBlahBlahDotHtml {
+    s = @"http://foo.com/blah_blah.html";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testFooComBlahBlahWikiDotHtml {
+    s = @"http://foo.com/blah_blah_(wikipedia).html";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
 - (void)testSomethingLikeFooComBlahBlahWiki {
     s = @"(Something like http://foo.com/blah_blah_(wikipedia))";
     t.string = s;
@@ -147,6 +177,26 @@
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @".");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testFooComBlahBlahComma {
+    s = @"http://foo.com/blah_blah,";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, @"http://foo.com/blah_blah");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(tok.stringValue, @",");
     TDEquals(tok.floatValue, (CGFloat)0.0);
     
     tok = [t nextToken];

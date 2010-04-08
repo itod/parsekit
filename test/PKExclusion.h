@@ -18,5 +18,5 @@
     
 }
 
-+ (id)exclusion;
++ (PKExclusion *)exclusion;
 @end

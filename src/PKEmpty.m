@@ -16,7 +16,7 @@
 
 @implementation PKEmpty
 
-+ (id)empty {
++ (PKEmpty *)empty {
     return [[[self alloc] init] autorelease];
 }
 

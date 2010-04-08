@@ -20,7 +20,7 @@
 
 @implementation PKRuleNode
 
-+ (id)ruleNodeWithName:(NSString *)s {
++ (PKRuleNode *)ruleNodeWithName:(NSString *)s {
     return [[[self alloc] initWithName:s] autorelease];
 }
 

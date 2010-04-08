@@ -17,7 +17,7 @@
 
 @implementation PKQuotedString
 
-+ (id)quotedString {
++ (PKQuotedString *)quotedString {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 

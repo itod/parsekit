@@ -21,20 +21,20 @@
 @end
 
 @interface PKCollectionParser ()
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
 @end
 
 @implementation PKAlternation
 
-+ (id)alternation {
++ (PKAlternation *)alternation {
     return [self alternationWithSubparsers:nil];
 }
 
 
-+ (id)alternationWithSubparsers:(PKParser *)p1, ... {
++ (PKAlternation *)alternationWithSubparsers:(PKParser *)p1, ... {
     va_list vargs;
     va_start(vargs, p1);
-    PKAlternation *alt = [self collectionParserWithFirst:p1 rest:vargs];
+    PKAlternation *alt = (PKAlternation *)[self collectionParserWithFirst:p1 rest:vargs];
     va_end(vargs);
     return alt;
 }

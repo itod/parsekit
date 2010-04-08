@@ -28,5 +28,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKEmpty</tt> parser.
     @result     an initialized autoreleased <tt>PKEmpty</tt> parser.
 */
-+ (id)empty;
++ (PKEmpty *)empty;
 @end

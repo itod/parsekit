@@ -114,7 +114,7 @@ static PKTokenEOF *EOFToken = nil;
 }
 
 
-+ (id)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n {
++ (PKToken *)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n {
     return [[[self alloc] initWithTokenType:t stringValue:s floatValue:n] autorelease];
 }
 

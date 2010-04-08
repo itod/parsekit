@@ -17,7 +17,7 @@
 @implementation TDJavaScriptParserTest
 
 - (void)setUp {
-    jsp = [TDJavaScriptParser parser];
+    jsp = (TDJavaScriptParser *)[TDJavaScriptParser parser];
 }
 
 

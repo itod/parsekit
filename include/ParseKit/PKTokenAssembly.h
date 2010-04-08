@@ -32,14 +32,16 @@
     @param      t tokenizer whose string will be worked on
     @result     an initialized autoreleased assembly
 */
-+ (id)assemblyWithTokenizer:(PKTokenizer *)t;
++ (PKTokenAssembly *)assemblyWithTokenizer:(PKTokenizer *)t;
 
 /*!
     @brief      Convenience factory method for initializing an autoreleased assembly with the token array <tt>a</tt> and its string
     @param      a token array whose string will be worked on
     @result     an initialized autoreleased assembly
 */
-+ (id)assemblyWithTokenArray:(NSArray *)a;
++ (PKTokenAssembly *)assemblyWithTokenArray:(NSArray *)a;
+
++ (PKTokenAssembly *)assemblyWithString:(NSString *)s;
 
 /*!
     @brief      Initializes an assembly with the tokenizer <tt>t</tt> and its string

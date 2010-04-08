@@ -44,7 +44,7 @@
 
 @implementation PKDifference
 
-+ (id)differenceWithSubparser:(PKParser *)s minus:(PKParser *)m {
++ (PKDifference *)differenceWithSubparser:(PKParser *)s minus:(PKParser *)m {
     return [[[self alloc] initWithSubparser:s minus:m] autorelease];
 }
 

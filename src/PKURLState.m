@@ -48,10 +48,17 @@
 }
 
 
+- (void)append:(PKUniChar)ch {
+    lastChar = ch;
+    [super append:ch];
+}
+
+
 - (PKToken *)nextTokenFromReader:(PKReader *)r startingWith:(PKUniChar)cin tokenizer:(PKTokenizer *)t {
     NSParameterAssert(r);
     [self resetWithReader:r];
     
+    lastChar = PKEOF;
     c = cin;
     BOOL matched = NO;
     if (allowsWWWPrefix && 'w' == c) {
@@ -74,13 +81,14 @@
         [self parsePathFromReader:r];
     }
     
+    NSString *s = [self bufferedString];
+
     if (PKEOF != c) {
         [r unread];
-    }
-
-    NSString *s = [self bufferedString];
+    } 
+    
     if (matched) {
-        if ([s hasSuffix:@"."]) {
+        if ('.' == lastChar || ',' == lastChar) {
             s = [s substringToIndex:[s length] - 1];
             [r unread];
         }
@@ -168,7 +176,6 @@
             result = hasAtLeastOneChar;
             break;
         } else if ('/' == c && hasAtLeastOneChar/* && hasDot*/) {
-            //[self append:c];
             result = YES;
             break;
         } else {

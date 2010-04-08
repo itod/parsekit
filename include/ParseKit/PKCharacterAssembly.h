@@ -22,4 +22,5 @@
 
 }
 
++ (PKCharacterAssembly *)assemblyWithString:(NSString *)s;
 @end

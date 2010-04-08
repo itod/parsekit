@@ -22,17 +22,17 @@
 
 @implementation PKDelimitedString
 
-+ (id)delimitedString {
++ (PKDelimitedString *)delimitedString {
     return [self delimitedStringWithStartMarker:nil];
 }
 
 
-+ (id)delimitedStringWithStartMarker:(NSString *)start {
++ (PKDelimitedString *)delimitedStringWithStartMarker:(NSString *)start {
     return [self delimitedStringWithStartMarker:start endMarker:nil];
 }
 
 
-+ (id)delimitedStringWithStartMarker:(NSString *)start endMarker:(NSString *)end {
++ (PKDelimitedString *)delimitedStringWithStartMarker:(NSString *)start endMarker:(NSString *)end {
     PKDelimitedString *ds = [[[self alloc] initWithString:nil] autorelease];
     ds.startMarker = start;
     ds.endMarker = end;

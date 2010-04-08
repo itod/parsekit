@@ -17,7 +17,7 @@
 
 @implementation PKAny
 
-+ (id)any {
++ (PKAny *)any {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 

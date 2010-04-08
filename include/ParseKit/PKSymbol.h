@@ -29,12 +29,12 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKSymbol</tt> object with a <tt>nil</tt> string value.
     @result     an initialized autoreleased <tt>PKSymbol</tt> object with a <tt>nil</tt> string value
 */
-+ (id)symbol;
++ (PKSymbol *)symbol;
 
 /*!
     @brief      Convenience factory method for initializing an autoreleased <tt>PKSymbol</tt> object with <tt>s</tt> as a string value.
     @param      s the string represented by this symbol
     @result     an initialized autoreleased <tt>PKSymbol</tt> object with <tt>s</tt> as a string value
 */
-+ (id)symbolWithString:(NSString *)s;
++ (PKSymbol *)symbolWithString:(NSString *)s;
 @end

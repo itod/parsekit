@@ -35,10 +35,17 @@
 }
 
 
+- (void)append:(PKUniChar)ch {
+    lastChar = ch;
+    [super append:ch];
+}
+
+
 - (PKToken *)nextTokenFromReader:(PKReader *)r startingWith:(PKUniChar)cin tokenizer:(PKTokenizer *)t {
     NSParameterAssert(r);
     [self resetWithReader:r];
     
+    lastChar = PKEOF;
     c = cin;
     BOOL matched = [self parseNameFromReader:r];
     if (matched) {
@@ -51,7 +58,7 @@
     
     NSString *s = [self bufferedString];
     if (matched) {
-        if ([s hasSuffix:@"."]) {
+        if ('.' == lastChar) {
             s = [s substringToIndex:[s length] - 1];
             [r unread];
         }

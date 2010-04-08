@@ -20,7 +20,7 @@
     PKToken *token;
 }
 
-+ (id)tokenNodeWithToken:(PKToken *)tok;
++ (PKTokenNode *)tokenNodeWithToken:(PKToken *)tok;
 
 // designated initializer
 - (id)initWithToken:(PKToken *)tok;

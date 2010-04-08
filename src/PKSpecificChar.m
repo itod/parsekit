@@ -17,7 +17,7 @@
 
 @implementation PKSpecificChar
 
-+ (id)specificCharWithChar:(PKUniChar)c {
++ (PKSpecificChar *)specificCharWithChar:(PKUniChar)c {
     return [[[self alloc] initWithSpecificChar:c] autorelease];
 }
 

@@ -17,7 +17,7 @@
 @interface TDBlob : PKTerminal {
 
 }
-+ (id)blob;
++ (TDBlob *)blob;
 
-+ (id)blobWithStartMarker:(NSString *)s;
++ (TDBlob *)blobWithStartMarker:(NSString *)s;
 @end

@@ -28,7 +28,7 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKTrack</tt> parser.
     @result     an initialized autoreleased <tt>PKTrack</tt> parser.
 */
-+ (id)track;
++ (PKTrack *)track;
 
-+ (id)trackWithSubparsers:(PKParser *)p1, ...;
++ (PKTrack *)trackWithSubparsers:(PKParser *)p1, ...;
 @end

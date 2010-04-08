@@ -146,7 +146,7 @@ void PKReleaseSubparserTree(PKParser *p) {
 
 @implementation PKParserFactory
 
-+ (id)factory {
++ (PKParserFactory *)factory {
     return [[[PKParserFactory alloc] init] autorelease];
 }
 
@@ -790,7 +790,7 @@ void PKReleaseSubparserTree(PKParser *p) {
         // if its not there, or still a token array, just spoof it with a sequence
 		NSMutableDictionary *d = a.target;
         p = [d objectForKey:parserName];
-        if (![p isKindOfClass:[PKParser parser]]) {
+        if (![p isKindOfClass:[PKParser class]]) {
             p = [PKSequence sequence];
         }
     } else {

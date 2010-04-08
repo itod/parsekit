@@ -17,7 +17,7 @@
 @implementation TDArithmeticParserTest
 
 - (void)setUp {
-    p = [TDArithmeticParser parser];
+    p = (TDArithmeticParser *)[TDArithmeticParser parser];
 }
 
 

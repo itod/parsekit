@@ -31,20 +31,20 @@
 @end
 
 @interface PKCollectionParser ()
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
 @end
 
 @implementation PKTrack
 
-+ (id)track {
++ (PKTrack *)track {
     return [self trackWithSubparsers:nil];
 }
 
 
-+ (id)trackWithSubparsers:(PKParser *)p1, ... {
++ (PKTrack *)trackWithSubparsers:(PKParser *)p1, ... {
     va_list vargs;
     va_start(vargs, p1);
-    PKTrack *tr = [self collectionParserWithFirst:p1 rest:vargs];
+    PKTrack *tr = (PKTrack *)[self collectionParserWithFirst:p1 rest:vargs];
     va_end(vargs);
     return tr;
 }

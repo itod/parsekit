@@ -30,5 +30,5 @@
     @param      s the word represented by this literal
     @result     an initialized autoreleased <tt>PKLiteral</tt> object representing <tt>s</tt>
 */
-+ (id)literalWithString:(NSString *)s;
++ (PKLiteral *)literalWithString:(NSString *)s;
 @end

@@ -35,7 +35,7 @@
     @param      subparser the parser whose matching logic is negated
     @result     an initialized autoreleased <tt>PKNegation</tt> parser.
 */
-+ (id)negationWithSubparser:(PKParser *)s;
++ (PKNegation *)negationWithSubparser:(PKParser *)s;
 
 /*!
     @brief      Designated initializer

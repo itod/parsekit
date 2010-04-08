@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKDigit</tt> parser.
     @result     an initialized autoreleased <tt>PKDigit</tt> parser.
 */
-+ (id)digit;
++ (PKDigit *)digit;
 @end

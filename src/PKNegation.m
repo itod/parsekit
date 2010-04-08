@@ -28,7 +28,7 @@
 
 @implementation PKNegation
 
-+ (id)negationWithSubparser:(PKParser *)s {
++ (PKNegation *)negationWithSubparser:(PKParser *)s {
     return [[[self alloc] initWithSubparser:s] autorelease];
 }
 

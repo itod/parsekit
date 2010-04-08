@@ -27,7 +27,7 @@
 
 - (void)testBlastOff {
     s = @"\"It's 123 blast-off!\", she said, // watch out!\n"
-                    @"and <= 3 'ticks' later /* wince */, it's blast-off!";
+        @"and <= 3 'ticks' later /* wince */, it's blast-off (to http://google.com)!";
     t = [PKTokenizer tokenizerWithString:s];
     
     PKToken *eof = [PKToken EOFToken];
@@ -35,7 +35,7 @@
     
     //NSLog(@"\n\n starting!!! \n\n");
     while ((tok = [t nextToken]) != eof) {
-        //NSLog(@"(%@)", tok.stringValue);
+        NSLog(@"(%@)", tok.stringValue);
     }
     //NSLog(@"\n\n done!!! \n\n");
     

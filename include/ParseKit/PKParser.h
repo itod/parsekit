@@ -57,7 +57,7 @@
     @brief      Convenience factory method for initializing an autoreleased parser.
     @result     an initialized autoreleased parser.
 */
-+ (id)parser;
++ (PKParser *)parser;
 
 /*!
     @brief      Sets the object and method that will work on an assembly whenever this parser successfully matches against the assembly.

@@ -462,7 +462,7 @@
         self.cardinalityParser = [PKSequence sequence];
         cardinalityParser.name = @"cardinality";
         
-        PKTrack *commaNum = [PKSequence sequence];
+        PKSequence *commaNum = [PKSequence sequence];
         [commaNum add:self.optionalWhitespaceParser];
         [commaNum add:[[PKSymbol symbolWithString:@","] discard]];
         [commaNum add:self.optionalWhitespaceParser];
@@ -610,7 +610,7 @@
 }
 
 
-- (PKCollectionParser *)optionalWhitespaceParser {
+- (PKParser *)optionalWhitespaceParser {
     return [PKRepetition repetitionWithSubparser:self.whitespaceParser];
 }
 

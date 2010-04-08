@@ -36,7 +36,8 @@ typedef enum {
     PKToken *paren;
     BOOL isGatheringClasses;
 }
-+ (id)factory;
+
++ (PKParserFactory *)factory;
 
 - (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a;
 - (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa;

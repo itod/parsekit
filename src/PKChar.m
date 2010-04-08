@@ -16,7 +16,7 @@
 
 @implementation PKChar
 
-+ (id)char {
++ (PKChar *)char {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 

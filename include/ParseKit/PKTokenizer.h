@@ -74,14 +74,14 @@
     @brief      Convenience factory method. Sets string from which to to read to <tt>nil</tt>.
     @result     An initialized tokenizer.
 */
-+ (id)tokenizer;
++ (PKTokenizer *)tokenizer;
 
 /*!
     @brief      Convenience factory method.
     @param      s string to read from.
     @result     An autoreleased initialized tokenizer.
 */
-+ (id)tokenizerWithString:(NSString *)s;
++ (PKTokenizer *)tokenizerWithString:(NSString *)s;
 
 /*!
     @brief      Designated Initializer. Constructs a tokenizer to read from the supplied string.

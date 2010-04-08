@@ -28,9 +28,10 @@ typedef enum {
 @interface PKPattern : PKTerminal {
     PKPatternOptions options;
 }
-+ (id)patternWithString:(NSString *)s;
 
-+ (id)patternWithString:(NSString *)s options:(PKPatternOptions)opts;
++ (PKPattern *)patternWithString:(NSString *)s;
+
++ (PKPattern *)patternWithString:(NSString *)s options:(PKPatternOptions)opts;
 
 - (id)initWithString:(NSString *)s;
 

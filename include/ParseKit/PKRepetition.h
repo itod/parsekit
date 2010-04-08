@@ -28,7 +28,7 @@
     @param      p the subparser against wich to repeatedly match
     @result     an initialized autoreleased <tt>PKRepetition</tt> parser.
 */
-+ (id)repetitionWithSubparser:(PKParser *)p;
++ (PKRepetition *)repetitionWithSubparser:(PKParser *)p;
 
 /*!
     @brief      Designated Initializer. Initialize a <tt>PKRepetition</tt> parser to repeatedly match against subparser <tt>p</tt>.

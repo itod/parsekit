@@ -21,7 +21,7 @@
 
 @implementation PKAST
 
-+ (id)ASTWithToken:(PKToken *)tok {
++ (PKAST *)ASTWithToken:(PKToken *)tok {
     return [[[self alloc] initWithToken:tok] autorelease];
 }
 

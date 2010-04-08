@@ -44,20 +44,20 @@
 @end
 
 @interface PKCollectionParser ()
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
 @end
 
 @implementation PKIntersection
 
-+ (id)intersection {
++ (PKIntersection *)intersection {
     return [self intersectionWithSubparsers:nil];
 }
 
 
-+ (id)intersectionWithSubparsers:(PKParser *)p1, ... {
++ (PKIntersection *)intersectionWithSubparsers:(PKParser *)p1, ... {
     va_list vargs;
     va_start(vargs, p1);
-    PKIntersection *inter = [self collectionParserWithFirst:p1 rest:vargs];
+    PKIntersection *inter = (PKIntersection *)[self collectionParserWithFirst:p1 rest:vargs];
     va_end(vargs);
     return inter;
 }

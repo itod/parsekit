@@ -15,14 +15,14 @@
 #import <ParseKit/PKCollectionParser.h>
 
 @interface PKCollectionParser ()
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
 
 @property (nonatomic, readwrite, retain) NSMutableArray *subparsers;
 @end
 
 @implementation PKCollectionParser
 
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest {
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest {
     PKCollectionParser *cp = [[[self alloc] init] autorelease];
     
     if (p1) {

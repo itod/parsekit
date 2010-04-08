@@ -21,12 +21,12 @@
 
 @implementation PKSymbol
 
-+ (id)symbol {
++ (PKSymbol *)symbol {
     return [[[self alloc] initWithString:nil] autorelease];
 }
 
 
-+ (id)symbolWithString:(NSString *)s {
++ (PKSymbol *)symbolWithString:(NSString *)s {
     return [[[self alloc] initWithString:s] autorelease];
 }
 

@@ -50,7 +50,7 @@
 
 
 + (id)parserFromGrammar:(NSString *)s {
-    TDRegularParser *p = [TDRegularParser parser];
+    TDRegularParser *p = (TDRegularParser *)[TDRegularParser parser];
     PKAssembly *a = [PKCharacterAssembly assemblyWithString:s];
     a = [p completeMatchFor:a];
     return [a pop];

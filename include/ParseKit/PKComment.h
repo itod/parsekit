@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKComment</tt> object.
     @result     an initialized autoreleased <tt>PKComment</tt> object
 */
-+ (id)comment;
++ (PKComment *)comment;
 @end

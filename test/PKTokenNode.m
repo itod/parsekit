@@ -21,7 +21,7 @@
 
 @implementation PKTokenNode
 
-+ (id)tokenNodeWithToken:(PKToken *)s {
++ (PKTokenNode *)tokenNodeWithToken:(PKToken *)s {
     return [[[self alloc] initWithToken:s] autorelease];
 }
 

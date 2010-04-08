@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKWhitespace</tt> object.
     @result     an initialized autoreleased <tt>PKWhitespace</tt> object
 */
-+ (id)whitespace;
++ (PKWhitespace *)whitespace;
 @end

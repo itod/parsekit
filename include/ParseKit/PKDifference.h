@@ -39,7 +39,7 @@
     @param      minus the parser whose matches will be exluded
     @result     an initialized autoreleased <tt>PKDifference</tt> parser.
 */
-+ (id)differenceWithSubparser:(PKParser *)s minus:(PKParser *)m;
++ (PKDifference *)differenceWithSubparser:(PKParser *)s minus:(PKParser *)m;
 
 /*!
     @brief      Designated initializer

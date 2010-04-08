@@ -29,7 +29,7 @@
     @param      c the character this object should match
     @result     an initialized autoreleased <tt>PKSpecificChar</tt> parser.
 */
-+ (id)specificCharWithChar:(PKUniChar)c;
++ (PKSpecificChar *)specificCharWithChar:(PKUniChar)c;
 
 /*!
     @brief      Designated Initializer. Initializes a <tt>PKSpecificChar</tt> parser.

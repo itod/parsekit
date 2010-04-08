@@ -17,12 +17,12 @@
 
 @implementation PKPattern
 
-+ (id)patternWithString:(NSString *)s {
++ (PKPattern *)patternWithString:(NSString *)s {
     return [self patternWithString:s options:PKPatternOptionsNone];
 }
 
 
-+ (id)patternWithString:(NSString *)s options:(PKPatternOptions)opts {
++ (PKPattern *)patternWithString:(NSString *)s options:(PKPatternOptions)opts {
     return [[[self alloc] initWithString:s options:opts] autorelease];
 }
 

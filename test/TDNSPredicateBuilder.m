@@ -389,7 +389,7 @@
 
 
 // nonReservedWord      = Word
-- (PKCollectionParser *)nonReservedWordParser {
+- (PKParser *)nonReservedWordParser {
     if (!nonReservedWordParser) {
         self.nonReservedWordParser = [PKDifference differenceWithSubparser:[PKWord word] minus:self.reservedWordParser];
         nonReservedWordParser.name = @"nonReservedWord";

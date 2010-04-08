@@ -132,7 +132,7 @@
 }
 
 //TagFormat ::= ABNF_URI
-- (PKCollectionParser *)tagFormat {
+- (PKParser *)tagFormat {
     if (!tagFormat) {
         self.tagFormat = self.ABNF_URI;
     }
@@ -608,7 +608,7 @@
 
 
 //BaseURI ::= ABNF_URI
-- (PKCollectionParser *)baseURI {
+- (PKParser *)baseURI {
     if (!baseURI) {
         self.baseURI = [PKWord word];
     }
@@ -628,7 +628,7 @@
 }
 
 
-- (PKCollectionParser *)ABNF_URI {
+- (PKParser *)ABNF_URI {
     if (!ABNF_URI) {
         self.ABNF_URI = [PKWord word];
     }
@@ -636,7 +636,7 @@
 }
 
 
-- (PKCollectionParser *)ABNF_URI_with_Media_Type {
+- (PKParser *)ABNF_URI_with_Media_Type {
     if (!ABNF_URI_with_Media_Type) {
         self.ABNF_URI_with_Media_Type = [PKWord word];
     }

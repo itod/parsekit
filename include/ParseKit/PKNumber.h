@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKNumber</tt> object.
     @result     an initialized autoreleased <tt>PKNumber</tt> object
 */
-+ (id)number;
++ (PKNumber *)number;
 @end

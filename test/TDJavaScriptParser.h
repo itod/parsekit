@@ -23,14 +23,14 @@
     PKCollectionParser *unaryOpParser;
     PKCollectionParser *multiplicativeOpParser;
     
-    PKCollectionParser *programParser;
+    PKParser *programParser;
     PKCollectionParser *elementParser;
     PKCollectionParser *funcParser;
     PKCollectionParser *paramListOptParser;
     PKCollectionParser *paramListParser;
     PKCollectionParser *commaIdentifierParser;
     PKCollectionParser *compoundStmtParser;
-    PKCollectionParser *stmtsParser;
+    PKParser *stmtsParser;
     PKCollectionParser *stmtParser;
     PKCollectionParser *ifStmtParser;
     PKCollectionParser *ifElseStmtParser;
@@ -191,14 +191,14 @@
 @property (nonatomic, retain) PKCollectionParser *unaryOpParser;
 @property (nonatomic, retain) PKCollectionParser *multiplicativeOpParser;
 
-@property (nonatomic, retain) PKCollectionParser *programParser;
+@property (nonatomic, retain) PKParser *programParser;
 @property (nonatomic, retain) PKCollectionParser *elementParser;
 @property (nonatomic, retain) PKCollectionParser *funcParser;
 @property (nonatomic, retain) PKCollectionParser *paramListOptParser;
 @property (nonatomic, retain) PKCollectionParser *paramListParser;
 @property (nonatomic, retain) PKCollectionParser *commaIdentifierParser;
 @property (nonatomic, retain) PKCollectionParser *compoundStmtParser;
-@property (nonatomic, retain) PKCollectionParser *stmtsParser;
+@property (nonatomic, retain) PKParser *stmtsParser;
 @property (nonatomic, retain) PKCollectionParser *stmtParser;
 @property (nonatomic, retain) PKCollectionParser *ifStmtParser;
 @property (nonatomic, retain) PKCollectionParser *ifElseStmtParser;

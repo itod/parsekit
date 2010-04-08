@@ -27,7 +27,7 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKSequence</tt> parser.
     @result     an initialized autoreleased <tt>PKSequence</tt> parser.
 */
-+ (id)sequence;
++ (PKSequence *)sequence;
 
-+ (id)sequenceWithSubparsers:(PKParser *)p1, ...;
++ (PKSequence *)sequenceWithSubparsers:(PKParser *)p1, ...;
 @end

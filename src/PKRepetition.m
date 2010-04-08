@@ -25,7 +25,7 @@
 
 @implementation PKRepetition
 
-+ (id)repetitionWithSubparser:(PKParser *)p {
++ (PKRepetition *)repetitionWithSubparser:(PKParser *)p {
     return [[[self alloc] initWithSubparser:p] autorelease];
 }
 

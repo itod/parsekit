@@ -34,7 +34,7 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 
 @implementation PKAssembly
 
-+ (id)assemblyWithString:(NSString *)s {
++ (PKAssembly *)assemblyWithString:(NSString *)s {
     return [[[self alloc] initWithString:s] autorelease];
 }
 

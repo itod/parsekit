@@ -24,7 +24,7 @@
     id userInfo;
     BOOL matched;
 }
-+ (id)parseTree;
++ (PKParseTree *)parseTree;
 
 - (PKRuleNode *)addChildRule:(NSString *)name;
 - (PKTokenNode *)addChildToken:(PKToken *)tok;

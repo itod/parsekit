@@ -21,6 +21,11 @@
 
 @implementation PKCharacterAssembly
 
++ (PKCharacterAssembly *)assemblyWithString:(NSString *)s {
+    return (PKCharacterAssembly *)[super assemblyWithString:s];
+}
+
+
 - (id)init {
     return [self initWithString:nil];
 }

@@ -21,7 +21,7 @@
 
 @implementation PKLiteral
 
-+ (id)literalWithString:(NSString *)s {
++ (PKLiteral *)literalWithString:(NSString *)s {
     return [[[self alloc] initWithString:s] autorelease];
 }
 

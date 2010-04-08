@@ -20,20 +20,20 @@
 @end
 
 @interface PKCollectionParser ()
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
 @end
 
 @implementation PKSequence
 
-+ (id)sequence {
++ (PKSequence *)sequence {
     return [self sequenceWithSubparsers:nil];
 }
 
 
-+ (id)sequenceWithSubparsers:(PKParser *)p1, ... {
++ (PKSequence *)sequenceWithSubparsers:(PKParser *)p1, ... {
     va_list vargs;
     va_start(vargs, p1);
-    PKSequence *seq = [self collectionParserWithFirst:p1 rest:vargs];
+    PKSequence *seq = (PKSequence *)[self collectionParserWithFirst:p1 rest:vargs];
     va_end(vargs);
     return seq;
 }

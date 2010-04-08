@@ -19,7 +19,7 @@
 @implementation TDJsonParserTest
 
 - (void)setUp {
-    p = [TDJsonParser parser];
+    p = (TDJsonParser *)[TDJsonParser parser];
 }
 
 

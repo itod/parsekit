@@ -27,5 +27,5 @@
     @brief      Convenience factory method for initializing an autoreleased <tt>PKChar</tt> parser.
     @result     an initialized autoreleased <tt>PKChar</tt> parser.
 */
-+ (id)char;
++ (PKChar *)char;
 @end

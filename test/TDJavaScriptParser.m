@@ -377,7 +377,7 @@
 //           Element Program
 //
 //program             = element*;
-- (PKCollectionParser *)programParser {
+- (PKParser *)programParser {
     if (!programParser) {
         self.programParser = [PKRepetition repetitionWithSubparser:self.elementParser];
         programParser.name = @"program";
@@ -482,7 +482,7 @@
 //           Statement Statements
 //
 //stmts               = stmt*;
-- (PKCollectionParser *)stmtsParser {
+- (PKParser *)stmtsParser {
     if (!stmtsParser) {
         self.stmtsParser = [PKRepetition repetitionWithSubparser:self.stmtParser];
         stmtsParser.name = @"stmts";

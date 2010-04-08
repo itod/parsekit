@@ -16,6 +16,7 @@
 */
 @interface PKEmailState : PKTokenizerState {
     PKUniChar c;
+    PKUniChar lastChar;
 }
 
 @end

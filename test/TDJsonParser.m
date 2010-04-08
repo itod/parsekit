@@ -144,7 +144,7 @@
         // content = Empty | actualArray
         // actualArray = value commaValue*
 
-        PKTrack *actualArray = [PKTrack sequence];
+        PKTrack *actualArray = [PKTrack track];
         [actualArray add:self.valueParser];
         [actualArray add:[PKRepetition repetitionWithSubparser:self.commaValueParser]];
 
@@ -174,7 +174,7 @@
         // property = QuotedString ':' value
         // commaProperty = ',' property
         
-        PKTrack *actualObject = [PKTrack sequence];
+        PKTrack *actualObject = [PKTrack track];
         [actualObject add:self.propertyParser];
         [actualObject add:[PKRepetition repetitionWithSubparser:self.commaPropertyParser]];
         

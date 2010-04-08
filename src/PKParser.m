@@ -33,7 +33,7 @@
 
 @implementation PKParser
 
-+ (id)parser {
++ (PKParser *)parser {
     return [[[self alloc] init] autorelease];
 }
 
