@@ -88,7 +88,7 @@
     } 
     
     if (matched) {
-        if ('.' == lastChar || ',' == lastChar) {
+        if ('.' == lastChar || ',' == lastChar || '-' == lastChar) {
             s = [s substringToIndex:[s length] - 1];
             [r unread];
         }

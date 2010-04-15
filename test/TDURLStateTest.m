@@ -36,6 +36,21 @@
 }
 
 
+- (void)testDunningDashKruger {
+    s = @"http://en.wikipedia.org/wiki/Dunning–Kruger_effect";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
 - (void)testFooComBlahBlahSlash {
     s = @"http://foo.com/blah_blah/";
     t.string = s;
