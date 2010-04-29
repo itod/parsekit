@@ -21,7 +21,7 @@
 @implementation NSMutableSet (PKDifferenceAdditions)
 
 - (void)minusSetTestingEquality:(NSSet *)s {
-    for (id a1 in self) {
+    for (id a1 in [[self copy] autorelease]) {
         for (id a2 in s) {
             if ([a1 isEqual:a2]) {
                 [self removeObject:a1];

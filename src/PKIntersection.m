@@ -22,7 +22,7 @@
 @implementation NSMutableSet (PKIntersectionAdditions)
 
 - (void)intersectSetTestingEquality:(NSSet *)s {
-    for (id a1 in self) {
+    for (id a1 in [[self copy] autorelease]) {
         BOOL found = NO;
         for (id a2 in s) {
             if ([a1 isEqual:a2]) {
