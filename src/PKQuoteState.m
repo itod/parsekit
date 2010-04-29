@@ -63,17 +63,17 @@
             }
         } else if ((!usesCSVStyleEscaping && c == '\\') || (usesCSVStyleEscaping && c == cin)) {
             PKUniChar peek = [r read];
-			if (peek == cin) {
-				[self append:c];
-				[self append:peek];
-				c = PKEOF;	// Just to get past the while() condition
-			} else {
+            if (peek == cin) {
+                [self append:c];
+                [self append:peek];
+                c = PKEOF;	// Just to get past the while() condition
+            } else {
                 if (peek != PKEOF) {
                     [r unread:1];
                 }
-				[self append:c];
-			}
-		} else {
+                [self append:c];
+            }
+        } else {
             [self append:c];
         }
     } while (c != cin);
