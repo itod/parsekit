@@ -17,6 +17,7 @@
 
 @interface TDQuoteStateTest : SenTestCase {
     PKQuoteState *quoteState;
+    PKTokenizer *t;
     PKReader *r;
     NSString *s;
 }

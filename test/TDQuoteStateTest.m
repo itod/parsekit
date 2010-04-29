@@ -18,55 +18,136 @@
 @implementation TDQuoteStateTest
 
 - (void)setUp {
-    quoteState = [[PKQuoteState alloc] init];
-    r = [[PKReader alloc] init];
+    t = [PKTokenizer tokenizer];
+    quoteState = t.quoteState;
 }
 
 
 - (void)tearDown {
-    [quoteState release];
-    [r release];
 }
 
 
 - (void)testQuotedString {
     s = @"'stuff'";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
+    TDEqualObjects(s, tok.stringValue);
+}
+
+
+- (void)testQuotedStringEscaped {
+    s = @"'it\\'s'";
+    t.string = s;
+    PKToken *tok = [t nextToken];
+    TDEqualObjects(s, tok.stringValue);
+}
+
+
+- (void)testQuotedStringEscaped2 {
+    s = @"'it\\'s'";
+    t.string = s;
+    quoteState.usesCSVStyleEscaping = YES;
+    
+    PKToken *tok = [t nextToken];
+    TDEqualObjects(@"'it\\'", tok.stringValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects(@"s'", tok.stringValue);
+    TDTrue(tok.isWord);
+    
+    tok = [t nextToken];
+    TDEquals([PKToken EOFToken], tok);
+}
+
+
+- (void)testQuotedStringEscapedDouble {
+    s = @"'it''s'";
+    t.string = s;
+    PKToken *tok = [t nextToken];
+    TDEqualObjects(@"'it'", tok.stringValue);
+
+    tok = [t nextToken];
+    TDEqualObjects(@"'s'", tok.stringValue);
+
+    tok = [t nextToken];
+    TDEquals([PKToken EOFToken], tok);
+}
+
+
+- (void)testQuotedStringEscapedDouble2 {
+    s = @"'it''s'";
+    t.string = s;
+    quoteState.usesCSVStyleEscaping = YES;
+    
+    PKToken *tok = [t nextToken];
     TDEqualObjects(s, tok.stringValue);
     
+    tok = [t nextToken];
+    TDEquals([PKToken EOFToken], tok);
+}
+
+
+- (void)testQuotedStringEscapedDouble3 {
+    s = @"'it''s' cool";
+    t.string = s;
+    quoteState.usesCSVStyleEscaping = YES;
+    
+    PKToken *tok = [t nextToken];
+    TDEqualObjects(@"'it''s'", tok.stringValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects(@"cool", tok.stringValue);
+    
+    tok = [t nextToken];
+    TDEquals([PKToken EOFToken], tok);
+}
+
+
+- (void)testQuotedStringEscapedDouble4 {
+    s = @"'it''s'cool";
+    t.string = s;
+    quoteState.usesCSVStyleEscaping = YES;
+    
+    PKToken *tok = [t nextToken];
+    TDEqualObjects(@"'it''s'", tok.stringValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects(@"cool", tok.stringValue);
+    
+    tok = [t nextToken];
+    TDEquals([PKToken EOFToken], tok);
 }
 
 
 - (void)testQuotedStringEOFTerminated {
     s = @"'stuff";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
     TDEqualObjects(s, tok.stringValue);
 }
 
 
 - (void)testQuotedStringRepairEOFTerminated {
     s = @"'stuff";
-    r.string = s;
+    t.string = s;
     quoteState.balancesEOFTerminatedQuotes = YES;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    PKToken *tok = [t nextToken];
     TDEqualObjects(@"'stuff'", tok.stringValue);
 }
 
 
 - (void)testQuotedStringPlus {
     s = @"'a quote here' more";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
     TDEqualObjects(@"'a quote here'", tok.stringValue);
 }
 
 
 - (void)test14CharQuotedString {
     s = @"'123456789abcef'";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
     TDEqualObjects(s, tok.stringValue);
     TDTrue(tok.isQuotedString);
 }
@@ -74,8 +155,8 @@
 
 - (void)test15CharQuotedString {
     s = @"'123456789abcefg'";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
     TDEqualObjects(s, tok.stringValue);
     TDTrue(tok.isQuotedString);
 }
@@ -83,8 +164,8 @@
 
 - (void)test16CharQuotedString {
     s = @"'123456789abcefgh'";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
     TDEqualObjects(s, tok.stringValue);
     TDTrue(tok.isQuotedString);
 }
@@ -92,8 +173,8 @@
 
 - (void)test31CharQuotedString {
     s = @"'123456789abcefgh123456789abcefg'";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
     TDEqualObjects(s, tok.stringValue);
     TDTrue(tok.isQuotedString);
 }
@@ -101,8 +182,8 @@
 
 - (void)test32CharQuotedString {
     s = @"'123456789abcefgh123456789abcefgh'";
-    r.string = s;
-    PKToken *tok = [quoteState nextTokenFromReader:r startingWith:[r read] tokenizer:nil];
+    t.string = s;
+    PKToken *tok = [t nextToken];
     TDEqualObjects(s, tok.stringValue);
     TDTrue(tok.isQuotedString);
 }

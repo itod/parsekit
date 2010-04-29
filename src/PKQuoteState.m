@@ -61,10 +61,21 @@
                 [r unread:[[self bufferedString] length]];
                 return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
             }
-        } else {
+        } else if ((!usesCSVStyleEscaping && c == '\\') || (usesCSVStyleEscaping && c == cin)) {
+            PKUniChar peek = [r read];
+			if (peek == cin) {
+				[self append:c];
+				[self append:peek];
+				c = PKEOF;	// Just to get past the while() condition
+			} else {
+                if (peek != PKEOF) {
+                    [r unread:1];
+                }
+				[self append:c];
+			}
+		} else {
             [self append:c];
         }
-        
     } while (c != cin);
     
     PKToken *tok = [PKToken tokenWithTokenType:PKTokenTypeQuotedString stringValue:[self bufferedString] floatValue:0.0];
@@ -74,4 +85,5 @@
 
 @synthesize allowsEOFTerminatedQuotes;
 @synthesize balancesEOFTerminatedQuotes;
+@synthesize usesCSVStyleEscaping;
 @end

@@ -23,6 +23,7 @@
 @interface PKQuoteState : PKTokenizerState {
     BOOL allowsEOFTerminatedQuotes;
     BOOL balancesEOFTerminatedQuotes;
+    BOOL usesCSVStyleEscaping;
 }
 
 /*!
@@ -36,4 +37,10 @@
     @brief      if YES, this state will append a matching quote char (<tt>'</tt> or <tt>"</tt>) to strings terminated by EOF. Default is NO.
 */
 @property (nonatomic) BOOL balancesEOFTerminatedQuotes;
+
+/*!
+    @property   usesCSVStyleEscaping
+    @brief      if NO, this state will use slash-style escaping (<tt>\'</tt> or <tt>\"</tt>). If YES, it will use CSV-style escaping, by doubling the quote character (<tt>''</tt> or <tt>""</tt>). The default behaviour is NO (slash-style).
+*/
+@property (nonatomic) BOOL usesCSVStyleEscaping;
 @end
