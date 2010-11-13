@@ -81,7 +81,7 @@
     NSRange visibleGlyphRange = [layoutMgr glyphRangeForBoundingRect:boundingRect inTextContainer:self.textContainer];
         
     NSUInteger index = visibleGlyphRange.location;
-    NSUInteger length = index + [visibleGlyphRange length];
+    NSUInteger length = index + visibleGlyphRange.length;
 
     (*outStart) = [self lineNumberForIndex:index + 1];
     

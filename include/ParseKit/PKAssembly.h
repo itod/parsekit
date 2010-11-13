@@ -84,3 +84,10 @@
 */
 @property (nonatomic, retain) id target;
 @end
+
+
+@interface PKAssembly (Subclassing)
+@property (nonatomic, readwrite, retain) NSString *defaultDelimiter;
+@property (nonatomic, readonly) NSUInteger length;
+@end
+
