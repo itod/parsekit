@@ -29,7 +29,7 @@
         [cp add:p1];
         
         PKParser *p = nil;
-        while (p = va_arg(rest, PKParser *)) {
+        while ((p = va_arg(rest, PKParser *))) {
             [cp add:p];
         }
     }
@@ -44,7 +44,7 @@
 
 
 - (id)initWithSubparsers:(PKParser *)p1, ... {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.subparsers = [NSMutableArray array];
 
         if (p1) {
@@ -54,7 +54,7 @@
             va_start(vargs, p1);
 
             PKParser *p = nil;
-            while (p = va_arg(vargs, PKParser *)) {
+            while ((p = va_arg(vargs, PKParser *))) {
                 [subparsers addObject:p];
             }
 

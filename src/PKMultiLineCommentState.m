@@ -46,7 +46,7 @@
 @implementation PKMultiLineCommentState
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.startMarkers = [NSMutableArray array];
         self.endMarkers = [NSMutableArray array];
     }

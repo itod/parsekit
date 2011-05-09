@@ -40,7 +40,7 @@
 @implementation PKSingleLineCommentState
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.startMarkers = [NSMutableArray array];
     }
     return self;

@@ -38,7 +38,7 @@
 @implementation PKWhitespaceState
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         const NSUInteger len = 255;
         self.whitespaceChars = [NSMutableArray arrayWithCapacity:len];
         NSUInteger i = 0;
