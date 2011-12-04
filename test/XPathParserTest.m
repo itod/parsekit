@@ -17,6 +17,8 @@
 
 @implementation XPathParserTest
 
+#if PK_INCLUDE_TWITTER_STATE
+#else
 - (void)setUp {
     p = [[[XPathParser alloc] init] autorelease];
 }
@@ -305,5 +307,6 @@
     TDNotNil(result);
     TDEqualObjects(@"[foo, and, bar]foo/and/bar^", [result description]);
 }
+#endif
 
 @end

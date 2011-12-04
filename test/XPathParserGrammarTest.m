@@ -16,6 +16,8 @@
 
 @implementation XPathParserGrammarTest
 
+#if PK_INCLUDE_TWITTER_STATE
+#else
 - (void)setUp {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"xpath1_0" ofType:@"grammar"];
     NSString *g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
@@ -288,5 +290,6 @@
     TDNotNil(res);
     TDEqualObjects(@"[foo, and, bar]foo/and/bar^", [res description]);
 }
+#endif
 
 @end

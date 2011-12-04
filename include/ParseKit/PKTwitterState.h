@@ -6,6 +6,7 @@
 //  Copyright 2010 Todd Ditchendorf. All rights reserved.
 //
 
+#if PK_INCLUDE_TWITTER_STATE
 #import <Foundation/Foundation.h>
 #import <ParseKit/PKTokenizerState.h>
 
@@ -19,3 +20,4 @@
 }
 
 @end
+#endif

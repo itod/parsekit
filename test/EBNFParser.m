@@ -44,16 +44,16 @@ static NSString * const kEBNFVariableSuffix = @"";
 @interface EBNFParser ()
 - (void)addSymbolString:(NSString *)s toTokenizer:(PKTokenizer *)t;
 
-- (void)didMatchWord:(PKAssembly *)a;
-- (void)didMatchNum:(PKAssembly *)a;
-- (void)didMatchQuotedString:(PKAssembly *)a;
-- (void)didMatchStar:(PKAssembly *)a;
-- (void)didMatchQuestion:(PKAssembly *)a;
-- (void)didMatchPlus:(PKAssembly *)a;
-- (void)didMatchAnd:(PKAssembly *)a;
-- (void)didMatchOr:(PKAssembly *)a;
-- (void)didMatchAssignment:(PKAssembly *)a;
-- (void)didMatchVariable:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchWord:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchQuotedString:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchStar:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchQuestion:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchPlus:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchOr:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchAssignment:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchVariable:(PKAssembly *)a;
 @end
 
 @implementation EBNFParser
@@ -136,7 +136,7 @@ static NSString * const kEBNFVariableSuffix = @"";
         [assignmentParser add:self.declarationParser];
         [assignmentParser add:[[PKSymbol symbolWithString:kEBNFEqualsString] discard]];
         [assignmentParser add:self.expressionParser];
-        [assignmentParser setAssembler:self selector:@selector(didMatchAssignment:)];
+        [assignmentParser setAssembler:self selector:@selector(parser:didMatchAssignment:)];
     }
     return assignmentParser;
 }
@@ -198,7 +198,7 @@ static NSString * const kEBNFVariableSuffix = @"";
         self.orTermParser = [PKTrack track];
         [orTermParser add:[[PKSymbol symbolWithString:@"|"] discard]];
         [orTermParser add:self.termParser];
-        [orTermParser setAssembler:self selector:@selector(didMatchOr:)];
+        [orTermParser setAssembler:self selector:@selector(parser:didMatchOr:)];
     }
     return orTermParser;
 }
@@ -225,7 +225,7 @@ static NSString * const kEBNFVariableSuffix = @"";
         [nextFactorParser add:self.phraseStarParser];
         [nextFactorParser add:self.phraseQuestionParser];
         [nextFactorParser add:self.phrasePlusParser];
-        [nextFactorParser setAssembler:self selector:@selector(didMatchAnd:)];
+        [nextFactorParser setAssembler:self selector:@selector(parser:didMatchAnd:)];
     }
     return nextFactorParser;
 }
@@ -253,7 +253,7 @@ static NSString * const kEBNFVariableSuffix = @"";
         self.phraseStarParser = [PKSequence sequence];
         [phraseStarParser add:self.phraseParser];
         [phraseStarParser add:[[PKSymbol symbolWithString:@"*"] discard]];
-        [phraseStarParser setAssembler:self selector:@selector(didMatchStar:)];
+        [phraseStarParser setAssembler:self selector:@selector(parser:didMatchStar:)];
     }
     return phraseStarParser;
 }
@@ -265,7 +265,7 @@ static NSString * const kEBNFVariableSuffix = @"";
         self.phraseQuestionParser = [PKSequence sequence];
         [phraseQuestionParser add:self.phraseParser];
         [phraseQuestionParser add:[[PKSymbol symbolWithString:@"?"] discard]];
-        [phraseQuestionParser setAssembler:self selector:@selector(didMatchQuestion:)];
+        [phraseQuestionParser setAssembler:self selector:@selector(parser:didMatchQuestion:)];
     }
     return phraseQuestionParser;
 }
@@ -277,7 +277,7 @@ static NSString * const kEBNFVariableSuffix = @"";
         self.phrasePlusParser = [PKSequence sequence];
         [phrasePlusParser add:self.phraseParser];
         [phrasePlusParser add:[[PKSymbol symbolWithString:@"+"] discard]];
-        [phrasePlusParser setAssembler:self selector:@selector(didMatchPlus:)];
+        [phrasePlusParser setAssembler:self selector:@selector(parser:didMatchPlus:)];
     }
     return phrasePlusParser;
 }
@@ -289,26 +289,26 @@ static NSString * const kEBNFVariableSuffix = @"";
         self.atomicValueParser = [PKAlternation alternation];
         
         PKParser *p = [PKWord word];
-        [p setAssembler:self selector:@selector(didMatchWord:)];
+        [p setAssembler:self selector:@selector(parser:didMatchWord:)];
         [atomicValueParser add:p];
         
         p = [PKNumber number];
-        [p setAssembler:self selector:@selector(didMatchNum:)];
+        [p setAssembler:self selector:@selector(parser:didMatchNum:)];
         [atomicValueParser add:p];
         
         p = [PKQuotedString quotedString];
-        [p setAssembler:self selector:@selector(didMatchQuotedString:)];
+        [p setAssembler:self selector:@selector(parser:didMatchQuotedString:)];
         [atomicValueParser add:p];
         
         p = self.variableParser;
-        [p setAssembler:self selector:@selector(didMatchVariable:)];
+        [p setAssembler:self selector:@selector(parser:didMatchVariable:)];
         [atomicValueParser add:p];
     }
     return atomicValueParser;
 }
 
 
-- (void)didMatchWord:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchWord:(PKAssembly *)a {
     //    NSLog(@"%s", _cmd);
     //    NSLog(@"a: %@", a);
     PKToken *tok = [a pop];
@@ -316,7 +316,7 @@ static NSString * const kEBNFVariableSuffix = @"";
 }
 
 
-- (void)didMatchNum:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a {
     //    NSLog(@"%s", _cmd);
     //    NSLog(@"a: %@", a);
     PKToken *tok = [a pop];
@@ -324,77 +324,77 @@ static NSString * const kEBNFVariableSuffix = @"";
 }
 
 
-- (void)didMatchQuotedString:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchQuotedString:(PKAssembly *)a {
     //    NSLog(@"%s", _cmd);
     //    NSLog(@"a: %@", a);
     PKToken *tok = [a pop];
     NSString *s = [tok.stringValue stringByTrimmingQuotes];
     
-    PKSequence *p = [PKSequence sequence];
+    PKSequence *seq = [PKSequence sequence];
     PKTokenizer *t = [PKTokenizer tokenizerWithString:s];
     PKToken *eof = [PKToken EOFToken];
     while (eof != (tok = [t nextToken])) {
-        [p add:[PKLiteral literalWithString:tok.stringValue]];
+        [seq add:[PKLiteral literalWithString:tok.stringValue]];
     }
     
-    [a push:p];
+    [a push:seq];
 }
 
 
-- (void)didMatchStar:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchStar:(PKAssembly *)a {
     //    NSLog(@"%s", _cmd);
     //    NSLog(@"a: %@", a);
-    PKRepetition *p = [PKRepetition repetitionWithSubparser:[a pop]];
-    [a push:p];
+    PKRepetition *rep = [PKRepetition repetitionWithSubparser:[a pop]];
+    [a push:rep];
 }
 
 
-- (void)didMatchQuestion:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchQuestion:(PKAssembly *)a {
     //    NSLog(@"%s", _cmd);
     //    NSLog(@"a: %@", a);
-    PKAlternation *p = [PKAlternation alternation];
-    [p add:[a pop]];
-    [p add:[PKEmpty empty]];
-    [a push:p];
+    PKAlternation *alt = [PKAlternation alternation];
+    [alt add:[a pop]];
+    [alt add:[PKEmpty empty]];
+    [a push:alt];
 }
 
 
-- (void)didMatchPlus:(PKAssembly *)a {
-    //    NSLog(@"%s", _cmd);
-    //    NSLog(@"a: %@", a);
-    id top = [a pop];
-    PKSequence *p = [PKSequence sequence];
-    [p add:top];
-    [p add:[PKRepetition repetitionWithSubparser:top]];
-    [a push:p];
-}
-
-
-- (void)didMatchAnd:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPlus:(PKAssembly *)a {
     //    NSLog(@"%s", _cmd);
     //    NSLog(@"a: %@", a);
     id top = [a pop];
-    PKSequence *p = [PKSequence sequence];
-    [p add:[a pop]];
-    [p add:top];
-    [a push:p];
+    PKSequence *seq = [PKSequence sequence];
+    [seq add:top];
+    [seq add:[PKRepetition repetitionWithSubparser:top]];
+    [a push:seq];
 }
 
 
-- (void)didMatchOr:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a {
+    //    NSLog(@"%s", _cmd);
+    //    NSLog(@"a: %@", a);
+    id top = [a pop];
+    PKSequence *seq = [PKSequence sequence];
+    [seq add:[a pop]];
+    [seq add:top];
+    [a push:seq];
+}
+
+
+- (void)parser:(PKParser *)p didMatchOr:(PKAssembly *)a {
     //    NSLog(@"%s", _cmd);
     //    NSLog(@"a: %@", a);
     id top = [a pop];
     //    NSLog(@"top: %@", top);
     //    NSLog(@"top class: %@", [top class]);
-    PKAlternation *p = [PKAlternation alternation];
-    [p add:[a pop]];
-    [p add:top];
-    [a push:p];
+    PKAlternation *alt = [PKAlternation alternation];
+    [alt add:[a pop]];
+    [alt add:top];
+    [a push:alt];
 }
 
 
-- (void)didMatchAssignment:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAssignment:(PKAssembly *)a {
     NSLog(@"%s", _cmd);
     NSLog(@"a: %@", a);
     id val = [a pop];
@@ -405,7 +405,7 @@ static NSString * const kEBNFVariableSuffix = @"";
 }
 
 
-- (void)didMatchVariable:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchVariable:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     PKToken *keyTok = [a pop];

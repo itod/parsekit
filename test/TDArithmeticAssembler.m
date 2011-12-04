@@ -17,35 +17,35 @@
 
 @implementation TDArithmeticAssembler
 
-- (void)didMatchPlus:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPlus:(PKAssembly *)a {
     PKToken *tok2 = [a pop];
     PKToken *tok1 = [a pop];
     [a push:[NSNumber numberWithDouble:tok1.floatValue + tok2.floatValue]];
 }
 
 
-- (void)didMatchMinus:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchMinus:(PKAssembly *)a {
     PKToken *tok2 = [a pop];
     PKToken *tok1 = [a pop];
     [a push:[NSNumber numberWithDouble:tok1.floatValue - tok2.floatValue]];
 }
 
 
-- (void)didMatchTimes:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchTimes:(PKAssembly *)a {
     PKToken *tok2 = [a pop];
     PKToken *tok1 = [a pop];
     [a push:[NSNumber numberWithDouble:tok1.floatValue * tok2.floatValue]];
 }
 
 
-- (void)didMatchDivide:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchDivide:(PKAssembly *)a {
     PKToken *tok2 = [a pop];
     PKToken *tok1 = [a pop];
     [a push:[NSNumber numberWithDouble:tok1.floatValue / tok2.floatValue]];
 }
 
 
-- (void)didMatchExp:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchExp:(PKAssembly *)a {
     PKToken *tok2 = [a pop];
     PKToken *tok1 = [a pop];
     

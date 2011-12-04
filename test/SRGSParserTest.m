@@ -21,6 +21,8 @@
 }
 
 
+#if PK_INCLUDE_TWITTER_STATE
+#else
 - (void)test {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"example1" ofType:@"srgs"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
@@ -31,19 +33,28 @@
     NSLog(@"\n\n\n result: %@ \n\n\n", result);
 //    TDEqualObjects(@"[#, ABNF, 1.0, ;]#/ABNF/1.0/;^", [result description]);
 }
+#endif
 
 - (void)testSelfIdentHeader {
     s = @"#ABNF 1.0;";
     a = [p assemblyWithString:s];
     result = [p.selfIdentHeader bestMatchFor:a];
     TDNotNil(result);
+#if PK_INCLUDE_TWITTER_STATE
+    TDEqualObjects(@"[#ABNF, 1.0, ;]#ABNF/1.0/;^", [result description]);
+#else
     TDEqualObjects(@"[#, ABNF, 1.0, ;]#/ABNF/1.0/;^", [result description]);
+#endif
 
     s = @"#ABNF 1.0 UTF;";
     a = [p assemblyWithString:s];
     result = [p.selfIdentHeader bestMatchFor:a];
     TDNotNil(result);
+#if PK_INCLUDE_TWITTER_STATE
+    TDEqualObjects(@"[#ABNF, 1.0, UTF, ;]#ABNF/1.0/UTF/;^", [result description]);
+#else
     TDEqualObjects(@"[#, ABNF, 1.0, UTF, ;]#/ABNF/1.0/UTF/;^", [result description]);
+#endif
 }
 
 

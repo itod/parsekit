@@ -122,7 +122,7 @@
         isHexAlpha = NO;
         if (allowsHexadecimalNotation) {
             [self checkForHex:r];
-            if (c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F') {
+            if ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
                 isHexAlpha = YES;
             }
         }

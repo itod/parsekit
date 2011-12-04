@@ -22,7 +22,7 @@
 - (NSString *)ruleNameForSelName:(NSString *)selName withPrefix:(NSString *)pre;
 - (void)didMatchRuleNamed:(NSString *)name assembly:(PKAssembly *)a;
 - (void)willMatchRuleNamed:(NSString *)name assembly:(PKAssembly *)a;
-- (void)didMatchToken:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchToken:(PKAssembly *)a;
 - (PKParseTree *)currentFrom:(PKAssembly *)a;
 - (void)removeUnmatchedChildrenFrom:(PKParseTree *)n;
 
@@ -37,8 +37,8 @@
 - (id)init {
     if (self = [super init]) {
         self.ruleNames = [NSMutableDictionary dictionary];
-        self.preassemblerPrefix = @"willMatch";
-        self.assemblerPrefix = @"didMatch";
+        self.preassemblerPrefix = @"parser:willMatch";
+        self.assemblerPrefix = @"parser:didMatch";
         self.suffix = @":";
     }
     return self;
@@ -68,15 +68,18 @@
 }
 
 
-- (id)performSelector:(SEL)sel withObject:(id)obj {
+- (id)performSelector:(SEL)sel withObject:(id)obj withObject:(id)obj1 {
     NSString *selName = NSStringFromSelector(sel);
     
+    //PKParser *p = obj;
+    PKAssembly *a = obj1;
+    
     if ([selName hasPrefix:assemblerPrefix] && [selName hasSuffix:suffix]) {
-        [self didMatchRuleNamed:[self ruleNameForSelName:selName withPrefix:assemblerPrefix] assembly:obj];
+        [self didMatchRuleNamed:[self ruleNameForSelName:selName withPrefix:assemblerPrefix] assembly:a];
     } else if ([selName hasPrefix:preassemblerPrefix] && [selName hasSuffix:suffix]) {
-        [self willMatchRuleNamed:[self ruleNameForSelName:selName withPrefix:preassemblerPrefix] assembly:obj];
+        [self willMatchRuleNamed:[self ruleNameForSelName:selName withPrefix:preassemblerPrefix] assembly:a];
     } else if ([super respondsToSelector:sel]) {
-        return [super performSelector:sel withObject:obj];
+        return [super performSelector:sel withObject:obj withObject:obj1];
     } else {
         NSAssert(0, @"");
     }
@@ -101,7 +104,7 @@
 
 - (void)willMatchRuleNamed:(NSString *)name assembly:(PKAssembly *)a {
     PKParseTree *current = [self currentFrom:a];
-    [self didMatchToken:a];
+    [self parser:nil didMatchToken:a];
     current = [current addChildRule:name];
     a.target = current;
 }
@@ -117,14 +120,14 @@
         oldCurrent = [[current retain] autorelease];
         a.target = [current parent];
         current = [self currentFrom:a];
-        [self didMatchToken:a];        
+        [self parser:nil didMatchToken:a];        
     }
 
     if (oldCurrent && ![oldCurrent isMatched]) {
         [(id)[current children] addObjectsFromArray:origChildren];
     }
 
-    [self didMatchToken:a];        
+    [self parser:nil didMatchToken:a];        
     current = [self currentFrom:a];
     
     [self removeUnmatchedChildrenFrom:current];
@@ -157,7 +160,7 @@
 }
 
 
-- (void)didMatchToken:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchToken:(PKAssembly *)a {
     PKParseTree *current = [self currentFrom:a];
     if ([current isMatched]) return;
     

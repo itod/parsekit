@@ -246,6 +246,11 @@
     TDEquals(tok.floatValue, (CGFloat)0.0);
     
     tok = [t nextToken];
+#if PK_INCLUDE_TWITTER_STATE
+    TDTrue(tok.isHashtag);
+    TDEqualObjects(tok.stringValue, @"#foo");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+#else
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"#");
     TDEquals(tok.floatValue, (CGFloat)0.0);
@@ -254,6 +259,7 @@
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"foo");
     TDEquals(tok.floatValue, (CGFloat)0.0);
+#endif
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
@@ -348,6 +354,11 @@
     TDEquals(tok.floatValue, (CGFloat)0.0);
     
     tok = [t nextToken];
+#if PK_INCLUDE_TWITTER_STATE
+    TDTrue(tok.isHashtag);
+    TDEqualObjects(tok.stringValue, @"#foo");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+#else
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"#");
     TDEquals(tok.floatValue, (CGFloat)0.0);
@@ -356,6 +367,7 @@
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"foo");
     TDEquals(tok.floatValue, (CGFloat)0.0);
+#endif
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);

@@ -36,11 +36,11 @@
 
 + (void)setUpDefaults {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
     id defaultValues = [NSMutableDictionary dictionaryWithContentsOfFile:path];
-	[[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:defaultValues];
-	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:defaultValues];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     [pool release];
 }
 

@@ -32,8 +32,7 @@
 
 
 - (id)initWithString:(NSString *)s {
-    self = [super initWithString:s];
-    if (self) {
+    if (self = [super initWithString:s]) {
         self.defaultDelimiter = @"";
     }
     return self;

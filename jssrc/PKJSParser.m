@@ -94,7 +94,7 @@ static bool PKParser_setAssembler(JSContextRef ctx, JSObjectRef this, JSStringRe
     PKParser *data = JSObjectGetPrivate(this);
     PKJSAssemblerAdapter *adapter = [[PKJSAssemblerAdapter alloc] init]; // retained. released in PKParser_finalize
     [adapter setAssemblerFunction:(JSObjectRef)value fromContext:ctx];
-    [data setAssembler:adapter selector:@selector(didMatch:)];
+    [data setAssembler:adapter selector:@selector(parser:didMatch:)];
     return true;
 }
 

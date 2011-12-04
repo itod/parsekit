@@ -13,8 +13,8 @@
         
     If implemented, your assembler object will receive callbacks for each production in this grammar, like:
         
-        - (void)didMatchElement:(PKAssembly *)a;
-        - (void)didMatchAttribute:(PKAssembly *)a;
+        - (void)parser:(PKParser *)p didMatchElement:(PKAssembly *)a;
+        - (void)parser:(PKParser *)p didMatchAttribute:(PKAssembly *)a;
     
     
     This parser is running successfully on some non-trivial real-world XML documents, 

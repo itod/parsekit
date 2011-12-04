@@ -74,7 +74,7 @@
 
 
 - (NSSet *)allMatchesFor:(NSSet *)inAssemblies {
-    NSAssert1(0, @"-[PKParser %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return nil;
 }
 
@@ -103,14 +103,14 @@
 #ifdef TARGET_OS_SNOW_LEOPARD
     if (preassemblerBlock) {
         for (PKAssembly *a in inAssemblies) {
-            preassemblerBlock(a);
+            preassemblerBlock(self, a);
         }
     } else 
 #endif
     if (preassembler) {
         NSAssert2([preassembler respondsToSelector:preassemblerSelector], @"provided preassembler %@ should respond to %s", preassembler, preassemblerSelector);
         for (PKAssembly *a in inAssemblies) {
-            [preassembler performSelector:preassemblerSelector withObject:a];
+            [preassembler performSelector:preassemblerSelector withObject:self withObject:a];
         }
     }
     
@@ -119,14 +119,14 @@
 #ifdef TARGET_OS_SNOW_LEOPARD
     if (assemblerBlock) {
         for (PKAssembly *a in outAssemblies) {
-            assemblerBlock(a);
+            assemblerBlock(self, a);
         }
     } else 
 #endif
     if (assembler) {
         NSAssert2([assembler respondsToSelector:assemblerSelector], @"provided assembler %@ should respond to %s", assembler, assemblerSelector);
         for (PKAssembly *a in outAssemblies) {
-            [assembler performSelector:assemblerSelector withObject:a];
+            [assembler performSelector:assemblerSelector withObject:self withObject:a];
         }
     }
     return outAssemblies;

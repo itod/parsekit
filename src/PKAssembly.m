@@ -95,14 +95,14 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
     }
     
     PKAssembly *a = (PKAssembly *)obj;
-    if ([a length] != [self length]) {
-        return NO;
-    }
-
     if (a->index != index) {
         return NO;
     }
     
+    if ([a length] != [self length]) {
+        return NO;
+    }
+
     if ([a.stack count] != [stack count]) {
         return NO;
     }
@@ -112,49 +112,49 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 
 
 - (id)next {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return nil;
 }
 
 
 - (BOOL)hasMore {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return NO;
 }
 
 
 - (NSString *)consumedObjectsJoinedByString:(NSString *)delimiter {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return nil;
 }
 
 
 - (NSString *)remainingObjectsJoinedByString:(NSString *)delimiter {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return nil;
 }
 
 
 - (NSUInteger)length {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return 0;
 }
 
 
 - (NSUInteger)objectsConsumed {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return 0;
 }
 
 
 - (NSUInteger)objectsRemaining {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return 0;
 }
 
 
 - (id)peek {
-    NSAssert1(0, @"-[PKAssembly %s] must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return nil;
 }
 

@@ -14,6 +14,7 @@
 
 #import <ParseKit/PKToken.h>
 #import <ParseKit/PKTypes.h>
+#import "NSString+ParseKitAdditions.h"
 
 @interface PKTokenEOF : PKToken {}
 + (PKTokenEOF *)instance;
@@ -54,7 +55,7 @@ static PKTokenEOF *EOFToken = nil;
 }
 
 
-- (void)release {
+- (oneway void)release {
     // do nothing
 }
 
@@ -97,7 +98,10 @@ static PKTokenEOF *EOFToken = nil;
 @property (nonatomic, readwrite, getter=isDelimitedString) BOOL delimitedString;
 @property (nonatomic, readwrite, getter=isURL) BOOL URL;
 @property (nonatomic, readwrite, getter=isEmail) BOOL email;
+#if PK_INCLUDE_TWITTER_STATE
 @property (nonatomic, readwrite, getter=isTwitter) BOOL twitter;
+@property (nonatomic, readwrite, getter=isHashtag) BOOL hashtag;
+#endif
 
 @property (nonatomic, readwrite) CGFloat floatValue;
 @property (nonatomic, readwrite, copy) NSString *stringValue;
@@ -136,7 +140,10 @@ static PKTokenEOF *EOFToken = nil;
         self.delimitedString = (PKTokenTypeDelimitedString == t);
         self.URL = (PKTokenTypeURL == t);
         self.email = (PKTokenTypeEmail == t);
+#if PK_INCLUDE_TWITTER_STATE
         self.twitter = (PKTokenTypeTwitter == t);
+        self.hashtag = (PKTokenTypeHashtag == t);
+#endif
     }
     return self;
 }
@@ -205,6 +212,11 @@ static PKTokenEOF *EOFToken = nil;
 }
 
 
+- (NSString *)quotedStringValue {
+    return [stringValue stringByTrimmingQuotes];
+}
+
+
 - (NSString *)debugDescription {
     NSString *typeString = nil;
     if (self.isNumber) {
@@ -225,8 +237,12 @@ static PKTokenEOF *EOFToken = nil;
         typeString = @"URL";
     } else if (self.isEmail) {
         typeString = @"Email";
+#if PK_INCLUDE_TWITTER_STATE
     } else if (self.isTwitter) {
         typeString = @"Twitter";
+    } else if (self.isHashtag) {
+        typeString = @"Hashtag";
+#endif
     }
     return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, 0x00AB, self.value, 0x00BB];
 }
@@ -245,7 +261,10 @@ static PKTokenEOF *EOFToken = nil;
 @synthesize delimitedString;
 @synthesize URL;
 @synthesize email;
+#if PK_INCLUDE_TWITTER_STATE
 @synthesize twitter;
+@synthesize hashtag;
+#endif
 @synthesize floatValue;
 @synthesize stringValue;
 @synthesize tokenType;

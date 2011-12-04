@@ -33,11 +33,11 @@
 #import <OCMock/OCMock.h>
 
 @protocol TDMockAssember
-- (void)didMatchFoo:(PKAssembly *)a;
-- (void)didMatchBaz:(PKAssembly *)a;
-- (void)didMatchStart:(PKAssembly *)a;
-- (void)didMatchStart:(PKAssembly *)a;
-- (void)didMatch_Start:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchFoo:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchBaz:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchStart:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchStart:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatch_Start:(PKAssembly *)a;
 @end
 
 @interface PKParserFactory ()
@@ -388,7 +388,7 @@
 //    id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
 //    PKParserFactory *factory = [PKParserFactory factory];
 //    NSString *s = nil;
-//    s = @"@start = foo|baz; foo (didMatchFooAssembly:) = 'bar'; baz (didMatchBazAssembly:) = 'bat'";
+//    s = @"@start = foo|baz; foo (parser:didMatchFooAssembly:) = 'bar'; baz (parser:didMatchBazAssembly:) = 'bat'";
 //    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnExplicit;
 //    PKParser *lp = [factory parserFromGrammar:s assembler:mock];
 //    
@@ -451,7 +451,7 @@
 
 
 - (void)doJSParser {
-    TDJavaScriptParser *jsp = [TDJavaScriptParser parser];
+    TDJavaScriptParser *jsp = (TDJavaScriptParser *)[TDJavaScriptParser parser];
     NSString *s = @"for( ; true; true) {}";
     jsp.tokenizer.string = s;
 //    PKTokenAssembly *a = [PKTokenAssembly assemblyWithTokenizer:jsp.tokenizer];
@@ -475,10 +475,22 @@
 }
 
 
+- (void)doTestGrammar {
+    
+	NSString *g = @"@start = sentence+;sentence = adjectives 'beer' '.';adjectives = cold adjective*;adjective = cold | freezing;cold = 'cold';freezing = 'freezing';";
+    PKParser *p = [[PKParserFactory factory] parserFromGrammar:g assembler:self];
+    NSString *s = @"cold freezing beer.";
+    PKAssembly *res = [p completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+    res = res;
+}
+
 
 
 - (IBAction)run:(id)sender {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    
+    [self doTestGrammar];
     
 //    [self doPlistParser];
 //    [self doHtmlSyntaxHighlighter];
@@ -487,7 +499,7 @@
 
 //    [self doJSParser];
     
-    [self doProf];
+//    [self doProf];
 
     //[self doJavaScriptGrammarParser];
     

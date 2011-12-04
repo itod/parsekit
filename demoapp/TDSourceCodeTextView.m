@@ -81,7 +81,7 @@
     NSRange visibleGlyphRange = [layoutMgr glyphRangeForBoundingRect:boundingRect inTextContainer:self.textContainer];
         
     NSUInteger index = visibleGlyphRange.location;
-    NSUInteger length = index + [visibleGlyphRange length];
+    NSUInteger length = index + visibleGlyphRange.length;
 
     (*outStart) = [self lineNumberForIndex:index + 1];
     
@@ -99,7 +99,7 @@
 
 - (NSUInteger)lineNumberForIndex:(NSUInteger)inIndex {
     NSString *s = self.string;
-    NSUInteger numberOfLines, index, stringLength = [s length];
+    NSUInteger numberOfLines, index, stringLength = s.length;
     
     for (index = 0, numberOfLines = 0; index < stringLength; numberOfLines++) {
         NSRange r = [s lineRangeForRange:NSMakeRange(index, 0)];

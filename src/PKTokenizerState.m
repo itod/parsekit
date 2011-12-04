@@ -46,7 +46,7 @@
 
 
 - (PKToken *)nextTokenFromReader:(PKReader *)r startingWith:(PKUniChar)cin tokenizer:(PKTokenizer *)t {
-    NSAssert1(0, @"PKTokenizerState is an abstract classs. %s must be overriden", _cmd);
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return nil;
 }
 

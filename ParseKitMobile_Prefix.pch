@@ -3,3 +3,5 @@
     #import <Foundation/NSObject.h>
     #import <CoreGraphics/CoreGraphics.h>
 #endif
+
+#define PK_INCLUDE_TWITTER_STATE 0

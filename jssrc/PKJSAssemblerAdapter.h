@@ -21,7 +21,7 @@
     JSContextRef ctx;
     JSObjectRef assemblerFunction;
 }
-- (void)didMatch:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatch:(PKAssembly *)a;
 
 - (JSObjectRef)assemblerFunction;
 - (void)setAssemblerFunction:(JSObjectRef)f fromContext:(JSContextRef)c;

@@ -26,7 +26,10 @@
 @class PKDelimitState;
 @class PKURLState;
 @class PKEmailState;
+#if PK_INCLUDE_TWITTER_STATE
 @class PKTwitterState;
+@class PKHashtagState;
+#endif
 @class PKReader;
 
 /*!
@@ -46,6 +49,7 @@
       '-'    '-'    numberState
       '.'    '.'    numberState
       '@'    '@'    twitterState
+      '#'    '#'    hashtagState
       '"'    '"'    quoteState
      '\''   '\''    quoteState
       '/'    '/'    commentState
@@ -67,7 +71,10 @@
     PKDelimitState *delimitState;
     PKURLState *URLState;
     PKEmailState *emailState;
+#if PK_INCLUDE_TWITTER_STATE
     PKTwitterState *twitterState;
+    PKHashtagState *hashtagState;
+#endif
 }
 
 /*!
@@ -163,5 +170,8 @@
 
 @property (nonatomic, retain) PKURLState *URLState;
 @property (nonatomic, retain) PKEmailState *emailState;
+#if PK_INCLUDE_TWITTER_STATE
 @property (nonatomic, retain) PKTwitterState *twitterState;
+@property (nonatomic, retain) PKHashtagState *hashtagState;
+#endif
 @end

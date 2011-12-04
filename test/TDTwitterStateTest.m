@@ -6,6 +6,7 @@
 //  Copyright 2010 Todd Ditchendorf. All rights reserved.
 //
 
+#if PK_INCLUDE_TWITTER_STATE
 #import "TDTwitterStateTest.h"
 
 @implementation TDTwitterStateTest
@@ -13,6 +14,7 @@
 - (void)setUp {
     t = [[PKTokenizer alloc] init];
     twitterState = t.twitterState;
+    [t setTokenizerState:twitterState from:'@' to:'@'];
 }
 
 
@@ -143,3 +145,4 @@
 //}
 
 @end
+#endif

@@ -38,7 +38,10 @@ typedef enum {
     PKTokenTypeAny,
     PKTokenTypeURL,
     PKTokenTypeEmail,
-    PKTokenTypeTwitter
+#if PK_INCLUDE_TWITTER_STATE
+    PKTokenTypeTwitter,
+    PKTokenTypeHashtag,
+#endif
 } PKTokenType;
 
 /*!
@@ -60,7 +63,10 @@ typedef enum {
     BOOL delimitedString;
     BOOL URL;
     BOOL email;
+#if PK_INCLUDE_TWITTER_STATE
     BOOL twitter;
+    BOOL hashtag;
+#endif
     
     id value;
     NSUInteger offset;
@@ -158,11 +164,19 @@ typedef enum {
 */
 @property (nonatomic, readonly, getter=isEmail) BOOL email;
 
+#if PK_INCLUDE_TWITTER_STATE
 /*!
     @property   twitter
     @brief      True if this token is an twitter handle. getter=isTwitter
 */
 @property (nonatomic, readonly, getter=isTwitter) BOOL twitter;
+
+/*!
+    @property   hashtaag
+    @brief      True if this token is an twitter hashtag. getter=isHashtag
+*/
+@property (nonatomic, readonly, getter=isHashtag) BOOL hashtag;
+#endif
 
 /*!
     @property   tokenType
@@ -181,6 +195,12 @@ typedef enum {
     @brief      The string value of this token.
 */
 @property (nonatomic, readonly, copy) NSString *stringValue;
+
+/*!
+    @property   stringValue
+    @brief      If a QuotedString, the string value of this token minus the quotes. Otherwise the stringValue.
+ */
+@property (nonatomic, readonly, copy) NSString *quotedStringValue;
 
 /*!
     @property   value

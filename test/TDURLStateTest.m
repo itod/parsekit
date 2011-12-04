@@ -614,4 +614,136 @@
     TDEqualObjects(tok, [PKToken EOFToken]);
 }
 
+
+- (void)testMoreThanOneParens {
+    s = @"http://foo.com/more_(than)_one_(parens)";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testMoreThanOneParensFoo {
+    s = @"http://foo.com/more_(than)_one_(parens) foo";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, @"http://foo.com/more_(than)_one_(parens)");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDTrue(tok.isWord);
+    TDEqualObjects(tok.stringValue, @"foo");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testParensHashCite {
+    s = @"http://foo.com/blah_(wikipedia)#cite-1";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testParensHashCiteFoo {
+    s = @"http://foo.com/blah_(wikipedia)#cite-1 foo";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, @"http://foo.com/blah_(wikipedia)#cite-1");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDTrue(tok.isWord);
+    TDEqualObjects(tok.stringValue, @"foo");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testUnicodeInParens {
+    s = @"http://foo.com/unicode_(✪)_in_parens";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testUnicodeInParensFoo {
+    s = @"http://foo.com/unicode_(✪)_in_parens foo";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, @"http://foo.com/unicode_(✪)_in_parens");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDTrue(tok.isWord);
+    TDEqualObjects(tok.stringValue, @"foo");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testSomethingAfterParens {
+    s = @"http://foo.com/(something)?after=parens";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, s);
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
+
+- (void)testSomethingAfterParensFoo {
+    s = @"http://foo.com/(something)?after=parens foo";
+    t.string = s;
+    
+    tok = [t nextToken];
+    TDTrue(tok.isURL);
+    TDEqualObjects(tok.stringValue, @"http://foo.com/(something)?after=parens");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDTrue(tok.isWord);
+    TDEqualObjects(tok.stringValue, @"foo");
+    TDEquals(tok.floatValue, (CGFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects(tok, [PKToken EOFToken]);
+}
+
 @end

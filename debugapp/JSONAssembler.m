@@ -109,51 +109,51 @@
 }
 
 
-- (void)didMatchSymbolChar:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchSymbolChar:(PKAssembly *)a {
     NSArray *objs = [NSArray arrayWithObject:[a pop]];
     [self consumeWhitespaceFrom:a];
     [self appendAttributedStringForObjects:objs withAttrs:objectAttrs];
 }
 
 
-- (void)didMatchPropertyName:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPropertyName:(PKAssembly *)a {
     NSArray *objs = [NSArray arrayWithObject:[a pop]];
     [self consumeWhitespaceFrom:a];
     [self appendAttributedStringForObjects:objs withAttrs:propertyNameAttrs];
 }
 
 
-- (void)didMatchString:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchString:(PKAssembly *)a {
     NSArray *objs = [NSArray arrayWithObject:[a pop]];
     [self consumeWhitespaceFrom:a];
     [self appendAttributedStringForObjects:objs withAttrs:arrayAttrs];
 }
 
 
-- (void)didMatchNumber:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNumber:(PKAssembly *)a {
     NSArray *objs = [NSArray arrayWithObject:[a pop]];
     [self consumeWhitespaceFrom:a];
     [self appendAttributedStringForObjects:objs withAttrs:valueAttrs];
 }
 
 
-- (void)didMatchConstant:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchConstant:(PKAssembly *)a {
     NSArray *objs = [NSArray arrayWithObject:[a pop]];
     [self consumeWhitespaceFrom:a];
     [self appendAttributedStringForObjects:objs withAttrs:constantAttrs];
 }
 
 
-- (void)didMatchNull:(PKAssembly *)a { [self didMatchConstant:a]; }
-- (void)didMatchTrue:(PKAssembly *)a { [self didMatchConstant:a]; }
-- (void)didMatchFalse:(PKAssembly *)a { [self didMatchConstant:a]; }
+- (void)parser:(PKParser *)p didMatchNull:(PKAssembly *)a { [self parser:p didMatchConstant:a]; }
+- (void)parser:(PKParser *)p didMatchTrue:(PKAssembly *)a { [self parser:p didMatchConstant:a]; }
+- (void)parser:(PKParser *)p didMatchFalse:(PKAssembly *)a { [self parser:p didMatchConstant:a]; }
 
-- (void)didMatchColon:(PKAssembly *)a { [self didMatchSymbolChar:a]; }
-- (void)didMatchComma:(PKAssembly *)a { [self didMatchSymbolChar:a]; }
-- (void)didMatchOpenCurly:(PKAssembly *)a { [self didMatchSymbolChar:a]; }
-- (void)didMatchCloseCurly:(PKAssembly *)a { [self didMatchSymbolChar:a]; }
-- (void)didMatchOpenBracket:(PKAssembly *)a { [self didMatchSymbolChar:a]; }
-- (void)didMatchCloseBracket:(PKAssembly *)a { [self didMatchSymbolChar:a]; }
+- (void)parser:(PKParser *)p didMatchColon:(PKAssembly *)a { [self parser:p didMatchSymbolChar:a]; }
+- (void)parser:(PKParser *)p didMatchComma:(PKAssembly *)a { [self parser:p didMatchSymbolChar:a]; }
+- (void)parser:(PKParser *)p didMatchOpenCurly:(PKAssembly *)a { [self parser:p didMatchSymbolChar:a]; }
+- (void)parser:(PKParser *)p didMatchCloseCurly:(PKAssembly *)a { [self parser:p didMatchSymbolChar:a]; }
+- (void)parser:(PKParser *)p didMatchOpenBracket:(PKAssembly *)a { [self parser:p didMatchSymbolChar:a]; }
+- (void)parser:(PKParser *)p didMatchCloseBracket:(PKAssembly *)a { [self parser:p didMatchSymbolChar:a]; }
 
 @synthesize displayString;
 @synthesize defaultAttrs;

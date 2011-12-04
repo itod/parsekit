@@ -14,6 +14,11 @@
 
 #import "PKJSUtils.h"
 
+NSString *PKJSStringGetNSString(JSStringRef str) {
+    return [(id)JSStringCopyCFString(NULL, str) autorelease];
+}
+
+
 JSValueRef PKCFTypeToJSValue(JSContextRef ctx, CFTypeRef value, JSValueRef *ex) {
     JSValueRef result = NULL;
     CFTypeID typeID = CFGetTypeID(value);
@@ -240,3 +245,70 @@ bool PKJSValueIsInstanceOfClass(JSContextRef ctx, JSValueRef value, char *classN
     
     return JSValueIsInstanceOfConstructor(ctx, value, constr, NULL);
 }
+
+JSValueRef PKEvaluateScript(JSGlobalContextRef ctx, NSString *script, NSString *sourceURLString, NSString **outErrMsg) {
+    JSValueRef result = NULL;
+    
+    // get context
+    if (!ctx) {
+        ctx = JSGlobalContextCreate(NULL);
+    }
+    
+    JSStringRef scriptStr = JSStringCreateWithCFString((CFStringRef)script);
+    
+    // setup source url string
+    JSStringRef sourceURLStr = NULL;
+    if ([sourceURLString length]) {
+        sourceURLStr = JSStringCreateWithCFString((CFStringRef)sourceURLString);
+    }
+    
+    // check syntax
+    JSValueRef e = NULL;
+    JSCheckScriptSyntax(ctx, scriptStr, sourceURLStr, 0, &e);
+    
+    // if syntax error...
+    if (e) {
+        if (outErrMsg) {
+            NSString *msg = PKJSValueGetNSString(ctx, e, NULL);
+            *outErrMsg = [NSString stringWithFormat:NSLocalizedString(@"JavaScript syntax error:\n\n%@", @""), msg];
+            NSLog(@"%@", *outErrMsg);
+        }
+        goto done;
+    }
+    
+    // eval the script
+    result = JSEvaluateScript(ctx, scriptStr, NULL, sourceURLStr, 0, &e);
+    if (e) {
+        if (outErrMsg) {
+            NSString *msg = PKJSValueGetNSString(ctx, e, NULL);
+            *outErrMsg = [NSString stringWithFormat:NSLocalizedString(@"JavaScript runtime error:\n\n%@", @""), msg];
+            NSLog(@"%@", *outErrMsg);
+        }
+        goto done;
+    }
+    
+    // memory management
+done:
+    if (scriptStr) JSStringRelease(scriptStr);
+    if (sourceURLStr) JSStringRelease(sourceURLStr);
+            
+    return result;
+}
+
+BOOL PKBooleanForScript(JSGlobalContextRef ctx, NSString *script, NSString *sourceURLString, NSString **outErrMsg) {
+    // wrap source in boolean cast
+    NSString *fmt = @"(function(){return Boolean(%@)})();";
+    script = [NSString stringWithFormat:fmt, script];
+    
+    JSValueRef res = PKEvaluateScript(ctx, script, sourceURLString, outErrMsg);
+    
+    // convert result to boolean
+    BOOL result = NO;
+    if (res) {
+        result = JSValueToBoolean(ctx, res);
+    }
+
+    return result;
+}
+
+

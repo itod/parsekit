@@ -110,7 +110,7 @@
         orTermParser.name = @"orTerm";
         [orTermParser add:[[PKCaseInsensitiveLiteral literalWithString:@"or"] discard]];
         [orTermParser add:self.termParser];
-        [orTermParser setAssembler:self selector:@selector(didMatchOr:)];
+        [orTermParser setAssembler:self selector:@selector(parser:didMatchOr:)];
     }
     return orTermParser;
 }
@@ -135,7 +135,7 @@
         andPrimaryExprParser.name = @"andPrimaryExpr";
         [andPrimaryExprParser add:[[PKCaseInsensitiveLiteral literalWithString:@"and"] discard]];
         [andPrimaryExprParser add:self.primaryExprParser];
-        [andPrimaryExprParser setAssembler:self selector:@selector(didMatchAnd:)];
+        [andPrimaryExprParser setAssembler:self selector:@selector(parser:didMatchAnd:)];
     }
     return andPrimaryExprParser;
 }
@@ -178,7 +178,7 @@
         negatedPredicateParser.name = @"negatedPredicate";
         [negatedPredicateParser add:[[PKCaseInsensitiveLiteral literalWithString:@"not"] discard]];
         [negatedPredicateParser add:self.predicateParser];
-        [negatedPredicateParser setAssembler:self selector:@selector(didMatchNegatedValue:)];
+        [negatedPredicateParser setAssembler:self selector:@selector(parser:didMatchNegatedValue:)];
     }
     return negatedPredicateParser;
 }
@@ -193,7 +193,7 @@
         [predicateParser add:self.attrValuePredicateParser];
         [predicateParser add:self.attrPredicateParser];
         [predicateParser add:self.valuePredicateParser];
-        [predicateParser setAssembler:self selector:@selector(didMatchPredicate:)];
+        [predicateParser setAssembler:self selector:@selector(parser:didMatchPredicate:)];
     }
     return predicateParser;
 }
@@ -219,7 +219,7 @@
         attrValuePredicateParser.name = @"attrValuePredicate";
         [attrValuePredicateParser add:self.attrParser];
         [attrValuePredicateParser add:self.valueParser];
-        [attrValuePredicateParser setAssembler:self selector:@selector(didMatchAttrValuePredicate:)];
+        [attrValuePredicateParser setAssembler:self selector:@selector(parser:didMatchAttrValuePredicate:)];
     }
     return attrValuePredicateParser;
 }
@@ -231,7 +231,7 @@
         self.attrPredicateParser = [PKSequence sequence];
         attrPredicateParser.name = @"attrPredicate";
         [attrPredicateParser add:self.attrParser];
-        [attrPredicateParser setAssembler:self selector:@selector(didMatchAttrPredicate:)];
+        [attrPredicateParser setAssembler:self selector:@selector(parser:didMatchAttrPredicate:)];
     }
     return attrPredicateParser;
 }
@@ -243,7 +243,7 @@
         self.valuePredicateParser = [PKSequence sequence];
         valuePredicateParser.name = @"valuePredicate";
         [valuePredicateParser add:self.valueParser];
-        [valuePredicateParser setAssembler:self selector:@selector(didMatchValuePredicate:)];
+        [valuePredicateParser setAssembler:self selector:@selector(parser:didMatchValuePredicate:)];
     }
     return valuePredicateParser;
 }
@@ -256,7 +256,7 @@
         attrParser.name = @"attr";
         [attrParser add:self.tagParser];
         [attrParser add:self.nonReservedWordParser];
-        [attrParser setAssembler:self selector:@selector(didMatchAttr:)];
+        [attrParser setAssembler:self selector:@selector(parser:didMatchAttr:)];
     }
     return attrParser;
 }
@@ -277,7 +277,7 @@
         [relationParser add:[PKCaseInsensitiveLiteral literalWithString:@"contains"]];
         [relationParser add:[PKCaseInsensitiveLiteral literalWithString:@"endswith"]];
         [relationParser add:[PKCaseInsensitiveLiteral literalWithString:@"matches"]];
-        [relationParser setAssembler:self selector:@selector(didMatchRelation:)];
+        [relationParser setAssembler:self selector:@selector(parser:didMatchRelation:)];
     }
     return relationParser;
 }
@@ -314,7 +314,7 @@
         boolParser.name = @"bool";
         [boolParser add:self.trueParser];
         [boolParser add:self.falseParser];
-        [boolParser setAssembler:self selector:@selector(didMatchBool:)];
+        [boolParser setAssembler:self selector:@selector(parser:didMatchBool:)];
     }
     return boolParser;
 }
@@ -324,7 +324,7 @@
     if (!trueParser) {
         self.trueParser = [[PKCaseInsensitiveLiteral literalWithString:@"true"] discard];
         trueParser.name = @"true";
-        [trueParser setAssembler:self selector:@selector(didMatchTrue:)];
+        [trueParser setAssembler:self selector:@selector(parser:didMatchTrue:)];
     }
     return trueParser;
 }
@@ -334,7 +334,7 @@
     if (!falseParser) {
         self.falseParser = [[PKCaseInsensitiveLiteral literalWithString:@"false"] discard];
         falseParser.name = @"false";
-        [falseParser setAssembler:self selector:@selector(didMatchFalse:)];
+        [falseParser setAssembler:self selector:@selector(parser:didMatchFalse:)];
     }
     return falseParser;
 }
@@ -357,7 +357,7 @@
     if (!quotedStringParser) {
         self.quotedStringParser = [PKQuotedString quotedString];
         quotedStringParser.name = @"quotedString";
-        [quotedStringParser setAssembler:self selector:@selector(didMatchQuotedString:)];
+        [quotedStringParser setAssembler:self selector:@selector(parser:didMatchQuotedString:)];
     }
     return quotedStringParser;
 }
@@ -370,7 +370,7 @@
         unquotedStringParser.name = @"unquotedString";
         [unquotedStringParser add:self.nonReservedWordParser];
         [unquotedStringParser add:[PKRepetition repetitionWithSubparser:self.nonReservedWordParser]];
-        [unquotedStringParser setAssembler:self selector:@selector(didMatchUnquotedString:)];
+        [unquotedStringParser setAssembler:self selector:@selector(parser:didMatchUnquotedString:)];
     }
     return unquotedStringParser;
 }
@@ -382,7 +382,7 @@
         [reservedWordParser add:[PKWord word]];
         [reservedWordParser add:self.reservedWordPattern];
         reservedWordParser.name = @"reservedWord";
-        [reservedWordParser setAssembler:self selector:@selector(didMatchReservedWord:)];
+        [reservedWordParser setAssembler:self selector:@selector(parser:didMatchReservedWord:)];
     }
     return reservedWordParser;
 }
@@ -393,7 +393,7 @@
     if (!nonReservedWordParser) {
         self.nonReservedWordParser = [PKDifference differenceWithSubparser:[PKWord word] minus:self.reservedWordParser];
         nonReservedWordParser.name = @"nonReservedWord";
-        [nonReservedWordParser setAssembler:self selector:@selector(didMatchNonReservedWord:)];
+        [nonReservedWordParser setAssembler:self selector:@selector(parser:didMatchNonReservedWord:)];
     }
     return nonReservedWordParser;
 }
@@ -413,13 +413,13 @@
     if (!numberParser) {
         self.numberParser = [PKNumber number];
         numberParser.name = @"number";
-        [numberParser setAssembler:self selector:@selector(didMatchNumber:)];
+        [numberParser setAssembler:self selector:@selector(parser:didMatchNumber:)];
     }
     return numberParser;
 }
 
 
-- (void)didMatchAnd:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a {
     NSPredicate *p2 = [a pop];
     NSPredicate *p1 = [a pop];
     NSArray *subs = [NSArray arrayWithObjects:p1, p2, nil];
@@ -427,7 +427,7 @@
 }
 
 
-- (void)didMatchOr:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchOr:(PKAssembly *)a {
     NSPredicate *p2 = [a pop];
     NSPredicate *p1 = [a pop];
     NSArray *subs = [NSArray arrayWithObjects:p1, p2, nil];
@@ -435,7 +435,7 @@
 }
 
 
-- (void)didMatchPredicate:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPredicate:(PKAssembly *)a {
     id value = [a pop];
     id relation = [a pop];
     id attr = [a pop];
@@ -445,7 +445,7 @@
 }
 
 
-- (void)didMatchAttrValuePredicate:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAttrValuePredicate:(PKAssembly *)a {
     id value = [a pop];
     id attr = [a pop];
     [a push:attr];
@@ -454,7 +454,7 @@
 }
 
 
-- (void)didMatchAttrPredicate:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAttrPredicate:(PKAssembly *)a {
     id attr = [a pop];
     [a push:attr];
     [a push:defaultRelation];
@@ -462,7 +462,7 @@
 }
 
 
-- (void)didMatchValuePredicate:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchValuePredicate:(PKAssembly *)a {
     id value = [a pop];
     [a push:defaultAttr];
     [a push:defaultRelation];
@@ -470,57 +470,57 @@
 }
 
 
-- (void)didMatchAttr:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAttr:(PKAssembly *)a {
     [a push:[[a pop] stringValue]];
 }
 
 
-- (void)didMatchRelation:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchRelation:(PKAssembly *)a {
     [a push:[[a pop] stringValue]];
 }
 
 
-- (void)didMatchNegatedValue:(PKAssembly *)a {
-    id p = [a pop];
-    [a push:[NSCompoundPredicate notPredicateWithSubpredicate:p]];
+- (void)parser:(PKParser *)p didMatchNegatedValue:(PKAssembly *)a {
+    id obj = [a pop];
+    [a push:[NSCompoundPredicate notPredicateWithSubpredicate:obj]];
 }
 
 
-- (void)didMatchBool:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchBool:(PKAssembly *)a {
     NSNumber *b = [a pop];
     [a push:[NSPredicate predicateWithValue:[b boolValue]]];
 }
 
 
-- (void)didMatchTrue:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchTrue:(PKAssembly *)a {
     [a push:[NSNumber numberWithBool:YES]];
 }
 
 
-- (void)didMatchFalse:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchFalse:(PKAssembly *)a {
     [a push:[NSNumber numberWithBool:NO]];
 }
 
 
-- (void)didMatchQuotedString:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchQuotedString:(PKAssembly *)a {
     [a push:[[[a pop] stringValue] stringByTrimmingQuotes]];
 }
 
 
-- (void)didMatchReservedWord:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchReservedWord:(PKAssembly *)a {
 //    PKToken *tok = [a pop];
 //    [a push:tok.stringValue];
 }
 
 
-- (void)didMatchNonReservedWord:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNonReservedWord:(PKAssembly *)a {
 //    id obj = [a pop];
 //    [a push:nonReservedWordFence];
 //    [a push:obj];
 }
 
 
-- (void)didMatchUnquotedString:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchUnquotedString:(PKAssembly *)a {
     NSMutableArray *wordStrings = [NSMutableArray array];
 
     while (1) {
@@ -555,7 +555,7 @@
 }
 
 
-- (void)didMatchNumber:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNumber:(PKAssembly *)a {
     NSNumber *n = [NSNumber numberWithFloat:[(PKToken *)[a pop] floatValue]];
     [a push:n];
 }

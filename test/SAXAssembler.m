@@ -17,7 +17,7 @@
 
 @implementation SAXAssembler
 
-- (void)didMatchSTag:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchSTag:(PKAssembly *)a {
     
 }
 

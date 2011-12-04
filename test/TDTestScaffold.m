@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 
 #define RUN_ALL_TEST_CASES 1
-#define SOLO_TEST_CASE @"TDURLStateTest"
+#define SOLO_TEST_CASE @"TDParserFactoryTest3"
 
 @interface SenTestSuite (TDAdditions)
 - (void)addSuitesForClassNames:(NSArray *)classNames;

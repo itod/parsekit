@@ -59,13 +59,19 @@
         self.delimitState    = [[[PKDelimitState alloc] init] autorelease];
         self.URLState        = [[[PKURLState alloc] init] autorelease];
         self.emailState      = [[[PKEmailState alloc] init] autorelease];
-        self.twitterState    = [[[PKTwitterState alloc] init] autorelease];
-        
+
         quoteState.fallbackState = symbolState;
         URLState.fallbackState = emailState;
         emailState.fallbackState = wordState;
-        twitterState.fallbackState = symbolState;
         
+#if PK_INCLUDE_TWITTER_STATE
+        self.twitterState    = [[[PKTwitterState alloc] init] autorelease];
+        twitterState.fallbackState = symbolState;
+
+        self.hashtagState    = [[[PKHashtagState alloc] init] autorelease];
+        hashtagState.fallbackState = symbolState;
+#endif
+
         self.tokenizerStates = [NSMutableArray arrayWithCapacity:STATE_COUNT];
         
         NSInteger i = 0;
@@ -81,6 +87,20 @@
         [commentState addSingleLineStartMarker:@"//"];
         [commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
         [self setTokenizerState:commentState from:'/' to:'/'];
+
+//        
+//        // Twitter handles
+//        NSMutableCharacterSet *set = [NSMutableCharacterSet characterSetWithCharactersInString:@"_"];
+//        [set formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+//        [self setTokenizerState:delimitState from:'@' to:'@'];
+//        [delimitState addStartMarker:@"@" endMarker:nil allowedCharacterSet:[[set copy] autorelease]];
+//
+//        // Hashtags
+//        [set addCharactersInString:@"%"];
+//        [self setTokenizerState:delimitState from:'#' to:'#'];
+//        [delimitState addStartMarker:@"#" endMarker:nil allowedCharacterSet:set];
+//
+//        delimitState.allowsUnbalancedStrings = YES;
     }
     return self;
 }
@@ -99,7 +119,10 @@
     self.delimitState = nil;
     self.URLState = nil;
     self.emailState = nil;
+#if PK_INCLUDE_TWITTER_STATE
     self.twitterState = nil;
+    self.hashtagState = nil;
+#endif
     [super dealloc];
 }
 
@@ -187,7 +210,13 @@
         return symbolState;
     } else if (c == '"') {               // From: 34 to: 34    From:0x22 to:0x22
         return quoteState;
-    } else if (c >= 35 && c <= 38) {
+    } else if (c == '#') {               // From: 35 to: 35    From:0x23 to:0x23
+#if PK_INCLUDE_TWITTER_STATE
+        return hashtagState;
+#else
+        return symbolState;
+#endif
+    } else if (c >= 36 && c <= 38) {
         return symbolState;
     } else if (c == '\'') {              // From: 39 to: 39    From:0x27 to:0x27
         return quoteState;
@@ -208,7 +237,11 @@
     } else if (c >= 58 && c <= 63) {
         return symbolState;
     } else if (c == '@') {               // From: 64 to: 64    From:0x40 to:0x40
+#if PK_INCLUDE_TWITTER_STATE
         return twitterState;
+#else
+        return symbolState;
+#endif
     } else if (c >= 'A' && c <= 'Z') {   // From: 65 to: 90    From:0x41 to:0x5A
         return URLState;
     } else if (c >= 91 && c <= 96) {
@@ -249,7 +282,10 @@
 @synthesize delimitState;
 @synthesize URLState;
 @synthesize emailState;
+#if PK_INCLUDE_TWITTER_STATE
 @synthesize twitterState;
+@synthesize hashtagState;
+#endif
 @synthesize string;
 @synthesize reader;
 @synthesize tokenizerStates;

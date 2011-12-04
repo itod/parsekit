@@ -134,7 +134,7 @@ static NSString *kTDPlistNullString = @"<null>";
         [dictParser add:[PKSymbol symbolWithString:@"{"]]; // dont discard. serves as fence
         [dictParser add:[PKRepetition repetitionWithSubparser:self.keyValuePairParser]];
         [dictParser add:[[PKSymbol symbolWithString:@"}"] discard]];
-        [dictParser setAssembler:self selector:@selector(didMatchDict:)];
+        [dictParser setAssembler:self selector:@selector(parser:didMatchDict:)];
     }
     return dictParser;
 }
@@ -171,7 +171,7 @@ static NSString *kTDPlistNullString = @"<null>";
         [arrayContent add:actualArray];
         [arrayParser add:arrayContent];
         [arrayParser add:[[PKSymbol symbolWithString:@")"] discard]];
-        [arrayParser setAssembler:self selector:@selector(didMatchArray:)];
+        [arrayParser setAssembler:self selector:@selector(parser:didMatchArray:)];
     }
     return arrayParser;
 }
@@ -220,12 +220,12 @@ static NSString *kTDPlistNullString = @"<null>";
         
         // we have to remove the quotes from QuotedString string values. so set an assembler method to do that
         PKParser *quotedString = [PKQuotedString quotedString];
-        [quotedString setAssembler:self selector:@selector(didMatchQuotedString:)];
+        [quotedString setAssembler:self selector:@selector(parser:didMatchQuotedString:)];
         [stringParser add:quotedString];
 
         // handle non-quoted string values (Words) in a separate assembler method for simplicity.
         PKParser *word = [PKWord word];
-        [word setAssembler:self selector:@selector(didMatchWord:)];
+        [word setAssembler:self selector:@selector(parser:didMatchWord:)];
         [stringParser add:word];
     }
     return stringParser;
@@ -235,7 +235,7 @@ static NSString *kTDPlistNullString = @"<null>";
 - (PKParser *)numParser {
     if (!numParser) {
         self.numParser = [PKNumber number];
-        [numParser setAssembler:self selector:@selector(didMatchNum:)];
+        [numParser setAssembler:self selector:@selector(parser:didMatchNum:)];
     }
     return numParser;
 }
@@ -246,13 +246,13 @@ static NSString *kTDPlistNullString = @"<null>";
     if (!nullParser) {
         // thus must be a PKSymbol (not a PKLiteral) to match the resulting '<null>' symbol tok
         self.nullParser = [PKSymbol symbolWithString:kTDPlistNullString];
-        [nullParser setAssembler:self selector:@selector(didMatchNull:)];
+        [nullParser setAssembler:self selector:@selector(parser:didMatchNull:)];
     }
     return nullParser;
 }
 
 
-- (void)didMatchDict:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchDict:(PKAssembly *)a {
     NSArray *objs = [a objectsAbove:self.curly];
     NSInteger count = [objs count];
     NSAssert1(0 == count % 2, @"in -%s, the assembly's stack's count should be a multiple of 2", _cmd);
@@ -272,7 +272,7 @@ static NSString *kTDPlistNullString = @"<null>";
 }
 
 
-- (void)didMatchArray:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchArray:(PKAssembly *)a {
     NSArray *objs = [a objectsAbove:self.paren];
     NSMutableArray *res = [NSMutableArray arrayWithCapacity:[objs count]];
     
@@ -285,25 +285,25 @@ static NSString *kTDPlistNullString = @"<null>";
 }
 
 
-- (void)didMatchQuotedString:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchQuotedString:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:[tok.stringValue stringByTrimmingQuotes]];
 }
 
 
-- (void)didMatchWord:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchWord:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:tok.stringValue];
 }
 
 
-- (void)didMatchNum:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:[NSNumber numberWithFloat:tok.floatValue]];
 }
 
 
-- (void)didMatchNull:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNull:(PKAssembly *)a {
     [a pop]; // discard '<null>' tok
     [a push:[NSNull null]];
 }
