@@ -16,6 +16,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 
 @class PKAssembly;
+@class PKParser;
 
 @interface PKJSAssemblerAdapter : NSObject {
     JSContextRef ctx;

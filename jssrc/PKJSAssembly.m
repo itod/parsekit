@@ -18,6 +18,10 @@
 #import <ParseKit/PKAssembly.h>
 #import <ParseKit/PKToken.h>
 
+@interface PKAssembly ()
+@property (nonatomic, readwrite, retain) NSString *defaultDelimiter;
+@end
+
 #pragma mark -
 #pragma mark Methods
 

@@ -19,6 +19,10 @@
 #import <ParseKit/PKTokenAssembly.h>
 #import <ParseKit/PKToken.h>
 
+@interface PKAssembly ()
+@property (nonatomic, readwrite, assign) NSUInteger length;
+@end
+
 #pragma mark -
 #pragma mark Methods
 
