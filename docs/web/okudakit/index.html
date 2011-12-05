@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <meta name="keywords" content="cocoa objective-c mac osx syntax highlighting">
+        <title>
+            OkudaKit - Cocoa Syntax Highlighting Framework for Mac OS X based on CSS
+        </title>
+        <style type="text/css">
+            body, html {
+                margin:0; 
+                padding:0; 
+                font:14px/1.5 "Lucida Grande", Helvetica, Verdana;
+            }
+
+            #content {
+                width:675px;
+                margin:20px auto;
+                text-align:justify;
+            }
+        
+            .code {
+                font-size:12px;
+                border:2px solid silver; 
+                background:#eee; 
+                padding:5px 10px; 
+                margin:25px 5px;
+            }
+
+            
+        </style>
+    </head>
+    <body>
+        <div id="content">
+        <h1>OkudaKit</h1>
+        <div>
+            <h3>What is it?</h3>
+            <p>An open source (BSD-license) <b>Mac OS X Framework</b> written by <a href="http://twitter.com/itod">Todd Ditchendorf</a> for adding <b>syntax highlighting</b> to Cocoa desktop applications using <b>CSS</b>.</p>
+            
+            <h3>Why is it cool?</h3>
+            <p>OkudaKit produces syntax highlighted <tt>NSAttributedString</tt>s for use in <tt>NSTextView</tt>s via <b>CSS stylesheets</b>. </p>
+            
+            <h3>How?</h3>
+            <p>Provide a simple <b>BNF-style grammar</b> for a language (like, say, JSON) and a <b>CSS stylesheet</b> which lists style rules for the productions found in the language grammar. Name your grammar and CSS files something like <tt>json.grammar</tt> (<a href="json.grammar.txt">example</a>) and <tt>json.css</tt> (<a href="json.css.txt">example</a>), put them in your app's bundle, and add a few lines of code like this:</p>
+<p><div class="code"><pre>
+NSString *s = ... // get a JSON string
+
+OKSyntaxHighlighter *highlighter = [OKSyntaxHighlighter syntaxHighlighter];
+NSAttributedString *str = [highlighter highlightedStringForString:s ofGrammar:@"json"];
+
+[textView setString:str]; // display</pre></div></p>
+        </div>
+            <p><em>Voilà</em>, syntax-highlighted JSON.</p>
+            
+            <p><img src="img/json.png"/></p>
+        
+            <h3>Why does it suck?</h3>
+            <p>OkudaKit is currently at version 0.1 which gives you an idea of how mature I think it is. Current suckiness includes (but is not limited to):</p>
+            <ul>
+                <li>No error recovery. Your display string must match the grammar provided.</li>
+                <li>Displayed Syntax Highlighting is read-only. No support for live syntax highlight updating (needed for text editors).</li>
+                <li>Only 3 languages are currently supported: <tt>HTML</tt>, <tt>CSS</tt>, and <tt>JSON</tt>. But adding new languages is easy.</li>
+            </ul>
+            <p>I'm working on these problems now. Stay tuned.</p>
+
+            <h3>Where's the source?</h3>
+            <p>Here: <p>
+            <p><div class="code"><pre>
+svn co http://kenai.com/svn/okudakit~svn/trunk</pre></div></p>
+            
+            <h3>What are the requirements?</h3>
+            <ol>
+                <li>Mac OS X Leopard or later</li>
+                <li><a href="http://parsekit.com">ParseKit</a> (included in the OkudaKit source)</li>
+            </ol>
+
+            <h3>WebKit isn't required?</h3>
+            <p>No.</p>
+
+            <h3>Why doesn't this work on iPhone OS?</h3>
+            <p>Cuz there's no <tt>NSAttributedString</tt> on iPhone OS.<p>
+
+            <h3>What's with the name?</h3>
+            <p>As a kid I was constantly fascinated with the flashing, blinking, multi-colored user-interface displays on Star Trek: The Next Generation. The UI designs for those displays were designed by <a href="http://en.wikipedia.org/wiki/Michael_Okuda">Michael Okuda</a> and sometimes called <b>OkudaGrams</b>. The bright colors of syntax highlighting themes remind me of the colorful text often seen in OkudaGrams. So, OkudaKit. Also, I didn't know what else to call it.</p>
+            
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+            </script>
+            <script type="text/javascript">
+            try {
+            var pageTracker = _gat._getTracker("UA-600478-9");
+            pageTracker._trackPageview();
+            } catch(err) {}</script>
+    </body></div>
+</html>
