@@ -1,6 +1,6 @@
 h1. "ParseKit - Cocoa Objective-C Framework for parsing, tokenizing and language processing":http://parsekit.com/
 
-ParseKit is a Mac OS X Framework written by Todd Ditchendorf in Objective-C 2.0 and released under the Apache Open Source License Version 2.0. ParseKit is suitable for use on Mac OS X Leopard, Snow Leopard or "iPhone OS":iphone.html. ParseKit is an Objective-C implementation of the tools described in "Building Parsers with Java":http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622 by Steven John Metsker. ParseKit includes additional features beyond the designs from the book and also some changes to match common Cocoa/Objective-C conventions. These changes are relatively superficial, however, and Metsker's book is the best documentation available for ParseKit.
+ParseKit is a Mac OS X Framework written by Todd Ditchendorf in Objective-C 2.0 and released under the Apache Open Source License Version 2.0. ParseKit is suitable for use on Mac OS X Leopard, Snow Leopard or "iOS":iphone.html. ParseKit is an Objective-C implementation of the tools described in "Building Parsers with Java":http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622 by Steven John Metsker. ParseKit includes additional features beyond the designs from the book and also some changes to match common Cocoa/Objective-C conventions. These changes are relatively superficial, however, and Metsker's book is the best documentation available for ParseKit.
 
 The ParseKit Framework offers 3 basic services of general interest to Cocoa developers:
 
@@ -15,8 +15,11 @@ h2. More documentation:
 
 h2. Projects using ParseKit:
 
+	"Base":http://menial.co.uk/software/base/: Mac SQLite tool by Ben Barnett
+	"TaskPaper for iPhone":http://www.hogbaysoftware.com/products/taskpaper_iphone: Simple to-do lists app by Jesse Grosjean
 	"Spike":http://lucidmac.com/products/spike: A Rails log file viewer/analyzer by Matt Mower
 	"JSTalk":http://github.com/ccgus/jstalk/tree/master: Interprocess Cocoa scripting with JavaScript by Gus Mueller
+	"BayesianKit"https://github.com/lok/BayesianKit: A Cocoa framework implementing a bayesian classifier by Samuel Mendes
 	"Objective-J Port":http://github.com/boucher/tdparsekit/tree/master of ParseKit by Ross Boucher
 	"HTTP Client":http://tr.im/http: HTTP debugging/testing tool
 	"Fluid":http://fluidapp.com: Site-Specific Browser for Mac OS X
@@ -45,7 +48,7 @@ Example usage:
 
 <pre>
 NSString *s = @""It's 123 blast-off!", she said, // watch out!n"
-              @"and <= 3.5 'ticks' later /* wince */, it's blast-off!";
+              @"and &lt;= 3.5 'ticks' later /* wince */, it's blast-off!";
 PKTokenizer *t = [PKTokenizer tokenizerWithString:s];
 PKToken *eof = [PKToken EOFToken];
 PKToken *tok = nil;
@@ -63,7 +66,7 @@ outputs:
  (said)
  (,)
  (and)
- (<=)
+ (&lt;=)
  (3.5)
  ('ticks')
  (later)
@@ -196,7 +199,7 @@ Here is an example of how one might build a parser for a simple voice-search com
 	[optionalFor add:[PKLiteral literalWithString:@"for"]];
 	[parser add:[optionalFor discard]];
 	PKParser *searchTerm = [PKQuotedString quotedString];
-	[searchTerm setAssembler:self selector:@selector(workOnSearchTermAssembly:)];
+	[searchTerm setAssembler:self selector:@selector(parser:didMatchSearchTerm:)];
 	[parser add:searchTerm];
 	PKAssembly *result = [parser bestMatchFor:[PKTokenAssembly assmeblyWithString:s]];
 	NSLog(@" %@", result);
@@ -204,7 +207,7 @@ Here is an example of how one might build a parser for a simple voice-search com
 	//  ['iphone']search/google/'iphone'^
 }
 ...
-- (void)workOnSearchTermAssembly:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchSearchTerm:(PKAssembly *)a {
 	PKToken *t = [a pop]; // a QuotedString token with a stringValue of 'iphone'
 	[self doGoogleSearchForTerm:t.stringValue];
 }
