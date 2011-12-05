@@ -48,7 +48,7 @@ Example usage:
 
 <pre>
 NSString *s = @""It's 123 blast-off!", she said, // watch out!n"
-              @"and &lt;= 3.5 'ticks' later /* wince */, it's blast-off!";
+              @"and <= 3.5 'ticks' later /* wince */, it's blast-off!";
 PKTokenizer *t = [PKTokenizer tokenizerWithString:s];
 PKToken *eof = [PKToken EOFToken];
 PKToken *tok = nil;
@@ -66,7 +66,7 @@ outputs:
  (said)
  (,)
  (and)
- (&lt;=)
+ (<=)
  (3.5)
  ('ticks')
  (later)
