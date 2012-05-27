@@ -45,7 +45,7 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 
 
 - (id)initWithString:(NSString *)s {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.stack = [NSMutableArray array];
         self.string = s;
     }

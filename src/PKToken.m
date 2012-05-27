@@ -126,7 +126,7 @@ static PKTokenEOF *EOFToken = nil;
 // designated initializer
 - (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n {
     //NSParameterAssert(s);
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.tokenType = t;
         self.stringValue = s;
         self.floatValue = n;

@@ -50,7 +50,7 @@
 
 
 - (id)initWithSubparser:(PKParser *)s minus:(PKParser *)m {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.subparser = s;
         self.minus = m;
     }

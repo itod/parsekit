@@ -44,7 +44,7 @@
 
 
 - (id)initWithSubparsers:(PKParser *)p1, ... {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.subparsers = [NSMutableArray array];
 
         if (p1) {

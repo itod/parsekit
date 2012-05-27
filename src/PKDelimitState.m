@@ -44,7 +44,7 @@
 @implementation PKDelimitState
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
         self.startMarkers = [NSMutableArray array];
         self.endMarkers = [NSMutableArray array];

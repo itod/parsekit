@@ -34,7 +34,7 @@
 
 
 - (id)initWithSubparser:(PKParser *)s {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.subparser = s;
         self.difference = [PKDifference differenceWithSubparser:[PKAny any] minus:subparser];
     }

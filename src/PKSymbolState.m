@@ -38,7 +38,7 @@
 @implementation PKSymbolState
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
         self.addedSymbols = [NSMutableArray array];
     }

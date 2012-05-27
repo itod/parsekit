@@ -32,7 +32,7 @@
 - (id)initWithTokenizer:(PKTokenizer *)t delimiter:(NSString *)s {
     NSParameterAssert(t);
     NSParameterAssert(s);
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.tokenizer = t;
         self.delimiter = s;
     }

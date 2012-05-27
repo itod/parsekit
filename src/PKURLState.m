@@ -36,7 +36,7 @@
 @implementation PKURLState
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.allowsWWWPrefix = YES;
     }
     return self;

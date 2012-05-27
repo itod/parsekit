@@ -33,7 +33,7 @@
 
     
 - (id)initWithString:(NSString *)s options:(PKPatternOptions)opts {
-    if (self = [super initWithString:s]) {
+    if ((self = [super initWithString:s])) {
         options = opts;
     }
     return self;

@@ -6,7 +6,6 @@
 //  Copyright 2009 Todd Ditchendorf All rights reserved.
 //
 
-#import "PKParserFactory.h"
 #import <ParseKit/ParseKit.h>
 #import "PKGrammarParser.h"
 #import "NSString+ParseKitAdditions.h"
@@ -152,7 +151,7 @@ void PKReleaseSubparserTree(PKParser *p) {
 
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.grammarParser = [[[PKGrammarParser alloc] initWithAssembler:self] autorelease];
         self.equals  = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"=" floatValue:0.0];
         self.curly   = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"{" floatValue:0.0];
@@ -346,7 +345,7 @@ void PKReleaseSubparserTree(PKParser *p) {
         if (tok.isQuotedString) {
 			NSString *s = [tok.stringValue stringByTrimmingQuotes];
 			if ([s length]) {
-				NSInteger c = [s characterAtIndex:0];
+				PKUniChar c = [s characterAtIndex:0];
 				[t.wordState setWordChars:YES from:c to:c];
 			}
         }
@@ -361,9 +360,9 @@ void PKReleaseSubparserTree(PKParser *p) {
         if (tok.isQuotedString) {
 			NSString *s = [tok.stringValue stringByTrimmingQuotes];
 			if ([s length]) {
-                NSInteger c = 0;
+                PKUniChar c = 0;
                 if ([s hasPrefix:@"#x"]) {
-                    c = [s integerValue];
+                    c = (PKUniChar)[s integerValue];
                 } else {
                     c = [s characterAtIndex:0];
                 }
@@ -451,7 +450,7 @@ void PKReleaseSubparserTree(PKParser *p) {
         if (tok.isQuotedString) {
             NSString *s = [tok.stringValue stringByTrimmingQuotes];
             if (1 == [s length]) {
-                NSInteger c = [s characterAtIndex:0];
+                PKUniChar c = [s characterAtIndex:0];
                 [t setTokenizerState:state from:c to:c];
             }
         }
