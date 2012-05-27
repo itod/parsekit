@@ -3328,7 +3328,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -3338,7 +3338,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -3628,7 +3628,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Tests;
-				SDKROOT = "";
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = octest;
@@ -3672,7 +3672,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Tests;
-				SDKROOT = "";
+				SDKROOT = macosx;
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
