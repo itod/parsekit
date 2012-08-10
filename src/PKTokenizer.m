@@ -58,14 +58,19 @@
         self.wordState       = [[[PKWordState alloc] init] autorelease];
         self.delimitState    = [[[PKDelimitState alloc] init] autorelease];
         self.URLState        = [[[PKURLState alloc] init] autorelease];
+#if PLATFORM(EMAIL_STATE)
         self.emailState      = [[[PKEmailState alloc] init] autorelease];
-
+#endif
         numberState.fallbackState = symbolState;
         quoteState.fallbackState = symbolState;
+#if PLATFORM(EMAIL_STATE)
         URLState.fallbackState = emailState;
         emailState.fallbackState = wordState;
+#else
+        URLState.fallbackState = wordState;
+#endif
         
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
         self.twitterState    = [[[PKTwitterState alloc] init] autorelease];
         twitterState.fallbackState = symbolState;
 
@@ -119,8 +124,10 @@
     self.wordState = nil;
     self.delimitState = nil;
     self.URLState = nil;
+#if PLATFORM(EMAIL_STATE)
     self.emailState = nil;
-#if PK_INCLUDE_TWITTER_STATE
+#endif
+#if PLATFORM(TWITTER_STATE)
     self.twitterState = nil;
     self.hashtagState = nil;
 #endif
@@ -148,7 +155,6 @@
 }
 
 
-#ifdef TARGET_OS_SNOW_LEOPARD
 - (void)enumerateTokensUsingBlock:(void (^)(PKToken *tok, BOOL *stop))block {
     PKToken *eof = [PKToken EOFToken];
 
@@ -160,7 +166,6 @@
         if (stop) break;
     }
 }
-#endif
 
 
 - (void)setTokenizerState:(PKTokenizerState *)state from:(PKUniChar)start to:(PKUniChar)end {
@@ -212,7 +217,7 @@
     } else if (c == '"') {               // From: 34 to: 34    From:0x22 to:0x22
         return quoteState;
     } else if (c == '#') {               // From: 35 to: 35    From:0x23 to:0x23
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
         return hashtagState;
 #else
         return symbolState;
@@ -238,7 +243,7 @@
     } else if (c >= 58 && c <= 63) {
         return symbolState;
     } else if (c == '@') {               // From: 64 to: 64    From:0x40 to:0x40
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
         return twitterState;
 #else
         return symbolState;
@@ -282,8 +287,10 @@
 @synthesize wordState;
 @synthesize delimitState;
 @synthesize URLState;
+#if PLATFORM(EMAIL_STATE)
 @synthesize emailState;
-#if PK_INCLUDE_TWITTER_STATE
+#endif
+#if PLATFORM(TWITTER_STATE)
 @synthesize twitterState;
 @synthesize hashtagState;
 #endif

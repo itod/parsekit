@@ -52,10 +52,8 @@ SenTestSuite *TDTokensTestSuite() {
                            @"TDEmailStateTest",
                            @"TDTwitterStateTest",
                            @"TDTokenizerStateTest",
-#ifdef TARGET_OS_SNOW_LEOPARD
                            @"TDTokenizerBlocksTest",
                            @"TDParserBlocksTest",
-#endif
                            nil];
     
     [suite addSuitesForClassNames:classNames];

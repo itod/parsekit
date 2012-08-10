@@ -21,7 +21,7 @@
 }
 
 
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
 #else
 - (void)test {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"example1" ofType:@"srgs"];
@@ -40,7 +40,7 @@
     a = [p assemblyWithString:s];
     result = [p.selfIdentHeader bestMatchFor:a];
     TDNotNil(result);
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
     TDEqualObjects(@"[#ABNF, 1.0, ;]#ABNF/1.0/;^", [result description]);
 #else
     TDEqualObjects(@"[#, ABNF, 1.0, ;]#/ABNF/1.0/;^", [result description]);
@@ -50,7 +50,7 @@
     a = [p assemblyWithString:s];
     result = [p.selfIdentHeader bestMatchFor:a];
     TDNotNil(result);
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
     TDEqualObjects(@"[#ABNF, 1.0, UTF, ;]#ABNF/1.0/UTF/;^", [result description]);
 #else
     TDEqualObjects(@"[#, ABNF, 1.0, UTF, ;]#/ABNF/1.0/UTF/;^", [result description]);

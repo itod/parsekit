@@ -12,13 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#if PLATFORM(TWITTER_STATE)
+#else
 #import "XPathParserTest.h"
 #import "TDNCName.h"
 
 @implementation XPathParserTest
 
-#if PK_INCLUDE_TWITTER_STATE
-#else
 - (void)setUp {
     p = [[[XPathParser alloc] init] autorelease];
 }
@@ -285,6 +285,7 @@
     TDEqualObjects(@"[foo, (, 'bar', ,, 1, )]foo/(/'bar'/,/1/)^", [result description]);
 }
 
+
 - (void)testOrExpr {
     s = @"foo or bar";
     a = [p assemblyWithString:s];
@@ -307,6 +308,6 @@
     TDNotNil(result);
     TDEqualObjects(@"[foo, and, bar]foo/and/bar^", [result description]);
 }
-#endif
 
 @end
+#endif

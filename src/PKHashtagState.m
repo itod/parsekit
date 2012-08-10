@@ -6,7 +6,7 @@
 //  Copyright 2011 Todd Ditchendorf. All rights reserved.
 //
 
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
 #import <ParseKit/PKHashtagState.h>
 #import <ParseKit/PKReader.h>
 #import <ParseKit/PKTokenizer.h>

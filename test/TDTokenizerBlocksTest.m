@@ -24,7 +24,6 @@
 }
 
 
-#ifdef TARGET_OS_SNOW_LEOPARD
 - (void)testBlastOff {
     s = @"\"It's 123 blast-off!\", she said, // watch out!\n"
     @"and <= 3 'ticks' later /* wince */, it's blast-off!";
@@ -39,6 +38,5 @@
     
     NSLog(@"\n\n done!!! \n\n");
 }
-#endif
 
 @end

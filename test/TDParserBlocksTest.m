@@ -24,7 +24,6 @@
 }
 
 
-#ifdef TARGET_OS_SNOW_LEOPARD
 - (void)testMath {
     s = @"2 4 6 8";
     start = [PKTokenAssembly assemblyWithString:s];
@@ -32,14 +31,14 @@
     PKNumber *n = [PKNumber number];
     p = [PKRepetition repetitionWithSubparser:n];
     
-    n.assemblerBlock = ^(PKAssembly *a) {
+    n.assemblerBlock = ^(PKParser *p, PKAssembly *a) {
         if (![a isStackEmpty]) {
             PKToken *tok = [a pop];
             [a push:[NSNumber numberWithFloat:tok.floatValue]];
         }
     };
     
-    p.assemblerBlock = ^(PKAssembly *a) {
+    p.assemblerBlock = ^(PKParser *p, PKAssembly *a) {
         NSNumber *total = [a pop];
         if (!total) {
             total = [NSNumber numberWithFloat:0];
@@ -63,7 +62,7 @@
 - (void)testMath2 {
     PKParser *addParser = [PKRepetition repetitionWithSubparser:[PKNumber number]];
     
-    addParser.assemblerBlock = ^(PKAssembly *a) {
+    addParser.assemblerBlock = ^(PKParser *p, PKAssembly *a) {
         NSArray *toks = [a objectsAbove:nil];
         double total = 0.0;
         
@@ -85,6 +84,5 @@
     TDEqualObjects(@"[5]2.5/-5.5/8^", [result description]);
     TDEquals(5.0, [(NSNumber *)[result pop] doubleValue]);
 }
-#endif
 
 @end

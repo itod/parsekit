@@ -39,10 +39,8 @@
 
 
 - (void)dealloc {
-#ifdef TARGET_OS_SNOW_LEOPARD
     self.assemblerBlock = nil;
     self.preassemblerBlock = nil;
-#endif
     self.assembler = nil;
     self.assemblerSelector = nil;
     self.preassembler = nil;
@@ -102,14 +100,11 @@
     
 #define CONCURRENT 0
 
-#ifdef TARGET_OS_SNOW_LEOPARD
     if (preassemblerBlock) {
         for (PKAssembly *a in inAssemblies) {
             preassemblerBlock(self, a);
         }
-    } else 
-#endif
-    if (preassembler) {
+    } else if (preassembler) {
         NSAssert2([preassembler respondsToSelector:preassemblerSelector], @"provided preassembler %@ should respond to %@", preassembler, NSStringFromSelector(preassemblerSelector));
         for (PKAssembly *a in inAssemblies) {
             [preassembler performSelector:preassemblerSelector withObject:self withObject:a];
@@ -126,14 +121,11 @@
 
     // memoize outAssemblies in -memo ivar {offset=>outAssemblies}
 
-#ifdef TARGET_OS_SNOW_LEOPARD
     if (assemblerBlock) {
         for (PKAssembly *a in outAssemblies) {
             assemblerBlock(self, a);
         }
-    } else 
-#endif
-    if (assembler) {
+    } else if (assembler) {
         NSAssert2([assembler respondsToSelector:assemblerSelector], @"provided assembler %@ should respond to %@", assembler, NSStringFromSelector(assemblerSelector));
 #if CONCURRENT
         dispatch_group_t myGroup = dispatch_group_create();
@@ -184,10 +176,8 @@
     }
 }
 
-#ifdef TARGET_OS_SNOW_LEOPARD
 @synthesize assemblerBlock;
 @synthesize preassemblerBlock;
-#endif
 @synthesize assembler;
 @synthesize assemblerSelector;
 @synthesize preassembler;

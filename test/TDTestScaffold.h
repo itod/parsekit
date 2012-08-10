@@ -16,8 +16,6 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import <ParseKit/ParseKit.h>
 
-#define PK_INCLUDE_TWITTER_STATE 0
-
 #define TDTrue(e) STAssertTrue((e), @"")
 #define TDFalse(e) STAssertFalse((e), @"")
 #define TDNil(e) STAssertNil((e), @"")

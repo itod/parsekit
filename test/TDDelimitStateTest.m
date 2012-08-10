@@ -246,7 +246,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
     TDTrue(tok.isHashtag);
     TDEqualObjects(tok.stringValue, @"#foo");
     TDEquals(tok.floatValue, (double)0.0);
@@ -354,7 +354,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
     TDTrue(tok.isHashtag);
     TDEqualObjects(tok.stringValue, @"#foo");
     TDEquals(tok.floatValue, (double)0.0);

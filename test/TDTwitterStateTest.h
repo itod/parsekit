@@ -6,7 +6,7 @@
 //  Copyright 2010 Todd Ditchendorf. All rights reserved.
 //
 
-#if PK_INCLUDE_TWITTER_STATE
+#if PLATFORM(TWITTER_STATE)
 #import "TDTestScaffold.h"
 
 @interface TDTwitterStateTest : SenTestCase {

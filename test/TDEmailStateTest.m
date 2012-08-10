@@ -6,6 +6,7 @@
 //  Copyright 2010 Todd Ditchendorf. All rights reserved.
 //
 
+#if PLATFORM(EMAIL_STATE)
 #import "TDEmailStateTest.h"
 
 @implementation TDEmailStateTest
@@ -178,3 +179,4 @@
 }
 
 @end
+#endif
