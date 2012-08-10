@@ -99,6 +99,8 @@
 
 - (NSSet *)matchAndAssemble:(NSSet *)inAssemblies {
     NSParameterAssert(inAssemblies);
+    
+#define CONCURRENT 0
 
 #ifdef TARGET_OS_SNOW_LEOPARD
     if (preassemblerBlock) {
@@ -108,13 +110,21 @@
     } else 
 #endif
     if (preassembler) {
-        NSAssert2([preassembler respondsToSelector:preassemblerSelector], @"provided preassembler %@ should respond to %s", preassembler, preassemblerSelector);
+        NSAssert2([preassembler respondsToSelector:preassemblerSelector], @"provided preassembler %@ should respond to %@", preassembler, NSStringFromSelector(preassemblerSelector));
         for (PKAssembly *a in inAssemblies) {
             [preassembler performSelector:preassemblerSelector withObject:self withObject:a];
         }
     }
     
+    // get current input string offset
+    
+    // lookup offset in -memo ivar and return assemblies if present.
+    
+    // else…
+    
     NSSet *outAssemblies = [self allMatchesFor:inAssemblies];
+
+    // memoize outAssemblies in -memo ivar {offset=>outAssemblies}
 
 #ifdef TARGET_OS_SNOW_LEOPARD
     if (assemblerBlock) {
@@ -124,10 +134,24 @@
     } else 
 #endif
     if (assembler) {
-        NSAssert2([assembler respondsToSelector:assemblerSelector], @"provided assembler %@ should respond to %s", assembler, assemblerSelector);
+        NSAssert2([assembler respondsToSelector:assemblerSelector], @"provided assembler %@ should respond to %@", assembler, NSStringFromSelector(assemblerSelector));
+#if CONCURRENT
+        dispatch_group_t myGroup = dispatch_group_create();
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+#endif
         for (PKAssembly *a in outAssemblies) {
-            [assembler performSelector:assemblerSelector withObject:self withObject:a];
+#if CONCURRENT
+            dispatch_group_async(myGroup, queue, ^{
+#endif
+                [assembler performSelector:assemblerSelector withObject:self withObject:a];
+#if CONCURRENT
+            });
+            dispatch_group_wait(myGroup, DISPATCH_TIME_FOREVER);
+#endif
         }
+#if CONCURRENT
+        dispatch_release(myGroup);
+#endif
     }
     return outAssemblies;
 }
@@ -173,17 +197,43 @@
 
 @implementation PKParser (PKParserFactoryAdditions)
 
-- (id)parse:(NSString *)s {
-    PKTokenizer *t = self.tokenizer;
-    if (!t) {
-        t = [PKTokenizer tokenizer];
+- (id)parse:(NSString *)s error:(NSError **)outError {
+    id result = nil;
+    
+    @try {
+        
+        PKTokenizer *t = self.tokenizer;
+        if (!t) {
+            t = [PKTokenizer tokenizer];
+        }
+        t.string = s;
+        PKAssembly *a = [self completeMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
+        if (a.target) {
+            result = a.target;
+        } else {
+            result = [a pop];
+        }
+
+        return result;
     }
-    t.string = s;
-    PKAssembly *a = [self completeMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
-    if (a.target) {
-        return a.target;
-    } else {
-        return [a pop];
+    @catch (NSException *ex) {
+        if (outError) {
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[ex userInfo]];
+            
+            // get reason
+            NSString *reason = [ex reason];
+            if ([reason length]) [userInfo setObject:reason forKey:NSLocalizedFailureReasonErrorKey];
+            
+            // get domain
+            NSString *exName = [ex name];
+            NSString *domain = exName ? exName : @"PKParseException";
+            
+            // convert to NSError
+            NSError *err = [NSError errorWithDomain:domain code:47 userInfo:[[userInfo copy] autorelease]];
+            *outError = err;
+        } else {
+            [ex raise];
+        }
     }
 }
 

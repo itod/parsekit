@@ -28,7 +28,7 @@
 @wordChars = '_' '.' '-';
 
 @numberState = '.';              // numbers may start with dot
-@allowsTrailingDot = YES;        // numbers may end with dot
+@allowsTrailingDecimalSeparator = YES;        // numbers may end with dot
 @symbolState = '+' '-';          // numbers may not start with a plus or minus sign. they're actually unary operators
 @allowsScientificNotation = NO;  // exponents not allowed
 @allowsOctalNotation = NO;       // octal not allowed

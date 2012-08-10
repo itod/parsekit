@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 #import "TDXmlToken.h"
+#import "PKTypes.h"
 
 @interface TDXmlTokenEOF : TDXmlToken {}
 @end
@@ -177,7 +178,7 @@
     } else if (self.isXmlDecl) {
         typeString = @"XML Declaration";
     }
-    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, 0x00ab, self.value, 0x00bb];
+    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, (unichar)0x00ab, self.value, (unichar)0x00bb];
 }
 
 

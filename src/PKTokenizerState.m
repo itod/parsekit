@@ -79,8 +79,8 @@
 
 
 - (void)append:(PKUniChar)c {
-    NSParameterAssert(c > -1);
-    [stringbuf appendFormat:@"%C", c];
+    NSParameterAssert(c != PKEOF);
+    [stringbuf appendFormat:@"%C", (unichar)c];
 }
 
 

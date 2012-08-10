@@ -156,9 +156,9 @@ JSObjectRef PKToken_new(JSContextRef ctx, void *data) {
 JSObjectRef PKToken_construct(JSContextRef ctx, JSObjectRef constructor, size_t argc, const JSValueRef argv[], JSValueRef *ex) {
     PKPreconditionConstructorArgc(3, "PKToken");
     
-    CGFloat tokenType = JSValueToNumber(ctx, argv[0], NULL);
+    PKFloat tokenType = JSValueToNumber(ctx, argv[0], NULL);
     NSString *stringValue = PKJSValueGetNSString(ctx, argv[1], ex);
-    CGFloat floatValue = JSValueToNumber(ctx, argv[2], NULL);
+    PKFloat floatValue = JSValueToNumber(ctx, argv[2], NULL);
 
     PKToken *data = [[PKToken alloc] initWithTokenType:tokenType stringValue:stringValue floatValue:floatValue];
     return PKToken_new(ctx, data);

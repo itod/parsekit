@@ -49,10 +49,10 @@
     PKToken *tok2 = [a pop];
     PKToken *tok1 = [a pop];
     
-    CGFloat n1 = tok1.floatValue;
-    CGFloat n2 = tok2.floatValue;
+    double n1 = tok1.floatValue;
+    double n2 = tok2.floatValue;
     
-    CGFloat res = n1;
+    double res = n1;
     NSUInteger i = 1;
     for ( ; i < n2; i++) {
         res *= n1;

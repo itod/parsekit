@@ -24,7 +24,7 @@
 - (void)testOrVsAndPrecendence {
     g = @" @start ( parser:didMatchFoo: ) = foo;\n"
     @"  foo = Word & /foo/ | Number! { 1 } ( DelimitedString ( '/' , '/' ) Symbol- '%' ) * /bar/ ;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -35,7 +35,7 @@
 
 - (void)testNegation {
     g = @"@start = ~'foo';";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -54,7 +54,7 @@
 
 - (void)testNegateSymbol {
     g = @"@start = ~Symbol;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"1";
@@ -78,7 +78,7 @@
 
 - (void)testNegateMore {
     g = @"@start = ~Symbol & ~Number;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"1";
@@ -93,7 +93,7 @@
 
 - (void)testNegateMore2 {
     g = @"@start = ~(Symbol|Number);";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"1";
@@ -113,7 +113,7 @@
     @"name = Word;";
     //        @"nameTest = '*' | ncName ':' '*' | qName;"
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -141,7 +141,7 @@
     @"prefix = ncName;"
     @"ncName = Word;";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     

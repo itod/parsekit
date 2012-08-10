@@ -27,13 +27,13 @@
 }
 - (double)parse:(NSString *)s;
 
-@property (retain) PKCollectionParser *exprParser;
-@property (retain) PKCollectionParser *termParser;
-@property (retain) PKCollectionParser *plusTermParser;
-@property (retain) PKCollectionParser *minusTermParser;
-@property (retain) PKCollectionParser *factorParser;
-@property (retain) PKCollectionParser *timesFactorParser;
-@property (retain) PKCollectionParser *divFactorParser;
-@property (retain) PKCollectionParser *exponentFactorParser;
-@property (retain) PKCollectionParser *phraseParser;
+@property (nonatomic, retain) PKCollectionParser *exprParser;
+@property (nonatomic, retain) PKCollectionParser *termParser;
+@property (nonatomic, retain) PKCollectionParser *plusTermParser;
+@property (nonatomic, retain) PKCollectionParser *minusTermParser;
+@property (nonatomic, retain) PKCollectionParser *factorParser;
+@property (nonatomic, retain) PKCollectionParser *timesFactorParser;
+@property (nonatomic, retain) PKCollectionParser *divFactorParser;
+@property (nonatomic, retain) PKCollectionParser *exponentFactorParser;
+@property (nonatomic, retain) PKCollectionParser *phraseParser;
 @end

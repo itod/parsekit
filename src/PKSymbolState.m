@@ -98,7 +98,7 @@
 
 
 - (PKToken *)symbolTokenWith:(PKUniChar)cin {
-    return [self symbolTokenWithSymbol:[NSString stringWithFormat:@"%C", cin]];
+    return [self symbolTokenWithSymbol:[NSString stringWithFormat:@"%C", (unichar)cin]];
 }
 
 

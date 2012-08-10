@@ -31,6 +31,7 @@
 
 - (void)dealloc {
     self.string = nil;
+    //if (buff) free(buff);
     [super dealloc];
 }
 
@@ -45,6 +46,10 @@
         [string autorelease];
         string = [s copy];
         length = [string length];
+
+//        if (buff) free(buff);
+//        buff = malloc(sizeof(unichar)*length + 1);
+//        [s getCharacters:buff range:NSMakeRange(0, length)];
     }
     // reset cursor
     offset = 0;
@@ -56,6 +61,7 @@
         return PKEOF;
     }
     return [string characterAtIndex:offset++];
+    //return buff[offset++];
 }
 
 

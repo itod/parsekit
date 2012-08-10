@@ -60,6 +60,7 @@
         self.URLState        = [[[PKURLState alloc] init] autorelease];
         self.emailState      = [[[PKEmailState alloc] init] autorelease];
 
+        numberState.fallbackState = symbolState;
         quoteState.fallbackState = symbolState;
         URLState.fallbackState = emailState;
         emailState.fallbackState = wordState;

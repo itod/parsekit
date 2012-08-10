@@ -526,7 +526,7 @@
         @"1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
         @"]";
 
-    p = [[[TDFastJsonParser alloc] init] autorelease];
+    p = (id)[[[TDFastJsonParser alloc] init] autorelease];
     result = [p parse:s];
     //NSLog(@"result %@", result);
     

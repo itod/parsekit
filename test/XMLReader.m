@@ -235,7 +235,7 @@ static void structErr(XMLReader *self, xmlErrorPtr error) {
 
     
 - (NSString *)attributeAtIndex:(NSInteger)index {
-    return [NSString stringWithXmlChar:xmlTextReaderGetAttributeNo(_reader, index)];
+    return [NSString stringWithXmlChar:xmlTextReaderGetAttributeNo(_reader, (int)index)];
 }
 
     
@@ -265,7 +265,7 @@ static void structErr(XMLReader *self, xmlErrorPtr error) {
 
     
 - (void)moveToAttributeAtIndex:(NSInteger)index {
-    xmlTextReaderMoveToAttributeNo(_reader, index);
+    xmlTextReaderMoveToAttributeNo(_reader, (int)index);
 }
 
     

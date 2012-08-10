@@ -20,7 +20,7 @@
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"xml" ofType:@"grammar"];
     g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     factory = [PKParserFactory factory];
-    p = [factory parserFromGrammar:g assembler:self];
+    p = [factory parserFromGrammar:g assembler:self error:nil];
     t = p.tokenizer;
 }
 
@@ -101,7 +101,7 @@
 
 - (void)testSmallSTagGrammar {
     g = @"@delimitState='<';@reportsWhitespaceTokens=YES;@start=sTag;sTag='<' name (S attribute)* S? '>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
-    PKParser *sTag = [factory parserFromGrammar:g assembler:nil];
+    PKParser *sTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = sTag.tokenizer;
 
     t.string = @"<foo>";
@@ -135,7 +135,7 @@
         @"eTag='</' name S? '>';"
         @"name=/[^-:\\.]\\w+/;";
     
-    PKParser *eTag = [factory parserFromGrammar:g assembler:nil];
+    PKParser *eTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = eTag.tokenizer;
     
     t.string = @"</foo>";
@@ -180,7 +180,7 @@
 
 - (void)testSmallEmptyElemTagGrammar {
     g = @"@delimitState='<';@symbols='/>';@reportsWhitespaceTokens=YES;@start=emptyElemTag;emptyElemTag='<' name (S attribute)* S? '/>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
-    PKParser *emptyElemTag = [factory parserFromGrammar:g assembler:nil];
+    PKParser *emptyElemTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = emptyElemTag.tokenizer;
     
     t.string = @"<foo/>";
@@ -208,7 +208,7 @@
         @"@start = charData+;"
         @"charData = /[^<\\&]+/ - (/[^\\]]*\\]\\]>[^<\\&]*/);";
 
-    PKParser *charData = [factory parserFromGrammar:g assembler:nil];
+    PKParser *charData = [factory parserFromGrammar:g assembler:nil error:nil];
     t = charData.tokenizer;
 
     t.string = @" ";
@@ -248,7 +248,7 @@
         @"cdSect = DelimitedString('<![CDATA[', ']]>');"
     ;
     
-    PKParser *element = [factory parserFromGrammar:g assembler:nil];
+    PKParser *element = [factory parserFromGrammar:g assembler:nil error:nil];
     t = element.tokenizer;
     
     t.string = @"<foo/>";
@@ -311,7 +311,7 @@
     t.string = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     NSDate *d = [NSDate date];
     res = [p bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
-    NSLog(@"time: %d", [d timeIntervalSinceNow]);
+    NSLog(@"time: %f", [d timeIntervalSinceNow]);
     TDNotNil(res);
     TDTrue([[res description] hasSuffix:@"^"]);
 }
@@ -368,7 +368,7 @@
         @"@wordChars = ':' '.' '-' '_';"
         @"pi = '<?' piTarget ~/?>/* '?>';"
         @"@start = pi;";
-    PKParser *pi = [[PKParserFactory factory] parserFromGrammar:gram assembler:nil];
+    PKParser *pi = [[PKParserFactory factory] parserFromGrammar:gram assembler:nil error:nil];
     pi.tokenizer.string = @"<?foo bar='baz'?>";
     res = [pi bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:pi.tokenizer]];
     TDEqualObjects(@"[<?, foo,  , bar, =, 'baz', ?>]<?/foo/ /bar/=/'baz'/?>^", [res description]);    

@@ -33,7 +33,7 @@
         tokenizer.numberState.allowsScientificNotation = YES;
 
         // Nums cannot end with '.' (e.g. 32. must be 32.0)
-        tokenizer.numberState.allowsTrailingDot = NO;
+        tokenizer.numberState.allowsTrailingDecimalSeparator = NO;
         
         [tokenizer setTokenizerState:tokenizer.numberState from:'-' to:'-'];
         [tokenizer setTokenizerState:tokenizer.numberState from:'.' to:'.'];

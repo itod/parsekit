@@ -28,14 +28,14 @@
 }
 + (id)parserFromGrammar:(NSString *)s;
 
-@property (retain) PKCollectionParser *expressionParser;
-@property (retain) PKCollectionParser *termParser;
-@property (retain) PKCollectionParser *orTermParser;
-@property (retain) PKCollectionParser *factorParser;
-@property (retain) PKCollectionParser *nextFactorParser;
-@property (retain) PKCollectionParser *phraseParser;
-@property (retain) PKCollectionParser *phraseStarParser;
-@property (retain) PKCollectionParser *phrasePlusParser;
-@property (retain) PKCollectionParser *phraseQuestionParser;
-@property (retain) PKCollectionParser *letterOrDigitParser;
+@property (nonatomic, retain) PKCollectionParser *expressionParser;
+@property (nonatomic, retain) PKCollectionParser *termParser;
+@property (nonatomic, retain) PKCollectionParser *orTermParser;
+@property (nonatomic, retain) PKCollectionParser *factorParser;
+@property (nonatomic, retain) PKCollectionParser *nextFactorParser;
+@property (nonatomic, retain) PKCollectionParser *phraseParser;
+@property (nonatomic, retain) PKCollectionParser *phraseStarParser;
+@property (nonatomic, retain) PKCollectionParser *phrasePlusParser;
+@property (nonatomic, retain) PKCollectionParser *phraseQuestionParser;
+@property (nonatomic, retain) PKCollectionParser *letterOrDigitParser;
 @end

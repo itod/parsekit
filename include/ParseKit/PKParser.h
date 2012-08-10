@@ -169,7 +169,7 @@ typedef void (^PKAssemblerBlock)(PKParser *, PKAssembly *);
 
 @interface PKParser (PKParserFactoryAdditions)
 
-- (id)parse:(NSString *)s;
+- (id)parse:(NSString *)s error:(NSError **)outError;
 
 - (PKTokenizer *)tokenizer;
 @end

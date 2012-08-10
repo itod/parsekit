@@ -28,14 +28,14 @@ static JSValueRef PKNumberState_toString(JSContextRef ctx, JSObjectRef function,
 #pragma mark -
 #pragma mark Properties
 
-static JSValueRef PKNumberState_getAllowsTrailingDot(JSContextRef ctx, JSObjectRef this, JSStringRef propName, JSValueRef *ex) {
+static JSValueRef PKNumberState_getAllowsTrailingDecimalSeparator(JSContextRef ctx, JSObjectRef this, JSStringRef propName, JSValueRef *ex) {
     PKNumberState *data = JSObjectGetPrivate(this);
-    return JSValueMakeBoolean(ctx, data.allowsTrailingDot);
+    return JSValueMakeBoolean(ctx, data.allowsTrailingDecimalSeparator);
 }
 
-static bool PKNumberState_setAllowsTrailingDot(JSContextRef ctx, JSObjectRef this, JSStringRef propertyName, JSValueRef value, JSValueRef *ex) {
+static bool PKNumberState_setAllowsTrailingDecimalSeparator(JSContextRef ctx, JSObjectRef this, JSStringRef propertyName, JSValueRef value, JSValueRef *ex) {
     PKNumberState *data = JSObjectGetPrivate(this);
-    data.allowsTrailingDot = JSValueToBoolean(ctx, value);
+    data.allowsTrailingDecimalSeparator = JSValueToBoolean(ctx, value);
     return true;
 }
 
@@ -56,7 +56,7 @@ static JSStaticFunction PKNumberState_staticFunctions[] = {
 };
 
 static JSStaticValue PKNumberState_staticValues[] = {        
-{ "allowsTrailingDot", PKNumberState_getAllowsTrailingDot, PKNumberState_setAllowsTrailingDot, kJSPropertyAttributeDontDelete }, // Boolean
+{ "allowsTrailingDecimalSeparator", PKNumberState_getAllowsTrailingDecimalSeparator, PKNumberState_setAllowsTrailingDecimalSeparator, kJSPropertyAttributeDontDelete }, // Boolean
 { 0, 0, 0, 0 }
 };
 

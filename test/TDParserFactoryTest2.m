@@ -23,7 +23,7 @@
 
 - (void)testOrVsAndPrecendence {
     g = @"@start = Word | Number Symbol;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -35,7 +35,7 @@
     TDNil(res);
     
     g = @"@start = Word Number | Symbol;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo 3";
@@ -51,7 +51,7 @@
     TDNil(res);
     
     g = @"@start = Word (Number | Symbol);";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo 3";
@@ -70,7 +70,7 @@
 
 - (void)test1 {
     g = @"@start = (Word | Number)*;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
 
     s = @"foo";
@@ -93,7 +93,7 @@
 
 - (void)test2 {
     g = @"@start = (Word | Number)* QuotedString;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo 'bar'";
@@ -116,7 +116,7 @@
 
 - (void)test3 {
     g = @"@start = (Word | Number)* '$'+ QuotedString;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo $ 'bar'";
@@ -143,7 +143,7 @@
 
 - (void)test4 {
     g = @"@start = (Word | Number)* ('$' '%')+ QuotedString;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo $ % 'bar'";
@@ -158,7 +158,7 @@
 
 - (void)test5 {
     g = @"@start = (Word | Number)* ('$' '%')+ QuotedString;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo $ % 'bar'";
@@ -181,7 +181,7 @@
 
 - (void)test6 {
     g = @"@start = ((Word | Number)* ('$' '%')+) | QuotedString;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"'bar'";
@@ -196,7 +196,7 @@
 
 - (void)test7 {
     g = @"@start = ((Word | Number)* ('$' '%')+) | QuotedString+;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"'bar' 'foo'";
@@ -215,7 +215,7 @@
 
 - (void)test8 {
     g = @"@start = ((Word | Number)* ('$' '%')+) | QuotedString+;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"'bar' 'foo'";
@@ -234,7 +234,7 @@
 
 - (void)test9 {
     g = @"@start = Word | (Number);";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"42";
@@ -249,7 +249,7 @@
 
 - (void)test10 {
     g = @"@start = Word | (Number QuotedString);";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -264,7 +264,7 @@
 
 - (void)test11 {
     g = @"@start = ((Word | Number)* | ('$' '%')+) QuotedString+;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
 
     s = @"foo 'bar'";
@@ -279,7 +279,7 @@
 
 - (void)test12 {
     g = @"@delimitState = '$'; @delimitedString = '$' '%' nil; @start = DelimitedString('$', '%');";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"$foo%";
@@ -290,7 +290,7 @@
     
     
     g = @"@delimitState = '$'; @delimitedString = '$' '%' nil; @start = DelimitedString('$', '');";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"$foo%";
@@ -301,7 +301,7 @@
     
     
     g = @"@delimitState = '$'; @delimitedString = '$' '%' 'fo'; @start = DelimitedString('$', '%');";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"$foo%";
@@ -312,7 +312,7 @@
 
     
     g = @"@delimitState = '$'; @delimitedString = '$' '%' 'f'; @start = DelimitedString('$', '%');";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"$foo%";
@@ -325,7 +325,7 @@
 
 - (void)testWhitespace {
     g = @"@reportsWhitespaceTokens = YES; @start = 'foo' S '+' S 'bar';";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
 
     s = @"foo + bar";
@@ -341,7 +341,7 @@
     TDNil(res);
 
     g = @"@start = 'foo' S '+' S 'bar';";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo + bar";
@@ -351,7 +351,7 @@
     TDNil(res);
 
     g = @"@reportsWhitespaceTokens = NO; @start = 'foo' S '+' S 'bar';";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo + bar";
@@ -362,7 +362,7 @@
 
 
     g = @"@reportsWhitespaceTokens = YES; @start = 'foo' S '+' S 'bar';";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo  \t \t +  bar";
@@ -375,7 +375,7 @@
 
 - (void)testDiscard {
     g = @"@start = 'foo'!;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -385,7 +385,7 @@
     TDEqualObjects(@"[]foo^", [res description]);
 
     g = @"@start = /foo/!;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -395,7 +395,7 @@
     TDEqualObjects(@"[]foo^", [res description]);
 
     g = @"@delimitState='<'; @delimitedStrings='<%' '%>' nil; @start=DelimitedString('<%', '%>')!;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"<% foo %>";
@@ -408,7 +408,7 @@
 
 - (void)testDiscard2 {
     g = @"@reportsWhitespaceTokens=YES;@start=S!;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @" ";
@@ -418,7 +418,7 @@
     TDEqualObjects(@"[] ^", [res description]);
     
     g = @"@start=Any!;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -428,7 +428,7 @@
     TDEqualObjects(@"[]foo^", [res description]);
     
     g = @"@start=Word!;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -446,7 +446,7 @@
         @"@singleLineComments = '//';"
         @"@reportsCommentTokens = YES;"
         @"@start = Any+;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
 
     s = @"# // foo";
@@ -470,7 +470,7 @@
         @"@singleLineComments = '//';"
         @"@multiLineComments = '/*' '*/';"
         @"@start = Any+;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
 
     s = @"/ %";
@@ -512,7 +512,7 @@
 - (void)testPatternPredicate1 {
     g = @"@wordChar = ':'; @start = Word;";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -525,7 +525,7 @@
     
     g = @"@wordChar = ':'; @start = Word & /[^:]+/;";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -546,7 +546,7 @@
 - (void)testPatternPredicate2 {
     g = @"@wordChar = ':'; @start=ncName+; name=Word; ncName=name & /[^:]+/;";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -567,7 +567,7 @@
 - (void)testExclusionFoo {
     g = @"@start = ex; ex = Word - 'foo';";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -591,7 +591,7 @@
 - (void)testExclusionAlt {
     g = @"@start = ex; m = ('foo'|'bar'); ex = Word - m;";
 
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -615,7 +615,7 @@
 - (void)testExclusionAlt2 {
     g = @"@start = ex; ex = Word - ('foo'|'bar');";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -639,7 +639,7 @@
 - (void)testExclusionAlt3 {
     g = @"@start = ex; s = 'foo'|'baz'; m = ('foo'|'bar'); ex = s - m;";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -663,7 +663,7 @@
 - (void)testExclusionAlt4 {
     g = @"@start = ex; m = ('foo'|'bar'); ex = ('foo'|'baz') - m;";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -687,7 +687,7 @@
 - (void)testExclusionAlt5 {
     g = @"@start = ex; ex = ('foo'|'baz') - ('foo'|'bar');";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     

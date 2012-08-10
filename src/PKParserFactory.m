@@ -12,6 +12,8 @@
 #import "NSString+ParseKitAdditions.h"
 #import "NSArray+ParseKitAdditions.h"
 
+#define USE_TRACK 0
+
 @interface PKParser (PKParserFactoryAdditionsFriend)
 - (void)setTokenizer:(PKTokenizer *)t;
 @end
@@ -182,35 +184,60 @@ void PKReleaseSubparserTree(PKParser *p) {
 }
 
 
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a {
-    return [self parserFromGrammar:s assembler:a preassembler:nil];
+- (PKParser *)parserFromGrammar:(NSString *)g assembler:(id)a error:(NSError **)outError {
+    return [self parserFromGrammar:g assembler:a preassembler:nil error:outError];
 }
 
 
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa {
-    self.assembler = a;
-    self.preassembler = pa;
-    self.selectorTable = [NSMutableDictionary dictionary];
-    self.parserClassTable = [NSMutableDictionary dictionary];
-    self.parserTokensTable = [self parserTokensTableFromParsingStatementsInString:s];
+- (PKParser *)parserFromGrammar:(NSString *)g assembler:(id)a preassembler:(id)pa error:(NSError **)outError {
+    PKParser *result = nil;
 
-    PKTokenizer *t = [self tokenizerFromGrammarSettings];
+    @try {
+        self.assembler = a;
+        self.preassembler = pa;
+        self.selectorTable = [NSMutableDictionary dictionary];
+        self.parserClassTable = [NSMutableDictionary dictionary];
+        self.parserTokensTable = [self parserTokensTableFromParsingStatementsInString:g];
 
-    [self gatherParserClassNamesFromTokens];
-    
-    PKParser *start = [self expandedParserForName:@"@start"];
-    
-    assembler = nil;
-    self.selectorTable = nil;
-    self.parserClassTable = nil;
-    self.parserTokensTable = nil;
-    
-    if (start && [start isKindOfClass:[PKParser class]]) {
-        start.tokenizer = t;
-        return start;
-    } else {
-        [NSException raise:@"GrammarException" format:@"The provided language grammar was invalid"];
-        return nil;
+        PKTokenizer *t = [self tokenizerFromGrammarSettings];
+
+        [self gatherParserClassNamesFromTokens];
+        
+        PKParser *start = [self expandedParserForName:@"@start"];
+        
+        assembler = nil;
+        self.selectorTable = nil;
+        self.parserClassTable = nil;
+        self.parserTokensTable = nil;
+        
+        if (start && [start isKindOfClass:[PKParser class]]) {
+            start.tokenizer = t;
+            result = start;
+        } else {
+            [NSException raise:@"PKGrammarException" format:NSLocalizedString(@"An unknown error occurred while parsing the grammar. The provided language grammar was invalid.", @"")];
+        }
+        
+        return result;
+
+    }
+    @catch (NSException *ex) {
+        if (outError) {
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[ex userInfo]];
+
+            // get reason
+            NSString *reason = [ex reason];
+            if ([reason length]) [userInfo setObject:reason forKey:NSLocalizedFailureReasonErrorKey];
+            
+            // get domain
+            NSString *name = [ex name];
+            NSString *domain = name ? name : @"PKGrammarException";
+
+            // convert to NSError
+            NSError *err = [NSError errorWithDomain:domain code:47 userInfo:[[userInfo copy] autorelease]];
+            *outError = err;
+        } else {
+            [ex raise];
+        }
     }
 }
 
@@ -305,13 +332,19 @@ void PKReleaseSubparserTree(PKParser *p) {
 
     t.whitespaceState.reportsWhitespaceTokens = [self boolForTokenForKey:@"@reportsWhitespaceTokens"];
     t.commentState.reportsCommentTokens = [self boolForTokenForKey:@"@reportsCommentTokens"];
-	t.commentState.balancesEOFTerminatedComments = [self boolForTokenForKey:@"balancesEOFTerminatedComments"];
-	t.quoteState.balancesEOFTerminatedQuotes = [self boolForTokenForKey:@"@balancesEOFTerminatedQuotes"];
-	t.delimitState.balancesEOFTerminatedStrings = [self boolForTokenForKey:@"@balancesEOFTerminatedStrings"];
-	t.numberState.allowsTrailingDot = [self boolForTokenForKey:@"@allowsTrailingDot"];
-    t.numberState.allowsScientificNotation  = [self boolForTokenForKey:@"@allowsScientificNotation"];
-    t.numberState.allowsOctalNotation  = [self boolForTokenForKey:@"@allowsOctalNotation"];
-    t.numberState.allowsHexadecimalNotation  = [self boolForTokenForKey:@"@allowsHexadecimalNotation"];
+    t.commentState.balancesEOFTerminatedComments = [self boolForTokenForKey:@"balancesEOFTerminatedComments"];
+    t.quoteState.balancesEOFTerminatedQuotes = [self boolForTokenForKey:@"@balancesEOFTerminatedQuotes"];
+    t.delimitState.balancesEOFTerminatedStrings = [self boolForTokenForKey:@"@balancesEOFTerminatedStrings"];
+    t.numberState.allowsTrailingDecimalSeparator = [self boolForTokenForKey:@"@allowsTrailingDecimalSeparator"];
+    t.numberState.allowsScientificNotation = [self boolForTokenForKey:@"@allowsScientificNotation"];
+    t.numberState.allowsOctalNotation = [self boolForTokenForKey:@"@allowsOctalNotation"];
+    t.numberState.allowsHexadecimalNotation = [self boolForTokenForKey:@"@allowsHexadecimalNotation"];
+    
+    BOOL yn = YES;
+    if ([parserTokensTable objectForKey:@"allowsFloatingPoint"]) {
+        yn = [self boolForTokenForKey:@"allowsFloatingPoint"];
+    }
+    t.numberState.allowsFloatingPoint = yn;
     
     [self setTokenizerState:t.wordState onTokenizer:t forTokensForKey:@"@wordState"];
     [self setTokenizerState:t.numberState onTokenizer:t forTokensForKey:@"@numberState"];
@@ -346,7 +379,7 @@ void PKReleaseSubparserTree(PKParser *p) {
         if (tok.isQuotedString) {
 			NSString *s = [tok.stringValue stringByTrimmingQuotes];
 			if ([s length]) {
-				NSInteger c = [s characterAtIndex:0];
+				PKUniChar c = [s characterAtIndex:0];
 				[t.wordState setWordChars:YES from:c to:c];
 			}
         }
@@ -361,9 +394,9 @@ void PKReleaseSubparserTree(PKParser *p) {
         if (tok.isQuotedString) {
 			NSString *s = [tok.stringValue stringByTrimmingQuotes];
 			if ([s length]) {
-                NSInteger c = 0;
+                PKUniChar c = 0;
                 if ([s hasPrefix:@"#x"]) {
-                    c = [s integerValue];
+                    c = (PKUniChar)[s integerValue];
                 } else {
                     c = [s characterAtIndex:0];
                 }
@@ -451,7 +484,7 @@ void PKReleaseSubparserTree(PKParser *p) {
         if (tok.isQuotedString) {
             NSString *s = [tok.stringValue stringByTrimmingQuotes];
             if (1 == [s length]) {
-                NSInteger c = [s characterAtIndex:0];
+                PKUniChar c = [s characterAtIndex:0];
                 [t setTokenizerState:state from:c to:c];
             }
         }
@@ -672,7 +705,12 @@ void PKReleaseSubparserTree(PKParser *p) {
     [a pop]; // pop '('
     
     if ([objs count] > 1) {
-        PKSequence *seq = [PKSequence sequence];
+        PKSequence *seq = nil;
+#if USE_TRACK
+        seq = [PKTrack track];
+#else
+        seq = [PKSequence sequence];
+#endif
         for (id obj in [objs reverseObjectEnumerator]) {
             [seq add:obj];
         }
@@ -915,8 +953,8 @@ void PKReleaseSubparserTree(PKParser *p) {
     NSAssert([toks count] > 0, @"");
     
     PKToken *tok = [toks lastObject];
-    CGFloat start = tok.floatValue;
-    CGFloat end = start;
+    PKFloat start = tok.floatValue;
+    PKFloat end = start;
     if ([toks count] > 1) {
         tok = [toks objectAtIndex:0];
         end = tok.floatValue;
@@ -954,7 +992,12 @@ void PKReleaseSubparserTree(PKParser *p) {
     }
     
     if ([parsers count] > 1) {
-        PKSequence *seq = [PKSequence sequence];
+        PKSequence *seq = nil;
+#if USE_TRACK
+        seq = [PKTrack track];
+#else
+        seq = [PKSequence sequence];
+#endif
         for (PKParser *p in [parsers reverseObjectEnumerator]) {
             [seq add:p];
         }

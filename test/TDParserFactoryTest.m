@@ -37,7 +37,7 @@
 - (void)testJavaScript {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"javascript" ofType:@"grammar"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     
@@ -52,7 +52,7 @@
 - (void)testCSS2_1 {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"css2_1" ofType:@"grammar"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     
@@ -66,7 +66,7 @@
 - (void)testCSS {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"mini_css" ofType:@"grammar"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     
@@ -78,13 +78,13 @@
     PKParser *declParser = [lp parserNamed:@"decl"];
     TDNotNil(declParser);
     TDEqualObjects(declParser.name, @"decl");
-    TDEqualObjects([declParser class], [PKSequence class]);
+    TDTrue([declParser isKindOfClass:[PKSequence class]]);
 
     PKParser *rulesetParser = [lp parserNamed:@"ruleset"];
     TDNotNil(rulesetParser);
     TDEqualObjects(rulesetParser, [(PKRepetition *)lp subparser]);
     TDEqualObjects(rulesetParser.name, @"ruleset");
-    TDEqualObjects([rulesetParser class], [PKSequence class]);
+    TDTrue([rulesetParser isKindOfClass:[PKSequence class]]);
     
     PKParser *startParser = [lp parserNamed:@"@start"];
     TDNotNil(startParser);
@@ -122,7 +122,7 @@
 - (void)testJSON {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"json" ofType:@"grammar"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     
@@ -161,7 +161,7 @@
 - (void)testJSONWithDiscards {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"json_with_discards" ofType:@"grammar"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     
@@ -200,7 +200,7 @@
 - (void)testStartLiteral {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = 'bar';";
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -219,7 +219,7 @@
 - (void)testStartLiteralNonReserved {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo*; foo = 'bar';";
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -242,7 +242,7 @@
 - (void)testStartLiteralNonReserved2 {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = (foo|baz)*; foo = 'bar'; baz = 'bat'";
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -265,7 +265,7 @@
 - (void)testStartLiteralNonReserved3 {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = (foo|baz)+; foo = 'bar'; baz = 'bat'";
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -287,7 +287,7 @@
 - (void)testStartLiteralNonReserved4 {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = (foo|baz)+; foo = 'bar'; baz = 'bat'";
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -311,7 +311,7 @@
 - (void)testAssemblerSettingBehaviorDefault {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo = 'bar'; baz = 'bat'";
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -332,7 +332,7 @@
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo = 'bar'; baz = 'bat'";
     factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnAll;
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -353,7 +353,7 @@
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo = 'bar'; baz = 'bat'";
     factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnTerminals;
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -373,7 +373,7 @@
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo (parser:didMatchFoo:) = 'bar'; baz (parser:didMatchBaz:) = 'bat'";
     factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnExplicit;
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -393,7 +393,7 @@
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo = 'bar'; baz = 'bat'";
     factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnExplicit;
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -412,7 +412,7 @@
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = (foo|baz)+; foo (parser:didMatchFoo:) = 'bar'; baz = 'bat'";
     factory.assemblerSettingBehavior = (PKParserFactoryAssemblerSettingBehaviorOnExplicit | PKParserFactoryAssemblerSettingBehaviorOnTerminals);
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -432,7 +432,7 @@
 - (void)testStartLiteralWithCallback {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start (parser:didMatchStart:) = 'bar';";
-    lp = [factory parserFromGrammar:s assembler:mock];
+    lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     TDEqualObjects(lp.name, @"@start");
@@ -450,7 +450,7 @@
 
 - (void)testStartRefToLiteral {
     s = @" @start = foo; foo = 'bar';";
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
     
@@ -463,7 +463,7 @@
 
 - (void)testStartRefToLiteral3 {
     s = @" @start = foo|baz; baz = 'bat'; foo = 'bar';";
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
 
@@ -476,7 +476,7 @@
 
 - (void)testStartRefToLiteral2 {
     s = @"foo = 'bar'; baz = 'bat'; @start = (foo | baz)*;";
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
 
@@ -632,9 +632,9 @@
 
     res = [exprSeq bestMatchFor:a];
     TDNotNil(res);
-    TDEqualObjects(@"[Sequence]'foo'/ /'bar'^", [res description]);
+//    TDEqualObjects(@"[Track]'foo'/ /'bar'^", [res description]);
     PKSequence *seq = [res pop];
-    TDTrue([seq isMemberOfClass:[PKSequence class]]);
+    TDTrue([seq isKindOfClass:[PKSequence class]]);
     TDEquals((NSUInteger)2, [seq.subparsers count]);
     
     PKLiteral *c = [seq.subparsers objectAtIndex:0];
@@ -661,9 +661,9 @@
     a = [PKTokenAssembly assemblyWithTokenizer:t];
     res = [exprSeq bestMatchFor:a];
     TDNotNil(res);
-    TDEqualObjects(@"[Sequence]'foo'/ /'bar'/ /'baz'^", [res description]);
+//    TDEqualObjects(@"[Track]'foo'/ /'bar'/ /'baz'^", [res description]);
     PKSequence *seq = [res pop];
-    TDTrue([seq isMemberOfClass:[PKSequence class]]);
+    TDTrue([seq isKindOfClass:[PKSequence class]]);
     TDEquals((NSUInteger)3, [seq.subparsers count]);
     
     PKLiteral *c = [seq.subparsers objectAtIndex:0];
@@ -1216,7 +1216,7 @@
 - (void)testRubyHash {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"rubyhash" ofType:@"grammar"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    lp = [factory parserFromGrammar:s assembler:nil];
+    lp = [factory parserFromGrammar:s assembler:nil error:nil];
     
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
@@ -1237,7 +1237,7 @@
 
 - (void)testSymbolState {
 	s = @"@symbolState = 'b'; @start = ('b'|'ar')*;";
-	lp = [factory parserFromGrammar:s assembler:nil];
+	lp = [factory parserFromGrammar:s assembler:nil error:nil];
 	
 	TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);

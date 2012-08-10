@@ -100,7 +100,7 @@ static NSString * const kEBNFVariableSuffix = @"";
 
 - (void)addSymbolString:(NSString *)s toTokenizer:(PKTokenizer *)t {
     if ([s length]) {
-        NSInteger c = [s characterAtIndex:0];
+        PKUniChar c = [s characterAtIndex:0];
         [t setTokenizerState:t.symbolState from:c to:c];
         [t.symbolState add:s];
     }
@@ -395,7 +395,7 @@ static NSString * const kEBNFVariableSuffix = @"";
 
 
 - (void)parser:(PKParser *)p didMatchAssignment:(PKAssembly *)a {
-    NSLog(@"%s", _cmd);
+    NSLog(@"%s", __PRETTY_FUNCTION__);
     NSLog(@"a: %@", a);
     id val = [a pop];
     PKToken *keyTok = [a pop];

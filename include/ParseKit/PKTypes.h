@@ -12,7 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-// a UTF-16 character. signed so that it may represent -1 as well
-typedef SInt32      PKUniChar;
+// a UTF-16 character. signed so that it may include -1 (EOF) as well
+typedef SInt32 PKUniChar;
 
-#define PKEOF       (PKUniChar)-1
+#define PKEOF (PKUniChar)-1
+
+typedef double PKFloat;

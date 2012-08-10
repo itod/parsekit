@@ -110,7 +110,7 @@
     
     for (id obj in self.stack) {
         if ([obj isKindOfClass:[NSNumber class]]) { // ***this is needed for Char Assemblies
-            [s appendFormat:@"%C", [obj integerValue]];
+            [s appendFormat:@"%C", (unichar)[obj integerValue]];
         } else {
             [s appendString:[obj description]];
         }

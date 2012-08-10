@@ -169,7 +169,7 @@
     PKParserFactory *factory = [PKParserFactory factory];
     
     JSONAssembler *ass = [[[JSONAssembler alloc] init] autorelease];
-    PKParser *lp = [factory parserFromGrammar:s assembler:ass];
+    PKParser *lp = [factory parserFromGrammar:s assembler:ass error:nil];
     
     path = [[NSBundle bundleForClass:[self class]] pathForResource:@"yahoo" ofType:@"json"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
@@ -189,7 +189,7 @@
 - (void)doJavaScriptGrammarParser {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"javascript" ofType:@"grammar"];
     NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    PKParser *p = [[PKParserFactory factory] parserFromGrammar:s assembler:nil];
+    PKParser *p = [[PKParserFactory factory] parserFromGrammar:s assembler:nil error:nil];
     //PKParser *plus = [p parserNamed:@"plus"];
     
     s = @";";
@@ -202,13 +202,13 @@
 
 - (void)doProf {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"json_with_discards" ofType:@"grammar"];
-    NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    PKTokenizer *t = [PKTokenizer tokenizerWithString:s];
+    NSString *g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    PKTokenizer *t = [PKTokenizer tokenizerWithString:g];
     PKToken *eof = [PKToken EOFToken];
     PKToken *tok = nil;
     NSDate *start = [NSDate date];
     while ((tok = [t nextToken]) != eof) ;
-    CGFloat ms4tok = -([start timeIntervalSinceNow]);
+    double ms4tok = -([start timeIntervalSinceNow]);
     
     PKParserFactory *factory = [PKParserFactory factory];
     TDJsonParser *p = nil;
@@ -217,43 +217,43 @@
     
     //JSONAssembler *assembler = [[[JSONAssembler alloc] init] autorelease];
     start = [NSDate date];
-    PKParser *lp = [factory parserFromGrammar:s assembler:p];
-    CGFloat ms4grammar = -([start timeIntervalSinceNow]);
+    PKParser *lp = [factory parserFromGrammar:g assembler:p error:nil];
+    double ms4grammar = -([start timeIntervalSinceNow]);
     
     path = [[NSBundle bundleForClass:[self class]] pathForResource:@"yahoo" ofType:@"json"];
-    s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     
     start = [NSDate date];
-    PKAssembly *a = [PKTokenAssembly assemblyWithString:s];
+    PKAssembly *a = [PKTokenAssembly assemblyWithString:g];
     a = [lp completeMatchFor:a];
-    CGFloat ms4json = -([start timeIntervalSinceNow]);
+    double ms4json = -([start timeIntervalSinceNow]);
 
     PKReleaseSubparserTree(lp);
     
     p = [[TDJsonParser alloc] initWithIntentToAssemble:NO];
     start = [NSDate date];
-    id res = [p parse:s];
-    CGFloat ms4json2 = -([start timeIntervalSinceNow]);
+    id res = [p parse:g];
+    double ms4json2 = -([start timeIntervalSinceNow]);
     [p release];
     
     p = [[TDJsonParser alloc] initWithIntentToAssemble:YES];
     start = [NSDate date];
-    res = [p parse:s];
-    CGFloat ms4json3 = -([start timeIntervalSinceNow]);
+    res = [p parse:g];
+    double ms4json3 = -([start timeIntervalSinceNow]);
     [p release];
     
     id fp = [[[TDFastJsonParser alloc] init] autorelease];
     start = [NSDate date];
-    res = [fp parse:s];
-    CGFloat ms4json4 = -([start timeIntervalSinceNow]);
+    res = [fp parse:g];
+    double ms4json4 = -([start timeIntervalSinceNow]);
     
     id attrs = [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSFont fontWithName:@"Monaco" size:14.], NSFontAttributeName,
                 [NSColor whiteColor], NSForegroundColorAttributeName,
                 nil];
 
-    s = [NSString stringWithFormat:@"tokenization: %f \n\ngrammar parse: %f sec\n\nlp json parse: %f sec\n\np json parse (not assembled): %f sec\n\np json parse (assembled): %f sec\n\nfast json parse (assembled): %f sec\n\n %f", ms4tok, ms4grammar, ms4json, ms4json2, ms4json3, ms4json4, (ms4json3/ms4json4)];
-    self.displayString = [[[NSMutableAttributedString alloc] initWithString:s attributes:attrs] autorelease];
+    g = [NSString stringWithFormat:@"tokenization: %f \n\ngrammar parse: %f sec\n\nlp json parse: %f sec\n\np json parse (not assembled): %f sec\n\np json parse (assembled): %f sec\n\nfast json parse (assembled): %f sec\n\n %f", ms4tok, ms4grammar, ms4json, ms4json2, ms4json3, ms4json4, (ms4json3/ms4json4)];
+    self.displayString = [[[NSMutableAttributedString alloc] initWithString:g attributes:attrs] autorelease];
 }
 
 
@@ -267,7 +267,7 @@
 
     NSDate *start = [NSDate date];    
     while ((tok = [t nextToken]) != eof) ;
-    CGFloat secs = -([start timeIntervalSinceNow]);
+    double secs = -([start timeIntervalSinceNow]);
     
     id attrs = [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSFont fontWithName:@"Monaco" size:14.], NSFontAttributeName,
@@ -285,7 +285,7 @@
     PKParserFactory *factory = [PKParserFactory factory];
     
     TDMiniCSSAssembler *assembler = [[[TDMiniCSSAssembler alloc] init] autorelease];
-    PKParser *lp = [factory parserFromGrammar:s assembler:assembler];
+    PKParser *lp = [factory parserFromGrammar:s assembler:assembler error:nil];
     s = @"foo { color:rgb(111.0, 99.0, 255.0); }";
     PKAssembly *a = [PKTokenAssembly assemblyWithString:s];
     a = [lp completeMatchFor:a];
@@ -300,7 +300,7 @@
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"mini_css" ofType:@"grammar"];
     NSString *grammarString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     TDMiniCSSAssembler *cssAssembler = [[[TDMiniCSSAssembler alloc] init] autorelease];
-    PKParser *cssParser = [factory parserFromGrammar:grammarString assembler:cssAssembler];
+    PKParser *cssParser = [factory parserFromGrammar:grammarString assembler:cssAssembler error:nil];
     
     // parse CSS
     path = [[NSBundle bundleForClass:[self class]] pathForResource:@"json" ofType:@"css"];
@@ -318,7 +318,7 @@
 
     // give it the attrs from CSS
     genericAssembler.attributes = attrs;
-    PKParser *jsonParser = [factory parserFromGrammar:grammarString assembler:genericAssembler];
+    PKParser *jsonParser = [factory parserFromGrammar:grammarString assembler:genericAssembler error:nil];
     
     // parse JSON
     path = [[NSBundle bundleForClass:[self class]] pathForResource:@"yahoo" ofType:@"json"];
@@ -371,7 +371,7 @@
 - (void)doRubyHashParser {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"rubyhash" ofType:@"grammar"];
     NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    PKParser *lp = [[PKParserFactory factory] parserFromGrammar:s assembler:nil];
+    PKParser *lp = [[PKParserFactory factory] parserFromGrammar:s assembler:nil error:nil];
     
     s = @"{\"brand\"=>{\"name\"=>\"something\","
     @"\"logo\"=>#<File:/var/folders/RK/RK1vsZigGhijmL6ObznDJk+++TI/-Tmp-/CGI66145-4>,"
@@ -379,7 +379,7 @@
     @"\"authenticity_token\"=>\"43a94d60304a7fb13a4ff61a5960461ce714e92b\","
     @"\"action\"=>\"create\", \"controller\"=>\"admin/brands\"}";
     
-    NSLog(@"%@", [lp parse:s]);
+    NSLog(@"%@", [lp parse:s error:nil]);
 }
 
 
@@ -409,7 +409,7 @@
     
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"xpath1_0" ofType:@"grammar"];
     NSString *g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    PKParser *p = [[PKParserFactory factory] parserFromGrammar:g assembler:nil];
+    PKParser *p = [[PKParserFactory factory] parserFromGrammar:g assembler:nil error:nil];
     PKTokenizer *t = p.tokenizer;
     t.string = @"foo";
     //PKAssembly *res = [p completeMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
@@ -425,12 +425,12 @@
     
 //    TDTrue(tok.isSymbol);
 //    TDEqualObjects(tok.stringValue, @"-");    
-//    TDEquals((CGFloat)0.0, tok.floatValue);
+//    TDEquals((double)0.0, tok.floatValue);
     
     tok = [t nextToken];
 //    TDTrue(tok.isSymbol);
 //    TDEqualObjects(tok.stringValue, @"(");
-//    TDEquals((CGFloat)0.0, tok.floatValue);
+//    TDEquals((double)0.0, tok.floatValue);
 }
 
 
@@ -477,13 +477,59 @@
 
 - (void)doTestGrammar {
     
-	NSString *g = @"@start = sentence+;sentence = adjectives 'beer' '.';adjectives = cold adjective*;adjective = cold | freezing;cold = 'cold';freezing = 'freezing';";
-    PKParser *p = [[PKParserFactory factory] parserFromGrammar:g assembler:self];
-    NSString *s = @"cold freezing beer.";
-    PKAssembly *res = [p completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+//    NSString *path = [[NSBundle mainBundle] pathForResource:@"date" ofType:@"grammar"];
+    NSString *path = [@"~/Desktop/grammar.txt" stringByExpandingTildeInPath];
+    NSString *g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    PKParser *p = [[PKParserFactory factory] parserFromGrammar:g assembler:self error:nil];
+
+    path = [@"~/Desktop/input.txt" stringByExpandingTildeInPath];
+    NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    
+    PKAssembly *res = [p parse:s error:nil];
+//    p.tokenizer.string = s;
+//    PKAssembly *res = [p bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:p.tokenizer]];
+    NSLog(@"p %@", p);
+    NSLog(@"res %@", res);
+    
     res = res;
 }
 
+
+- (void)parser:(PKParser *)p didMatchExpr:(PKAssembly *)a {
+    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
+    NSArray *toks = [a objectsAbove:nil];
+    
+    double total = 0.0;
+    for (PKToken *tok in toks) {
+        double n = tok.floatValue;
+        total += n;
+    }
+    
+    a.target = [NSNumber numberWithDouble:total];
+}
+
+//- (void)parser:(PKParser *)p didMatchTerm:(PKAssembly *)a {
+//    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
+////    PKToken *tok = [a pop];
+//}
+
+- (void)parser:(PKParser *)p didMatchYear:(PKAssembly *)a {
+    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
+}
+
+- (void)parser:(PKParser *)p didMatchDate:(PKAssembly *)a {
+    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
+    
+}
+
+- (void)parser:(PKParser *)p didMatchPassthru:(PKAssembly *)a {
+    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
+    
+}
+
+- (void)parser:(PKParser *)p didMatchTree:(PKAssembly *)a {
+    
+}
 
 
 - (IBAction)run:(id)sender {
@@ -499,7 +545,7 @@
 
 //    [self doJSParser];
     
-//    [self doProf];
+    //    [self doProf];
 
     //[self doJavaScriptGrammarParser];
     

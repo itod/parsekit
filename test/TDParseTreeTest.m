@@ -27,7 +27,7 @@
         @"expr = addExpr;"
         @"addExpr = atom (('+'|'-') atom)*;"
         @"atom = Number;";
-    lp = [factory parserFromGrammar:g assembler:as preassembler:as];
+    lp = [factory parserFromGrammar:g assembler:as preassembler:as error:nil];
     
     lp.tokenizer.string = @"1 + 2";
     a = [PKTokenAssembly assemblyWithTokenizer:lp.tokenizer];
@@ -76,7 +76,7 @@
 - (void)testFoo {
     g = @"@start = expr;"
     @"expr = Word+;";
-    lp = [factory parserFromGrammar:g assembler:as preassembler:as];
+    lp = [factory parserFromGrammar:g assembler:as preassembler:as error:nil];
     
     lp.tokenizer.string = @"foo";
     a = [PKTokenAssembly assemblyWithTokenizer:lp.tokenizer];
@@ -102,7 +102,7 @@
 - (void)testFooBar {
     g = @"@start = expr;"
     @"expr = Word+;";
-    lp = [factory parserFromGrammar:g assembler:as preassembler:as];
+    lp = [factory parserFromGrammar:g assembler:as preassembler:as error:nil];
     
     lp.tokenizer.string = @"foo bar";
     a = [PKTokenAssembly assemblyWithTokenizer:lp.tokenizer];
@@ -134,7 +134,7 @@
     @"array = '[' Number (commaNumber)* ']';"
     @"commaNumber = ',' Number;";
     
-    lp = [factory parserFromGrammar:g assembler:as preassembler:as];
+    lp = [factory parserFromGrammar:g assembler:as preassembler:as error:nil];
     
     lp.tokenizer.string = @"[1,2]";
     a = [PKTokenAssembly assemblyWithTokenizer:lp.tokenizer];

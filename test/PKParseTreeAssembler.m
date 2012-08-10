@@ -92,9 +92,9 @@
     
     if (!ruleName) {
         NSUInteger prefixLen = [prefix length];
-        NSInteger c = ((NSInteger)[selName characterAtIndex:prefixLen]) + 32; // lowercase
+        PKUniChar c = (PKUniChar)[[selName lowercaseString] characterAtIndex:prefixLen];
         NSRange r = NSMakeRange(prefixLen + 1, [selName length] - (prefixLen + [suffix length] + 1 /*:*/));
-        ruleName = [NSString stringWithFormat:@"%C%@", c, [selName substringWithRange:r]];
+        ruleName = [NSString stringWithFormat:@"%C%@", (unichar)c, [selName substringWithRange:r]];
         [ruleNames setObject:ruleName forKey:selName];
     }
     
@@ -103,6 +103,7 @@
 
 
 - (void)willMatchRuleNamed:(NSString *)name assembly:(PKAssembly *)a {
+    //NSLog(@"%s %@ %@", __PRETTY_FUNCTION__, name, a);
     PKParseTree *current = [self currentFrom:a];
     [self parser:nil didMatchToken:a];
     current = [current addChildRule:name];
@@ -111,6 +112,7 @@
 
 
 - (void)didMatchRuleNamed:(NSString *)name assembly:(PKAssembly *)a {
+    //NSLog(@"%s %@ %@", __PRETTY_FUNCTION__, name, a);
     PKParseTree *current = [self currentFrom:a];
 
     NSArray *origChildren = [[[current children] mutableCopy] autorelease];
@@ -161,6 +163,7 @@
 
 
 - (void)parser:(PKParser *)p didMatchToken:(PKAssembly *)a {
+    //NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
     PKParseTree *current = [self currentFrom:a];
     if ([current isMatched]) return;
     

@@ -210,7 +210,7 @@
 //    NSLog(@"a: %@", a);
     id obj = [a pop];
     NSAssert([obj isKindOfClass:[NSNumber class]], @"");
-    NSInteger c = [obj integerValue];
+    PKUniChar c = (PKUniChar)[obj integerValue];
     [a push:[PKSpecificChar specificCharWithChar:c]];
 }
 

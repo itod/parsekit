@@ -14,8 +14,11 @@
 
 #import "TDTestScaffold.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
+
 #define RUN_ALL_TEST_CASES 1
-#define SOLO_TEST_CASE @"TDParserFactoryTest3"
+#define SOLO_TEST_CASE @"TDNumberStateTest"
 
 @interface SenTestSuite (TDAdditions)
 - (void)addSuitesForClassNames:(NSArray *)classNames;
@@ -158,5 +161,7 @@ SenTestSuite *TDParserFactoryTestSuite() {
         [self addTest:suite];
     }
 }
+
+#pragma clang diagnostic pop
 
 @end

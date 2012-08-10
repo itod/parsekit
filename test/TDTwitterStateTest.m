@@ -31,7 +31,7 @@
     
     TDTrue(tok.isTwitter);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -45,17 +45,17 @@
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"(");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isTwitter);
     TDEqualObjects(tok.stringValue, @"@iTod");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @")");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -69,12 +69,12 @@
     tok = [t nextToken];
     TDTrue(tok.isTwitter);
     TDEqualObjects(tok.stringValue, @"@iTod");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isQuotedString);
     TDEqualObjects(tok.stringValue, @"'s");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -89,17 +89,17 @@
 //    tok = [t nextToken];
 //    TDTrue(tok.isTwitter);
 //    TDEqualObjects(tok.stringValue, @"@iTod");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDTrue(tok.isSymbol);
 //    TDEqualObjects(tok.stringValue, @"'");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDTrue(tok.isWord);
 //    TDEqualObjects(tok.stringValue, @"s");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDEqualObjects(tok, [PKToken EOFToken]);
@@ -113,32 +113,32 @@
 //    tok = [t nextToken];
 //    TDTrue(tok.isSymbol);
 //    TDEqualObjects(tok.stringValue, @"(");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDTrue(tok.isWord);
 //    TDEqualObjects(tok.stringValue, @"something");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDTrue(tok.isWord);
 //    TDEqualObjects(tok.stringValue, @"like");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDTrue(tok.isEmail);
 //    TDEqualObjects(tok.stringValue, @"todd@gmail.com");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDTrue(tok.isSymbol);
 //    TDEqualObjects(tok.stringValue, @".");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDTrue(tok.isSymbol);
 //    TDEqualObjects(tok.stringValue, @")");
-//    TDEquals(tok.floatValue, (CGFloat)0.0);
+//    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
 //    TDEqualObjects(tok, [PKToken EOFToken]);

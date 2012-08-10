@@ -34,7 +34,7 @@
 
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"nspredicate" ofType:@"grammar"];
         NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-        self.parser = [[PKParserFactory factory] parserFromGrammar:s assembler:self];
+        self.parser = [[PKParserFactory factory] parserFromGrammar:s assembler:self error:nil];
     }
     return self;
 }
@@ -49,7 +49,7 @@
 
 
 - (BOOL)evaluate:(NSString *)s {
-    id result = [parser parse:s];
+    id result = [parser parse:s error:nil];
     return [result boolValue];
 }
 
@@ -61,9 +61,9 @@
 
 
 - (void)parser:(PKParser *)p didMatchNumComparisonPredicate:(PKAssembly *)a {
-    CGFloat n2 = [(PKToken *)[a pop] floatValue];
+    PKFloat n2 = [(PKToken *)[a pop] floatValue];
     NSString *op = [[a pop] stringValue];
-    CGFloat n1 = [(PKToken *)[a pop] floatValue];
+    PKFloat n1 = [(PKToken *)[a pop] floatValue];
     
     BOOL result = NO;
     if ([op isEqualToString:@"<"]) {

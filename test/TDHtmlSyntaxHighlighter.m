@@ -246,7 +246,7 @@
     // handle case where no elements were encountered (plain text basically)
     if (![highlightedString length]) {
         PKToken *tok = nil;
-        while (tok = [self pop]) {
+        while ((tok = [self pop])) {
             NSAttributedString *as = [[[NSAttributedString alloc] initWithString:tok.stringValue attributes:textAttributes] autorelease];
             [highlightedString appendAttributedString:as];
         }
@@ -294,7 +294,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endCommentToken]) {
             break;
         } else {
@@ -320,7 +320,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endCDATAToken]) {
             break;
         } else {
@@ -346,7 +346,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endPIToken]) {
             break;
         } else {
@@ -372,7 +372,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:gtToken]) {
             break;
         } else {
@@ -394,7 +394,7 @@
     NSAttributedString *as = nil;
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endScriptToken]) {
             break;
         } else {
@@ -470,7 +470,7 @@
 - (void)didMatchEndTag:(NSEnumerator *)e {
     // consume tagName to ">"
     PKToken *tok = nil; 
-    while (tok = [e nextObject]) {
+    while ((tok = [e nextObject])) {
         NSAttributedString *as = [[[NSAttributedString alloc] initWithString:tok.stringValue attributes:tagAttributes] autorelease];
         [highlightedString appendAttributedString:as];
     }

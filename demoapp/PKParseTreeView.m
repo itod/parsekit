@@ -27,8 +27,8 @@
 - (void)drawParentNode:(PKParseTree *)n atPoint:(NSPoint)p;
 - (void)drawLeafNode:(PKTokenNode *)n atPoint:(NSPoint)p;
 
-- (CGFloat)widthForNode:(PKParseTree *)n;
-- (CGFloat)depthForNode:(PKParseTree *)n;
+- (PKFloat)widthForNode:(PKParseTree *)n;
+- (PKFloat)depthForNode:(PKParseTree *)n;
 - (NSString *)labelFromNode:(PKParseTree *)n;
 - (void)drawLabel:(NSString *)label atPoint:(NSPoint)p;
 @end
@@ -38,7 +38,7 @@
 - (id)initWithFrame:(NSRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.labelAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
-                           [NSFont boldSystemFontOfSize:10], NSFontAttributeName,
+                           [NSFont boldSystemFontOfSize:10.0], NSFontAttributeName,
                            [NSColor blackColor], NSForegroundColorAttributeName,
                            nil];
     }
@@ -61,13 +61,13 @@
 - (void)drawParseTree:(PKParseTree *)t {
     self.parseTree = t;
     
-    CGFloat w = [self widthForNode:parseTree] * CELL_WIDTH;
-    CGFloat h = [self depthForNode:parseTree] * ROW_HEIGHT + 120;
+    PKFloat w = [self widthForNode:parseTree] * CELL_WIDTH;
+    PKFloat h = [self depthForNode:parseTree] * ROW_HEIGHT + 120.0;
     
     NSSize minSize = [[self superview] bounds].size;
     w = w < minSize.width ? minSize.width : w;
     h = h < minSize.height ? minSize.height : h;
-    [self setFrame:NSMakeRect(0, 0, w, h)];
+    [self setFrame:NSMakeRect(0.0, 0.0, w, h)];
     
     [self setNeedsDisplay:YES];
 }
@@ -77,7 +77,7 @@
     [[NSColor whiteColor] set];
     NSRectFill(r);
     
-    [self drawTree:parseTree atPoint:NSMakePoint(r.size.width / 2, 20)];
+    [self drawTree:parseTree atPoint:NSMakePoint(r.size.width / 2.0, 20.0)];
 }
 
 
@@ -98,8 +98,8 @@
     NSUInteger c = [[n children] count];
 
     // get total width
-    CGFloat widths[c];
-    CGFloat totalWidth = 0;
+    PKFloat widths[c];
+    PKFloat totalWidth = 0.0;
     for (PKParseTree *child in [n children]) {
         widths[i] = [self widthForNode:child] * CELL_WIDTH;
         totalWidth += widths[i++];
@@ -112,10 +112,10 @@
         points[0] = NSMakePoint(p.x, p.y + ROW_HEIGHT);
         [self drawTree:[[n children] objectAtIndex:0] atPoint:points[0]];
     } else {
-        CGFloat x = 0;
-        CGFloat buff = 0;
+        PKFloat x = 0.0;
+        PKFloat buff = 0.0;
         for (i = 0; i < c; i++) {
-            x = p.x - (totalWidth/2) + buff + widths[i]/2;
+            x = p.x - (totalWidth / 2.0) + buff + (widths[i] / 2.0);
             buff += widths[i];
 
             points[i] = NSMakePoint(x, p.y + ROW_HEIGHT);
@@ -128,8 +128,8 @@
     
     for (i = 0; i < c; i++) {
         CGContextBeginPath(ctx);
-        CGContextMoveToPoint(ctx, p.x, p.y + 15);
-        CGContextAddLineToPoint(ctx, points[i].x, points[i].y - 4);
+        CGContextMoveToPoint(ctx, p.x, p.y + 15.0);
+        CGContextAddLineToPoint(ctx, points[i].x, points[i].y - 4.0);
         CGContextClosePath(ctx);
         CGContextStrokePath(ctx);
     }
@@ -141,22 +141,22 @@
 }
 
 
-- (CGFloat)widthForNode:(PKParseTree *)n {
-    CGFloat res = 0;
+- (PKFloat)widthForNode:(PKParseTree *)n {
+    PKFloat res = 0.0;
     for (PKParseTree *child in [n children]) {
         res += [self widthForNode:child];
     }
-    return res ? res : 1;
+    return res ? res : 1.0;
 }
     
     
-- (CGFloat)depthForNode:(PKParseTree *)n {
-    CGFloat res = 0;
+- (PKFloat)depthForNode:(PKParseTree *)n {
+    PKFloat res = 0.0;
     for (PKParseTree *child in [n children]) {
-        CGFloat n = [self depthForNode:child];
+        PKFloat n = [self depthForNode:child];
         res = n > res ? n : res;
     }
-    return res + 1;
+    return res + 1.0;
 }
 
 
@@ -173,13 +173,13 @@
 
 - (void)drawLabel:(NSString *)label atPoint:(NSPoint)p {
     NSSize labelSize = [label sizeWithAttributes:labelAttrs];
-    NSRect maxRect = NSMakeRect(p.x - CELL_WIDTH / 2, p.y, CELL_WIDTH, labelSize.height);
+    NSRect maxRect = NSMakeRect(p.x - CELL_WIDTH / 2.0, p.y, CELL_WIDTH, labelSize.height);
     
     if (!NSContainsRect(maxRect, NSMakeRect(maxRect.origin.x, maxRect.origin.y, labelSize.width, labelSize.height))) {
         labelSize = maxRect.size;
     }
     
-    p.x -= labelSize.width / 2;
+    p.x -= labelSize.width / 2.0;
     NSRect r = NSMakeRect(p.x, p.y, labelSize.width, labelSize.height);
     NSUInteger opts = NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin;
     [label drawWithRect:r options:opts attributes:labelAttrs];

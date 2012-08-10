@@ -5,7 +5,7 @@
 <h1>ParseKit Documentation</h1>
 <div id="content">
 <h2 id="home-title">ParseKit</h2>
-<p>ParseKit is a Mac OS X Framework written by Todd Ditchendorf in Objective-C 2.0 and released under the MIT Open Source License. ParseKit is suitable for use on Mac OS X Leopard, Snow Leopard or <a href="iphone.html">iPhone OS</a>. ParseKit is an Objective-C implementation of the tools described in <a href="http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622" title="Amazon.com: Building Parsers With Java(TM): Steven John Metsker: Books">"Building Parsers with Java"</a> by Steven John Metsker. ParseKit includes additional features beyond the designs from the book and also some changes to match common Cocoa/Objective-C conventions. These changes are relatively superficial, however, and Metsker's book is the best documentation available for ParseKit.</p>
+<p>ParseKit is a Mac OS X Framework written by Todd Ditchendorf in Objective-C 2.0 and released under the MIT Open Source License. ParseKit is suitable for use on Mac OS X Leopard and later or <a href="iphone.html">iOS</a>. ParseKit is an Objective-C implementation of the tools described in <a href="http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622" title="Amazon.com: Building Parsers With Java(TM): Steven John Metsker: Books">"Building Parsers with Java"</a> by Steven John Metsker. ParseKit includes additional features beyond the designs from the book and also some changes to match common Cocoa/Objective-C conventions. These changes are relatively superficial, however, and Metsker's book is the best documentation available for ParseKit.</p>
 <p>The ParseKit Framework offers 3 basic services of general interest to Cocoa developers:</p>
 
 <ol>
@@ -17,7 +17,7 @@
 
 <p>More documentation:</p>
 <ul>
-    <li><a href="iphone.html">Instructions for including ParseKit in your iPhone OS app</a></li>
+    <li><a href="iphone.html">Instructions for including ParseKit in your iOS app</a></li>
 	<li><a href="doxygen/">Doxygen-generated Header Docs</a></li>
 </ul>
 
@@ -33,6 +33,7 @@
 	<li><a href="http://fluidapp.com">Fluid</a>: Site-Specific Browser for Mac OS X</li>
 	<li><a href="http://cruzapp.com">Cruz</a>: Social Browser for Mac OS X</li>
 	<li><a href="http://fakeapp.com">Fake</a>: A Recordable/Automated Browser for Mac OS X</li>
+	<li><a href="http://shapesapp.com">Shapes</a>: Simple, Elegant Diagramming tool for Mac OS X</li>
 	<li><a href="http://parsekit.com/okudakit">OkudaKit</a>: Syntax Highlighting Framework for Mac OS X</li>
 	<li><a href="http://tr.im/exedore">Exedore</a>: XPath 1.0 implemented in Cocoa (ported from <a href="http://saxonica.com/">Saxon</a>)</li>
 </ul>
@@ -98,27 +99,27 @@ while ((tok = [t nextToken]) != eof) {
 
 <div class="code">
 <pre>
-NSLog(@" (%@)", [tok debugDescription]);
+NSLog(@"%@", [tok debugDescription]);
 </pre>
 </div>
 
 <p>and each token's type will be printed as well:</p>
 
 <div class="code">
-<pre> &lt;Quoted String «"It's 123 blast-off!"»>
- &lt;Symbol «,»>
- &lt;Word «she»>
- &lt;Word «said»>
- &lt;Symbol «,»>
- &lt;Word «and»>
- &lt;Symbol «&lt;=»>
- &lt;Number «3.5»>
- &lt;Quoted String «'ticks'»>
- &lt;Word «later»>
- &lt;Symbol «,»>
- &lt;Word «it's»>
- &lt;Word «blast-off»>
- &lt;Symbol «!»>
+<pre> &lt;Quoted String &laquo;"It's 123 blast-off!"&raquo;>
+ &lt;Symbol &laquo;,&raquo;>
+ &lt;Word &laquo;she&raquo;>
+ &lt;Word &laquo;said&raquo;>
+ &lt;Symbol &laquo;,&raquo;>
+ &lt;Word &laquo;and&raquo;>
+ &lt;Symbol &laquo;&lt;=&raquo;>
+ &lt;Number &laquo;3.5&raquo;>
+ &lt;Quoted String &laquo;'ticks'&raquo;>
+ &lt;Word &laquo;later&raquo;>
+ &lt;Symbol &laquo;,&raquo;>
+ &lt;Word &laquo;it's&raquo;>
+ &lt;Word &laquo;blast-off&raquo;>
+ &lt;Symbol &laquo;!&raquo;>
 </pre>
 </div>
 

@@ -62,7 +62,7 @@
 
 
 - (void)awakeFromNib {
-    NSString *s = [NSString stringWithFormat:@"%C", 0xab];
+    NSString *s = [NSString stringWithFormat:@"%C", (unichar)0xab];
     NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:s];
     [tokenField setTokenizingCharacterSet:set];
 }
@@ -104,7 +104,7 @@
 - (void)done {
     NSMutableString *s = [NSMutableString string];
     for (PKToken *tok in toks) {
-        [s appendFormat:@"%@ %C", tok.stringValue, 0xab];
+        [s appendFormat:@"%@ %C", tok.stringValue, (unichar)0xab];
     }
     self.tokString = [[s copy] autorelease];
     

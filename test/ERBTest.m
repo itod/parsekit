@@ -55,7 +55,7 @@
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"erb" ofType:@"grammar"];
     g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     
-    lp = [[PKParserFactory factory] parserFromGrammar:g assembler:[[[ERBAssembler alloc] init] autorelease]];
+    lp = [[PKParserFactory factory] parserFromGrammar:g assembler:[[[ERBAssembler alloc] init] autorelease] error:nil];
     t = lp.tokenizer;
 //    startPrintMarker = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"<@=" floatValue:0];
 }

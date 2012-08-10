@@ -62,7 +62,7 @@
 - (PKToken *)nextTokenFromReader:(PKReader *)r startingWith:(PKUniChar)cin tokenizer:(PKTokenizer *)t {
     [self resetWithReader:r];
     
-    NSInteger c = cin;
+    PKUniChar c = cin;
     do {
         [self append:c];
         c = [r read];

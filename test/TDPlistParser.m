@@ -255,7 +255,7 @@ static NSString *kTDPlistNullString = @"<null>";
 - (void)parser:(PKParser *)p didMatchDict:(PKAssembly *)a {
     NSArray *objs = [a objectsAbove:self.curly];
     NSInteger count = [objs count];
-    NSAssert1(0 == count % 2, @"in -%s, the assembly's stack's count should be a multiple of 2", _cmd);
+    NSAssert1(0 == count % 2, @"in -%s, the assembly's stack's count should be a multiple of 2", __PRETTY_FUNCTION__);
 
     NSMutableDictionary *res = [NSMutableDictionary dictionaryWithCapacity:count / 2.];
     if (count) {

@@ -102,7 +102,7 @@
 
 - (NSString *)nextWithFirst:(PKUniChar)c rest:(PKReader *)r parent:(PKSymbolNode *)p {
     NSParameterAssert(p);
-    NSString *result = [NSString stringWithFormat:@"%C", c];
+    NSString *result = [NSString stringWithFormat:@"%C", (unichar)c];
 
     // this also works.
 //    NSString *result = [[[NSString alloc] initWithCharacters:(const unichar *)&c length:1] autorelease];

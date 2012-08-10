@@ -39,8 +39,8 @@ typedef enum {
 
 + (PKParserFactory *)factory;
 
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a;
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa;
+- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a error:(NSError **)outError;
+- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa error:(NSError **)outError;
 
 - (PKCollectionParser *)exprParser;
 

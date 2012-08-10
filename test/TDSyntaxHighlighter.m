@@ -81,7 +81,7 @@
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"mini_css" ofType:@"grammar"];
         NSString *grammarString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 
-        self.miniCSSParser = [self.parserFactory parserFromGrammar:grammarString assembler:self.miniCSSAssembler];
+        self.miniCSSParser = [self.parserFactory parserFromGrammar:grammarString assembler:self.miniCSSAssembler error:nil];
     } 
     return miniCSSParser;
 }
@@ -130,7 +130,7 @@
 
         // generate a parser for the requested grammar
         parserFactory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnTerminals;
-        parser = [self.parserFactory parserFromGrammar:grammarString assembler:self.genericAssembler];
+        parser = [self.parserFactory parserFromGrammar:grammarString assembler:self.genericAssembler error:nil];
         
         if (cacheParsers) {
             [self.parserCache setObject:parser forKey:grammarName];

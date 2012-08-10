@@ -91,8 +91,8 @@
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     PKParseTreeAssembler *as = [[[PKParseTreeAssembler alloc] init] autorelease];
-    PKParser *p = [[PKParserFactory factory] parserFromGrammar:grammarString assembler:as preassembler:as];
-    PKParseTree *tr = [p parse:inString];
+    PKParser *p = [[PKParserFactory factory] parserFromGrammar:grammarString assembler:as preassembler:as error:nil];
+    PKParseTree *tr = [p parse:inString error:nil];
     [parseTreeView drawParseTree:tr];
     
     // release

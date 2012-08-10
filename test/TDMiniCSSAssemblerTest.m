@@ -21,7 +21,7 @@
     grammarString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     ass = [[TDMiniCSSAssembler alloc] init];
     factory = [PKParserFactory factory];
-    lp = [factory parserFromGrammar:grammarString assembler:ass];
+    lp = [factory parserFromGrammar:grammarString assembler:ass error:nil];
 }
 
 

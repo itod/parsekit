@@ -27,46 +27,10 @@ static PKTokenEOF *EOFToken = nil;
 + (PKTokenEOF *)instance {
     @synchronized(self) {
         if (!EOFToken) {
-            [[self alloc] init]; // assignment not done here
+            EOFToken = [[self alloc] init];
         }
     }
     return EOFToken;
-}
-
-
-+ (id)allocWithZone:(NSZone *)zone {
-    @synchronized(self) {
-        if (!EOFToken) {
-            EOFToken = [super allocWithZone:zone];
-            return EOFToken;  // assignment and return on first allocation
-        }
-    }
-    return nil; //on subsequent allocation attempts return nil
-}
-
-
-- (id)copyWithZone:(NSZone *)zone {
-    return self;
-}
-
-
-- (id)retain {
-    return self;
-}
-
-
-- (oneway void)release {
-    // do nothing
-}
-
-
-- (id)autorelease {
-    return self;
-}
-
-
-- (NSUInteger)retainCount {
-    return UINT_MAX; // denotes an object that cannot be released
 }
 
 
@@ -103,7 +67,7 @@ static PKTokenEOF *EOFToken = nil;
 @property (nonatomic, readwrite, getter=isHashtag) BOOL hashtag;
 #endif
 
-@property (nonatomic, readwrite) CGFloat floatValue;
+@property (nonatomic, readwrite) PKFloat floatValue;
 @property (nonatomic, readwrite, copy) NSString *stringValue;
 @property (nonatomic, readwrite) PKTokenType tokenType;
 @property (nonatomic, readwrite, copy) id value;
@@ -118,13 +82,13 @@ static PKTokenEOF *EOFToken = nil;
 }
 
 
-+ (PKToken *)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n {
++ (PKToken *)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(PKFloat)n {
     return [[[self alloc] initWithTokenType:t stringValue:s floatValue:n] autorelease];
 }
 
 
 // designated initializer
-- (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n {
+- (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(PKFloat)n {
     //NSParameterAssert(s);
     if (self = [super init]) {
         self.tokenType = t;
@@ -244,7 +208,7 @@ static PKTokenEOF *EOFToken = nil;
         typeString = @"Hashtag";
 #endif
     }
-    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, 0x00AB, self.value, 0x00BB];
+    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, (unichar)0x00AB, self.value, (unichar)0x00BB];
 }
 
 

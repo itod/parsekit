@@ -172,7 +172,7 @@
 
 // [4] Step ::=       AxisSpecifier NodeTest Predicate* | AbbreviatedStep    
 - (PKCollectionParser *)step {
-    NSLog(@"%s", _cmd);
+    NSLog(@"%s", __PRETTY_FUNCTION__);
     if (!step) {
         self.step = [PKAlternation alternation];
         step.name = @"step";

@@ -28,7 +28,7 @@
 
 
 - (id)initWithString:(NSString *)s {
-    NSLog(@"%s", _cmd);
+    NSLog(@"%s", __PRETTY_FUNCTION__);
     self = [super initWithString:s];
     if (self) {
         self.tok = [TDXmlToken tokenWithTokenType:TDTT_XML_TEXT stringValue:s];
@@ -45,7 +45,7 @@
 
 - (BOOL)qualifies:(id)obj {
     TDXmlToken *other = (TDXmlToken *)obj;
-    NSLog(@"%s obj: %@ isText: %d", _cmd, obj, other.isText);
+    NSLog(@"%s obj: %@ isText: %d", __PRETTY_FUNCTION__, obj, other.isText);
     
     if ([string length]) {
         return [tok isEqual:other];
