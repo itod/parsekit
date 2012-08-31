@@ -25,17 +25,4 @@ build/
 
 #SVN
 .svn/
-.svn/*
-*.svn-base
-
-include/.svn/all-wcprops
-
-include/.svn/entries
-
-include/ParseKit/.svn/all-wcprops
-
-include/ParseKit/.svn/entries
-
-*.svn-base
-
 *.svn-base
