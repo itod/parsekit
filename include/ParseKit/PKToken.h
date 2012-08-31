@@ -39,7 +39,7 @@ typedef enum {
     PKTokenTypeAny,
     PKTokenTypeURL,
     PKTokenTypeEmail,
-#if PLATFORM(TWITTER_STATE)
+#if PK_PLATFORM_TWITTER_STATE
     PKTokenTypeTwitter,
     PKTokenTypeHashtag,
 #endif
@@ -64,7 +64,7 @@ typedef enum {
     BOOL delimitedString;
     BOOL URL;
     BOOL email;
-#if PLATFORM(TWITTER_STATE)
+#if PK_PLATFORM_TWITTER_STATE
     BOOL twitter;
     BOOL hashtag;
 #endif
@@ -165,7 +165,7 @@ typedef enum {
 */
 @property (nonatomic, readonly, getter=isEmail) BOOL email;
 
-#if PLATFORM(TWITTER_STATE)
+#if PK_PLATFORM_TWITTER_STATE
 /*!
     @property   twitter
     @brief      True if this token is an twitter handle. getter=isTwitter

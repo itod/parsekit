@@ -16,7 +16,7 @@
 
 @implementation XPathParserGrammarTest
 
-#if PLATFORM(TWITTER_STATE)
+#if PK_PLATFORM_TWITTER_STATE
 #else
 - (void)setUp {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"xpath1_0" ofType:@"grammar"];

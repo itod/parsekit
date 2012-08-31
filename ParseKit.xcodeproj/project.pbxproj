@@ -1321,6 +1321,7 @@
 			isa = PBXGroup;
 			children = (
 				D34BAD630FF9C6AE00D7773A /* ParseKit_Prefix.pch */,
+				D3FDC8DB0FFC51F200F1F797 /* ParseKitMobile_Prefix.pch */,
 				D3C221900FFE8B8C004514FE /* ParseKit.h */,
 				D3C221910FFE8B8C004514FE /* PKTypes.h */,
 				D3C7D8710A411F6B005DD154 /* io */,
@@ -1750,7 +1751,6 @@
 		D380BA950F0F1C450009EC13 /* JSParseKit Framework */ = {
 			isa = PBXGroup;
 			children = (
-				D3FDC8DB0FFC51F200F1F797 /* ParseKitMobile_Prefix.pch */,
 				D34BB04E0FF9EC4E00D7773A /* JSParseKit-Info.plist */,
 				D34BB0660FF9EDDF00D7773A /* JSParseKit.h */,
 				D34BB0670FF9EDDF00D7773A /* JSParseKit.m */,
@@ -3541,7 +3541,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREFIX_HEADER = ParseKit_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "JSParseKit-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
@@ -3569,7 +3569,7 @@
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREFIX_HEADER = ParseKit_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "JSParseKit-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";

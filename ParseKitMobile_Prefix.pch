@@ -4,4 +4,8 @@
     #import <CoreGraphics/CoreGraphics.h>
 #endif
 
-#define PLATFORM(TWITTER_STATE) 0
+//#define PLATFORM(PK_FEATURE) (defined PK_PLATFORM_##PK_FEATURE && PK_PLATFORM_##PK_FEATURE)
+
+#define PK_PLATFORM_EMAIL_STATE 0
+#define PK_PLATFORM_TWITTER_STATE 0
+

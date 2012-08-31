@@ -6,7 +6,7 @@
 //  Copyright 2010 Todd Ditchendorf. All rights reserved.
 //
 
-#if PLATFORM(EMAIL_STATE)
+#if PK_PLATFORM_EMAIL_STATE
 #import "TDEmailStateTest.h"
 
 @implementation TDEmailStateTest
