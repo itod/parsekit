@@ -92,7 +92,7 @@
 - (void)consumeWhitespaceFrom:(PKAssembly *)a {
     NSMutableArray *whitespaceToks = [NSMutableArray array];
     PKToken *tok = nil;
-    while (1) {
+    for (;;) {
         tok = [a pop];
         if (PKTokenTypeWhitespace == tok.tokenType) {
             [whitespaceToks addObject:tok];

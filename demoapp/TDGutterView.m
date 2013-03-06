@@ -53,10 +53,9 @@
         return;
     }
     
-    NSUInteger i = startLineNumber;
     NSUInteger count = i + [lineNumberRects count];
     
-    for ( ; i < count; i++) {
+    for (NSUInteger i = startLineNumber; ; i < count; i++) {
         NSRect r = [[lineNumberRects objectAtIndex:i - startLineNumber] rectValue];
 
         // set the x origin of the number according to the number of digits it contains

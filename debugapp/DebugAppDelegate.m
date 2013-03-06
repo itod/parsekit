@@ -491,7 +491,12 @@
     NSLog(@"p %@", p);
     NSLog(@"res %@", res);
     
-    res = res;
+}
+
+- (void)parser:(PKParser *)p didMatchTag:(PKAssembly *)a {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    NSLog(@"%@", a);
+    
 }
 
 
@@ -530,6 +535,33 @@
 - (void)parser:(PKParser *)p didMatchTree:(PKAssembly *)a {
     
 }
+
+
+
+
+    - (void)parser:(PKParser *)p didMatchFunctionKeyword:(PKAssembly *)a {
+        [a push:[NSNull null]];
+    }
+
+
+    - (void)parser:(PKParser *)p didMatchFunctionCloseCurly:(PKAssembly *)a {
+        id obj = [a pop];
+        NSAssert(obj == [NSNull null], @"null should be on the top of the stack");
+    }
+
+
+    - (void)parser:(PKParser *)p didMatchVarDecl:(PKAssembly *)a {
+        id obj = [a pop];
+        if (obj == [NSNull null]) {
+            [a push:obj]; // we're in a function. put the null back and bail.
+        } else {
+            PKToken *fence = [PKToken tokenWithTokenType:PKTokenTypeWord stringValue:@"var" floatValue:0.0];
+            NSArray *toks = [a objectsAbove:fence]; // get all the tokens for the var decl
+            // now do whatever you want with the var decl tokens here.
+        }
+        
+    }
+
 
 
 - (IBAction)run:(id)sender {

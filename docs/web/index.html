@@ -18,6 +18,7 @@
 <p>More documentation:</p>
 <ul>
     <li><a href="iphone.html">Instructions for including ParseKit in your iOS app</a></li>
+    <li><a href="http://stackoverflow.com/questions/9649537/how-to-embed-parsekit-as-a-private-framework-in-a-mac-app-bundle/9658158#9658158">Instructions for including ParseKit in your OS X app</a></li>
 	<li><a href="doxygen/">Doxygen-generated Header Docs</a></li>
 </ul>
 
@@ -25,8 +26,9 @@
 <ul>
 	<li><a href="http://menial.co.uk/software/base/">Base</a>: Mac SQLite tool by Ben Barnett</li>
 	<li><a href="http://www.hogbaysoftware.com/products/taskpaper_iphone">TaskPaper for iPhone</a>: Simple to-do lists app by Jesse Grosjean</li>
-	<li><a href="http://lucidmac.com/products/spike">Spike</a>: A Rails log file viewer/analyzer by Matt Mower</li>
+	<li><a href="http://worqshop.com/">Worqshop</a>: Development environment for iOS with GitHub support by Donny Kurniawan</li>
 	<li><a href="http://github.com/ccgus/jstalk/tree/master">JSTalk</a>: Interprocess Cocoa scripting with JavaScript by Gus Mueller</li>
+	<li><a href="http://lucidmac.com/products/spike">Spike</a>: A Rails log file viewer/analyzer by Matt Mower</li>
 	<li><a href="https://github.com/lok/BayesianKit">BayesianKit</a>: A Cocoa framework implementing a bayesian classifier by Samuel Mendes</li>
 	<li><a href="http://github.com/boucher/tdparsekit/tree/master">Objective-J Port</a> of ParseKit by Ross Boucher</li>
 	<li><a href="http://tr.im/http">HTTP Client</a>: HTTP debugging/testing tool</li>
@@ -43,7 +45,7 @@
 
 <ol>
 <li><b>ParseKit</b> : the ParseKit Objective-C framework. The central feature/codebase of this project.</li>
-<li><b>Tests</b> : a UnitTest Bundle containing hundreds of unit tests (actually, more correctly, interaction tests) for the framework as well as some example classes that serve as real-world uses of the framework.</li>
+<li><b>Tests</b> : a UnitTest Bundle containing hundreds of unit tests (or more correctly, <i>interaction tests</i>) for the framework as well as some example classes that serve as real-world uses of the framework.</li>
 <li><b>DemoApp</b> : A simple Cocoa demo app that gives a visual presentation of the results of tokenizing text using the PKTokenizer class.</li>
 <li><b>DebugApp</b> : A simple Cocoa app that exists only to run arbitrary test code thru GDB with breakpoints for debugging (I was not able to do that with the UnitTest bundle).</li>
 <li><b>JSParseKit</b> : A JavaScriptCore-based scripting interface to ParseKit which can be used to expose the entire framework to JavaScript environments.</li>
@@ -93,7 +95,7 @@ while ((tok = [t nextToken]) != eof) {
 </pre>
 </div>
 
-<p>Each token produced is an object of class <tt>PKToken</tt>. <tt>PKToken</tt>s have a <tt>tokenType</tt> (<tt>Word</tt>, <tt>Symbol</tt>, <tt>Num</tt>, <tt>QuotedString</tt>, etc.) and both a <tt>stringValue</tt> and a <tt>floatValue</tt>.</p>
+<p>Each token produced is an object of class <tt>PKToken</tt>. <tt>PKToken</tt>s have a <tt>tokenType</tt> (<tt>Word</tt>, <tt>Symbol</tt>, <tt>Number</tt>, <tt>QuotedString</tt>, etc.) and both a <tt>stringValue</tt> and a <tt>floatValue</tt>.</p>
 
 <p>More information about a token can be easily discovered using the <tt>-debugDescription</tt> method instead of the default <tt>-description</tt>. Replace the line containing <tt>NSLog</tt> above with this line:</p>
 
@@ -129,7 +131,7 @@ NSLog(@"%@", [tok debugDescription]);
 <ul>
 <li>single- and double-quoted string tokens</li>
 <li>common multiple character symbols (<tt>&lt;=</tt>)</li>
-<li>apostrophes, dashes and other symbol chars that should not signal the start of a new Symbol token, but rather be included in the current Word or Num token (<tt>it's</tt>, <tt>blast-off</tt>, <tt>3.5</tt>)</li>	
+<li>apostrophes, dashes and other symbol chars that should not signal the start of a new Symbol token, but rather be included in the current Word or Number token (<tt>it's</tt>, <tt>blast-off</tt>, <tt>3.5</tt>)</li>	
 <li>silently ignoring C- and C++-style comments</li>
 <li>silently ignoring whitespace</li>
 </ul>
@@ -150,7 +152,7 @@ NSLog(@"%@", [tok debugDescription]);
 </li>
 	
 	
-<li>change which chars singnal the start of a token of any given type. ex: 
+<li>change which chars signal the start of a token of any given type. e.g.:
 <div class="code"><pre>[t setTokenizerState:t.wordState from:'_' to:'_'];</pre></div>
 <p><small>allows Word tokens to start with underscore</small></p>
 <div class="code"><pre>[t setTokenizerState:t.quoteState from:'*' to:'*'];</pre></div>
