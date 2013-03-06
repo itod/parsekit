@@ -1,0 +1,29 @@
+@wantsCharacters  = YES;
+
+@start = expression;
+expression        = term orTerm*;
+term              = factor nextFactor*;
+orTerm            = '|'! term;
+factor            = phrase | phraseStar | phrasePlus | phraseQuestion | phraseInterval;
+nextFactor        = factor;
+phrase            = char | '(' expression ')'!;
+phraseStar        = phrase '*'!;
+phrasePlus        = phrase '+'!;
+phraseQuestion    = phrase '?'!;
+phraseInterval    = phrase '{' Digit (','! Digit)? '}'!;
+char              = charClass | literalChar | metaChar;
+literalChar       = Letter | Digit;
+metaChar          = dot;
+
+dot = '.'!;
+
+
+charClass = customCharClass | wordCharClass | notWordCharClass | digitCharClass | notDigitCharClass;
+
+customCharClass = '[' Char+ ']'!;
+
+wordCharClass = '\\'! 'w'!;
+notWordCharClass = '\\'! 'W'!;
+
+digitCharClass = '\\'! 'd'!;
+notDigitCharClass = '\\'! 'D'!;

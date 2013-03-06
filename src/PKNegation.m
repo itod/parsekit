@@ -34,9 +34,9 @@
 
 
 - (id)initWithSubparser:(PKParser *)s {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.subparser = s;
-        self.difference = [PKDifference differenceWithSubparser:[PKAny any] minus:subparser];
     }
     return self;
 }
@@ -62,6 +62,23 @@
     NSParameterAssert(inAssemblies);
     
     return [difference allMatchesFor:inAssemblies];
+}
+
+
+- (void)add:(PKParser *)p {
+    NSParameterAssert([p isKindOfClass:[PKParser class]]);
+    NSAssert(!subparser, @"");
+    self.subparser = p;
+}
+
+
+- (void)setSubparser:(PKParser *)p {
+    if (p != subparser) {
+        [subparser autorelease];
+        subparser = [p retain];
+        
+        self.difference = [PKDifference differenceWithSubparser:[PKAny any] minus:subparser];
+    }
 }
 
 @synthesize subparser;

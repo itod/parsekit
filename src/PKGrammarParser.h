@@ -45,6 +45,7 @@
     PKParser *literalParser;
     PKParser *variableParser;
     PKParser *constantParser;
+    PKCollectionParser *specificConstantParser;
 }
 
 - (id)initWithAssembler:(id)a;
@@ -78,6 +79,7 @@
 @property (nonatomic, retain) PKParser *literalParser;
 @property (nonatomic, retain) PKParser *variableParser;
 @property (nonatomic, retain) PKParser *constantParser;
+@property (nonatomic, retain) PKCollectionParser *specificConstantParser;
 @property (nonatomic, retain, readonly) PKParser *whitespaceParser;
 @property (nonatomic, retain, readonly) PKParser *optionalWhitespaceParser;
 @end

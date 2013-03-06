@@ -36,8 +36,7 @@
     TDNotNil(reader);
     NSInteger len = [string length];
     PKUniChar c;
-    NSInteger i = 0;
-    for ( ; i < len; i++) {
+    for (NSInteger i = 0; i < len; i++) {
         c = [string characterAtIndex:i];
         TDEquals(c, [reader read]);
     }
@@ -46,8 +45,7 @@
 
 - (void)testReadTooFar {
     NSInteger len = [string length];
-    NSInteger i = 0;
-    for ( ; i < len; i++) {
+    for (NSInteger i = 0; i < len; i++) {
         [reader read];
     }
     TDEquals(PKEOF, [reader read]);

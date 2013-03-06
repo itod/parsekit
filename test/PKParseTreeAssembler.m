@@ -35,7 +35,8 @@
 @implementation PKParseTreeAssembler
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.ruleNames = [NSMutableDictionary dictionary];
         self.preassemblerPrefix = @"parser:willMatch";
         self.assemblerPrefix = @"parser:didMatch";

@@ -55,7 +55,8 @@
 
 
 - (id)initWithAttributesForDarkBackground:(BOOL)isDark {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         isDarkBG = isDark;
         self.tokenizer = [PKTokenizer tokenizer];
         
@@ -415,7 +416,7 @@
 
 
 - (void)didMatchStartTag:(NSEnumerator *)e {
-    while (1) {
+    for (;;) {
         // attr name or ns prefix decl "xmlns:foo" or "/" for empty element
         PKToken *tok = [self nextNonWhitespaceTokenFrom:e];
         if (!tok) return;
@@ -526,7 +527,7 @@
 
 - (NSArray *)objectsAbove:(id)fence {
     NSMutableArray *res = [NSMutableArray array];
-    while (1) {
+    for (;;) {
         if (![stack count]) {
             break;
         }

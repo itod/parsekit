@@ -25,6 +25,10 @@
 @property (nonatomic, readwrite) NSUInteger offset;
 @end
 
+@interface PKTokenizer ()
+@property (nonatomic, readwrite) NSUInteger lineNumber;
+@end
+
 @interface PKTokenizerState ()
 - (void)resetWithReader:(PKReader *)r;
 - (void)append:(PKUniChar)c;
@@ -38,11 +42,11 @@
 @implementation PKWhitespaceState
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         const NSUInteger len = 255;
         self.whitespaceChars = [NSMutableArray arrayWithCapacity:len];
-        NSUInteger i = 0;
-        for ( ; i <= len; i++) {
+        for (NSUInteger i = 0; i <= len; i++) {
             [whitespaceChars addObject:PKFALSE];
         }
         
@@ -65,8 +69,7 @@
     }
 
     id obj = yn ? PKTRUE : PKFALSE;
-    NSUInteger i = start;
-    for ( ; i <= end; i++) {
+    for (NSUInteger i = start; i <= end; i++) {
         [whitespaceChars replaceObjectAtIndex:i withObject:obj];
     }
 }
@@ -88,6 +91,9 @@
     
     PKUniChar c = cin;
     while ([self isWhitespaceChar:c]) {
+        if ('\n' == c) {
+            t.lineNumber++;
+        }
         if (reportsWhitespaceTokens) {
             [self append:c];
         }

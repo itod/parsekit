@@ -43,11 +43,6 @@ static PKTokenEOF *EOFToken = nil;
     return [self description];
 }
 
-
-- (NSUInteger)offset {
-    return NSNotFound;
-}
-
 @end
 
 @interface PKToken ()
@@ -73,6 +68,7 @@ static PKTokenEOF *EOFToken = nil;
 @property (nonatomic, readwrite, copy) id value;
 
 @property (nonatomic, readwrite) NSUInteger offset;
+@property (nonatomic, readwrite) NSUInteger lineNumber;
 @end
 
 @implementation PKToken
@@ -90,10 +86,13 @@ static PKTokenEOF *EOFToken = nil;
 // designated initializer
 - (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(PKFloat)n {
     //NSParameterAssert(s);
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.tokenType = t;
         self.stringValue = s;
         self.floatValue = n;
+        self.offset = NSNotFound;
+        self.lineNumber = NSNotFound;
         
         self.number = (PKTokenTypeNumber == t);
         self.quotedString = (PKTokenTypeQuotedString == t);
@@ -234,4 +233,5 @@ static PKTokenEOF *EOFToken = nil;
 @synthesize tokenType;
 @synthesize value;
 @synthesize offset;
+@synthesize lineNumber;
 @end

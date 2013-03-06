@@ -30,7 +30,8 @@
 @implementation TDFastJsonParser
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.tokenizer = [PKTokenizer tokenizer];
 
         // configure tokenizer
@@ -100,8 +101,7 @@
     NSArray *a = [self objectsAbove:curly];
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[a count]/2.];
     
-    NSInteger i = [a count] - 1;
-    for ( ; i >= 0; i--) {
+    for (NSInteger i = [a count] - 1; i >= 0; i--) {
         NSString *key = [a objectAtIndex:i--];
         id value = [a objectAtIndex:i];
         [result setObject:value forKey:key];
@@ -123,7 +123,7 @@
 
 - (NSArray *)objectsAbove:(id)fence {
     NSMutableArray *result = [NSMutableArray array];
-    while (1) {
+    for (;;) {
         id obj = [stack lastObject];
         [stack removeLastObject];
         if ([obj isEqual:fence]) {

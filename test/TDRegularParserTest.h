@@ -13,12 +13,14 @@
 //  limitations under the License.
 
 #import "TDTestScaffold.h"
+#import "TDRegexAssembler.h"
 #import "TDRegularParser.h"
 
 @interface TDRegularParserTest : SenTestCase {
     NSString *s;
     PKCharacterAssembly *a;
-    TDRegularParser *p;
+    PKParser *p;
+    TDRegexAssembler *ass;
     PKAssembly *res;
 }
 

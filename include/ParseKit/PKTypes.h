@@ -13,7 +13,7 @@
 //  limitations under the License.
 
 // a UTF-16 character. signed so that it may include -1 (EOF) as well
-typedef SInt32 PKUniChar;
+typedef int32_t PKUniChar;
 
 #define PKEOF (PKUniChar)-1
 

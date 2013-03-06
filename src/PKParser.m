@@ -98,8 +98,6 @@
 - (NSSet *)matchAndAssemble:(NSSet *)inAssemblies {
     NSParameterAssert(inAssemblies);
     
-#define CONCURRENT 0
-
     if (preassemblerBlock) {
         for (PKAssembly *a in inAssemblies) {
             preassemblerBlock(self, a);
@@ -110,16 +108,8 @@
             [preassembler performSelector:preassemblerSelector withObject:self withObject:a];
         }
     }
-    
-    // get current input string offset
-    
-    // lookup offset in -memo ivar and return assemblies if present.
-    
-    // else…
-    
-    NSSet *outAssemblies = [self allMatchesFor:inAssemblies];
 
-    // memoize outAssemblies in -memo ivar {offset=>outAssemblies}
+    NSSet *outAssemblies = [self allMatchesFor:inAssemblies];
 
     if (assemblerBlock) {
         for (PKAssembly *a in outAssemblies) {
@@ -127,23 +117,9 @@
         }
     } else if (assembler) {
         NSAssert2([assembler respondsToSelector:assemblerSelector], @"provided assembler %@ should respond to %@", assembler, NSStringFromSelector(assemblerSelector));
-#if CONCURRENT
-        dispatch_group_t myGroup = dispatch_group_create();
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-#endif
         for (PKAssembly *a in outAssemblies) {
-#if CONCURRENT
-            dispatch_group_async(myGroup, queue, ^{
-#endif
-                [assembler performSelector:assemblerSelector withObject:self withObject:a];
-#if CONCURRENT
-            });
-            dispatch_group_wait(myGroup, DISPATCH_TIME_FOREVER);
-#endif
+            [assembler performSelector:assemblerSelector withObject:self withObject:a];
         }
-#if CONCURRENT
-        dispatch_release(myGroup);
-#endif
     }
     return outAssemblies;
 }
@@ -193,9 +169,8 @@
     @try {
         
         PKTokenizer *t = self.tokenizer;
-        if (!t) {
-            t = [PKTokenizer tokenizer];
-        }
+        if (!t) t = [PKTokenizer tokenizer];
+
         t.string = s;
         PKAssembly *a = [self completeMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
         if (a.target) {
@@ -203,8 +178,8 @@
         } else {
             result = [a pop];
         }
-
-        return result;
+        
+        [result retain];
     }
     @catch (NSException *ex) {
         if (outError) {
@@ -225,6 +200,8 @@
             [ex raise];
         }
     }
+
+    return [result autorelease];
 }
 
 

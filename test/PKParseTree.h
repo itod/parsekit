@@ -30,6 +30,8 @@
 - (PKTokenNode *)addChildToken:(PKToken *)tok;
 - (void)addChild:(PKParseTree *)tr;
 
+- (NSString *)treeDescription;
+
 @property (nonatomic, assign, readonly) PKParseTree *parent;  // weak ref
 @property (nonatomic, retain, readonly) NSMutableArray *children;
 @property (nonatomic, retain) id userInfo;

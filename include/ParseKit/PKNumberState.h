@@ -15,6 +15,8 @@
 #import <Foundation/Foundation.h>
 #import <ParseKit/PKTokenizerState.h>
 
+@class PKSymbolRootNode;
+
 /*!
     @class      PKNumberState 
     @brief      A number state returns a number from a reader.
@@ -25,29 +27,41 @@
     BOOL allowsTrailingDecimalSeparator;
     BOOL allowsScientificNotation;
     BOOL allowsOctalNotation;
-    BOOL allowsHexadecimalNotation;
     BOOL allowsFloatingPoint;
-    BOOL allowsGroupingSeparator;
     
     PKUniChar positivePrefix;
     PKUniChar negativePrefix;
-    PKUniChar groupingSeparator;
     PKUniChar decimalSeparator;
     
-    BOOL isDecimal;
     BOOL isFraction;
     BOOL isNegative;
-    BOOL isHex;
     BOOL gotADigit;
-    NSUInteger len;
-    PKFloat base;
+    NSUInteger base;
     PKUniChar originalCin;
-    PKUniChar firstNum;
     PKUniChar c;
     PKFloat floatValue;
-    PKFloat exp;
-    BOOL isNegativeExp;    
+
+    NSUInteger exp;
+    BOOL isNegativeExp;
+
+    PKSymbolRootNode *prefixRootNode;
+    PKSymbolRootNode *suffixRootNode;
+    NSMutableDictionary *radixForPrefix;
+    NSMutableDictionary *radixForSuffix;
+    NSMutableDictionary *separatorsForRadix;
+    
+    NSString *prefix;
+    NSString *suffix;
 }
+
+- (void)addPrefix:(NSString *)s forRadix:(NSUInteger)r;
+- (void)removePrefix:(NSString *)s;
+
+- (void)addSuffix:(NSString *)s forRadix:(NSUInteger)r;
+- (void)removeSuffix:(NSString *)s;
+
+- (void)addGroupingSeparator:(PKUniChar)c forRadix:(NSUInteger)r;
+- (void)removeGroupingSeparator:(PKUniChar)c forRadix:(NSUInteger)r;
 
 /*!
     @property   allowsTrailingDecimalSeparator
@@ -64,35 +78,13 @@
 @property (nonatomic) BOOL allowsScientificNotation;
 
 /*!
-    @property   allowsOctalNotation
-    @brief      If YES, supports octal numbers like <tt>020<tt> (16), or <tt>0102<tt> (66)
-    @details    default is NO
-*/
-@property (nonatomic) BOOL allowsOctalNotation;
-
-/*!
-    @property   allowsHexidecimalNotation
-    @brief      If YES, supports hex numbers like <tt>0x20<tt> (32), or <tt>0xB7<tt> (183)
-    @details    default is NO
-*/
-@property (nonatomic) BOOL allowsHexadecimalNotation;
-
-/*!
     @property   allowsFloatingPoint
     @brief      If YES, supports floating point numbers like <tt>1.0<tt> or <tt>3.14<tt>. If NO, only whole numbers are allowed.
     @details    default is YES
 */
 @property (nonatomic) BOOL allowsFloatingPoint;
 
-/*!
-    @property   allowsGroupingSeparator
-    @brief      If YES, supports numbers with internal grouping separators like <tt>2,001</tt>.
-    @details    default is NO
-*/
-@property (nonatomic) BOOL allowsGroupingSeparator;
-
 @property (nonatomic) PKUniChar positivePrefix;
 @property (nonatomic) PKUniChar negativePrefix;
-@property (nonatomic) PKUniChar groupingSeparator;
 @property (nonatomic) PKUniChar decimalSeparator;
 @end

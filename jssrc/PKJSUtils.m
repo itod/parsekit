@@ -67,8 +67,7 @@ JSObjectRef PKCFArrayToJSObject(JSContextRef ctx, CFArrayRef cfArray, JSValueRef
         len = CFArrayGetCount(cfArray);
     }
     
-    CFIndex i = 0;
-    for ( ; i < len; i++) {
+    for (CFIndex i = 0; i < len; i++) {
         CFTypeRef value = CFArrayGetValueAtIndex(cfArray, i);
         JSValueRef propVal = PKCFTypeToJSValue(ctx, value, ex);
         JSObjectSetPropertyAtIndex(ctx, obj, i, propVal, NULL);
@@ -95,8 +94,7 @@ JSObjectRef PKCFDictionaryToJSObject(JSContextRef ctx, CFDictionaryRef cfDict, J
         CFTypeRef values[len];
         CFDictionaryGetKeysAndValues(cfDict, (const void**)keys, (const void**)values);
         
-        CFIndex i = 0;
-        for ( ; i < len; i++) {
+        for (CFIndex i = 0; i < len; i++) {
             CFStringRef key = keys[i];
             CFTypeRef value = values[i];
             
@@ -161,8 +159,7 @@ CFArrayRef PKJSObjectCopyCFArray(JSContextRef ctx, JSObjectRef obj, JSValueRef *
     
     CFMutableArrayRef cfArray = CFArrayCreateMutable(NULL, len, NULL);
     
-    CFIndex i = 0;
-    for ( ; i < len; i++) {
+    for (CFIndex i = 0; i < len; i++) {
         JSValueRef val = JSObjectGetPropertyAtIndex(ctx, obj, i, NULL);
         CFTypeRef cfType = PKJSValueCopyCFType(ctx, val, ex);
         CFArraySetValueAtIndex(cfArray, i, cfType);
@@ -182,8 +179,7 @@ CFDictionaryRef PKJSObjectCopyCFDictionary(JSContextRef ctx, JSObjectRef obj, JS
     
     CFMutableDictionaryRef cfDict = CFDictionaryCreateMutable(NULL, len, NULL, NULL);
     
-    CFIndex i = 0;
-    for ( ; i < len; i++) {
+    for (CFIndex i = 0; i < len; i++) {
         JSStringRef propName = JSPropertyNameArrayGetNameAtIndex(propNames, i);
         JSValueRef val = JSObjectGetProperty(ctx, obj, propName, NULL);
         CFTypeRef cfType = PKJSValueCopyCFType(ctx, val, ex);

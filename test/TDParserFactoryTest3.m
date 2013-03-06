@@ -21,6 +21,133 @@
 }
 
 
+- (void)testSpecificSymbol {
+    g = @"@start = Symbol('-');";
+    
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+    
+    TDNotNil(lp);
+    
+    s = @"-";
+    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+    TDEqualObjects(@"[-]-^", [res description]);
+}
+
+
+- (void)testSpecificSymbol2 {
+    g = @"@start = Symbol('<=');";
+    
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+    
+    TDNotNil(lp);
+    
+    s = @"<=";
+    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+    TDEqualObjects(@"[<=]<=^", [res description]);
+}
+
+
+- (void)testTrack {
+    g = @"@start = [Number Word]";
+    
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+    
+    TDNotNil(lp);
+    
+    s = @"3 foo";
+    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+    TDEqualObjects(@"[3, foo]3/foo^", [res description]);
+}
+
+
+- (void)testSubTrack {
+    g = @"@start = Word [Number Word]";
+    
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+    
+    TDNotNil(lp);
+    
+    s = @"foo 3 bar";
+    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+    TDEqualObjects(@"[foo, 3, bar]foo/3/bar^", [res description]);
+}
+
+
+- (void)testTrackFailure {
+    g = @"@start = [Number Word]";
+    
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+    
+    TDNotNil(lp);
+    
+    BOOL reachedCatch = NO;
+    
+    s = @"3";
+    @try {
+        res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+        TDTrue(0); // should not reach
+    }
+    @catch (NSException *ex) {
+        NSLog(@"%@", ex);
+        reachedCatch = YES;
+        TDEqualObjects([PKTrackException class], [ex class]);
+        TDEqualObjects(@"\n\nAfter : 3\nExpected : Word\nFound : -nothing-\n\n", [ex reason]);
+    }
+    
+    TDTrue(reachedCatch);
+}
+
+
+- (void)testTrackFailure2 {
+    g = @"@start = [Number Symbol('{')]";
+    
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+    
+    TDNotNil(lp);
+    
+    BOOL reachedCatch = NO;
+    
+    s = @"3";
+    @try {
+        res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+        TDTrue(0); // should not reach
+    }
+    @catch (NSException *ex) {
+        NSLog(@"%@", ex);
+        reachedCatch = YES;
+        TDEqualObjects([PKTrackException class], [ex class]);
+        TDEqualObjects(@"\n\nAfter : 3\nExpected : Symbol {\nFound : -nothing-\n\n", [ex reason]);
+    }
+    
+    TDTrue(reachedCatch);
+}
+
+
+- (void)testSubTrackFailure {
+    g = @"@start = Word [Number Word]";
+    
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+    
+    TDNotNil(lp);
+    
+    BOOL reachedCatch = NO;
+    
+    s = @"foo 3";
+    @try {
+        res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+        TDTrue(0); // should not reach
+    }
+    @catch (NSException *ex) {
+        NSLog(@"%@", ex);
+        reachedCatch = YES;
+        TDEqualObjects([PKTrackException class], [ex class]);
+        TDEqualObjects(@"\n\nAfter : foo 3\nExpected : Word\nFound : -nothing-\n\n", [ex reason]);
+    }
+    
+    TDTrue(reachedCatch);
+}
+
+
 - (void)testOrVsAndPrecendence {
     g = @" @start ( parser:didMatchFoo: ) = foo;\n"
     @"  foo = Word & /foo/ | Number! { 1 } ( DelimitedString ( '/' , '/' ) Symbol- '%' ) * /bar/ ;";

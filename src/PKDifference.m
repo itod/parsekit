@@ -50,7 +50,8 @@
 
 
 - (id)initWithSubparser:(PKParser *)s minus:(PKParser *)m {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.subparser = s;
         self.minus = m;
     }
@@ -97,6 +98,18 @@
     [outAssemblies minusSetTestingEquality:[minus allMatchesFor:inAssemblies]];
     
     return outAssemblies;
+}
+
+
+- (void)add:(PKParser *)p {
+    NSParameterAssert([p isKindOfClass:[PKParser class]]);
+    NSAssert(!subparser || !minus, @"");
+    
+    if (!subparser) {
+        self.subparser = p;
+    } else if (!minus) {
+        self.minus = p;
+    }
 }
 
 @synthesize subparser;

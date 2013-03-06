@@ -28,7 +28,8 @@
 @implementation PKSymbolNode
 
 - (id)initWithParent:(PKSymbolNode *)p character:(PKUniChar)c {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.parent = p;
         self.character = c;
         self.children = [NSMutableDictionary dictionary];

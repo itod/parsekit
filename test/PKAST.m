@@ -15,8 +15,6 @@
 #import "PKAST.h"
 
 @interface PKAST ()
-@property (nonatomic, retain) PKToken *token;
-@property (nonatomic, retain) NSMutableArray *children;
 @end
 
 @implementation PKAST
@@ -32,7 +30,8 @@
 
 
 - (id)initWithToken:(PKToken *)tok {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.token = tok;
     }
     return self;
@@ -47,27 +46,27 @@
 
 
 - (NSString *)description {
-    return [token stringValue];
+    return [self treeDescription];
 }
 
 
 - (NSString *)treeDescription {
-    if (![children count]) {
-        return [self description];
+    if (![_children count]) {
+        return [_token stringValue];
     }
     
     NSMutableString *ms = [NSMutableString string];
     
     if (![self isNil]) {
-        [ms appendFormat:@"(%@ ", [self description]];
+        [ms appendFormat:@"(%@ ", [_token stringValue]];
     }
 
     NSInteger i = 0;
-    for (PKAST *child in children) {
+    for (PKAST *child in _children) {
         if (i++) {
-            [ms appendFormat:@" %@", child];
+            [ms appendFormat:@" %@", [child treeDescription]];
         } else {
-            [ms appendFormat:@"%@", child];
+            [ms appendFormat:@"%@", [child treeDescription]];
         }
     }
     
@@ -79,24 +78,22 @@
 }
 
 
-- (NSInteger)type {
+- (int)type {
     NSAssert2(0, @"%s is an abastract method. Must be overridden in %@", __PRETTY_FUNCTION__, NSStringFromClass([self class]));
     return -1;
 }
 
 
 - (void)addChild:(PKAST *)c {
-    if (!children) {
+    if (!_children) {
         self.children = [NSMutableArray array];
     }
-    [children addObject:c];
+    [_children addObject:c];
 }
 
 
 - (BOOL)isNil {
-    return !token;
+    return !_token;
 }
 
-@synthesize token;
-@synthesize children;
 @end

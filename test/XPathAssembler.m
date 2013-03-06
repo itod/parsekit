@@ -19,7 +19,8 @@
 @implementation XPathAssembler
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.context = [[[XPathContext alloc] init] autorelease];
     }
     return self;

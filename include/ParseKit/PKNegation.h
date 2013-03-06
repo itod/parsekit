@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#import <ParseKit/PKParser.h>
+#import <ParseKit/PKCompositeParser.h>
 
 /*!
     @class      PKNegation
@@ -25,7 +25,7 @@
     PKNegation *n = [PKNegation negationWithSubparser:question];
 @endcode 
 */
-@interface PKNegation : PKParser {
+@interface PKNegation : PKCompositeParser {
     PKParser *subparser;
     PKParser *difference;
 }

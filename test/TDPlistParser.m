@@ -259,8 +259,7 @@ static NSString *kTDPlistNullString = @"<null>";
 
     NSMutableDictionary *res = [NSMutableDictionary dictionaryWithCapacity:count / 2.];
     if (count) {
-        NSInteger i = 0;
-        for ( ; i < [objs count] - 1; i++) {
+        for (NSInteger i = 0; i < [objs count] - 1; i++) {
             id value = [objs objectAtIndex:i++];
             id key = [objs objectAtIndex:i];
             [res setObject:value forKey:key];

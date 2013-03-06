@@ -94,7 +94,8 @@ static void structErr(XMLReader *self, xmlErrorPtr error) {
 */
 
 - (id)initWithContentsOfFile:(NSString *)newPath {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.path = newPath;
 
         _reader = xmlNewTextReaderFilename([path UTF8String]);

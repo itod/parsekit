@@ -22,7 +22,8 @@
 
 
 - (id)initWithString:(NSString *)s {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.string = s;
     }
     return self;
@@ -31,7 +32,6 @@
 
 - (void)dealloc {
     self.string = nil;
-    //if (buff) free(buff);
     [super dealloc];
 }
 
@@ -46,10 +46,6 @@
         [string autorelease];
         string = [s copy];
         length = [string length];
-
-//        if (buff) free(buff);
-//        buff = malloc(sizeof(unichar)*length + 1);
-//        [s getCharacters:buff range:NSMakeRange(0, length)];
     }
     // reset cursor
     offset = 0;
@@ -61,7 +57,6 @@
         return PKEOF;
     }
     return [string characterAtIndex:offset++];
-    //return buff[offset++];
 }
 
 
@@ -71,8 +66,7 @@
 
 
 - (void)unread:(NSUInteger)count {
-    NSUInteger i = 0;
-    for ( ; i < count; i++) {
+    for (NSUInteger i = 0; i < count; i++) {
         [self unread];
     }
 }

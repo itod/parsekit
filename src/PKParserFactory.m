@@ -12,8 +12,6 @@
 #import "NSString+ParseKitAdditions.h"
 #import "NSArray+ParseKitAdditions.h"
 
-#define USE_TRACK 0
-
 @interface PKParser (PKParserFactoryAdditionsFriend)
 - (void)setTokenizer:(PKTokenizer *)t;
 @end
@@ -117,7 +115,7 @@ void PKReleaseSubparserTree(PKParser *p) {
 - (void)parser:(PKParser *)p didMatchCallback:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchExpression:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a;
-- (void)parser:(PKParser *)p didMatchIntersection:(PKAssembly *)a;    
+- (void)parser:(PKParser *)p didMatchIntersection:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchDifference:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchPatternOptions:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchPattern:(PKAssembly *)a;
@@ -125,6 +123,7 @@ void PKReleaseSubparserTree(PKParser *p) {
 - (void)parser:(PKParser *)p didMatchLiteral:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchVariable:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchConstant:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchSpecificConstant:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchDelimitedString:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchStar:(PKAssembly *)a;
@@ -141,9 +140,11 @@ void PKReleaseSubparserTree(PKParser *p) {
 @property (nonatomic, retain) NSMutableDictionary *parserTokensTable;
 @property (nonatomic, retain) NSMutableDictionary *parserClassTable;
 @property (nonatomic, retain) NSMutableDictionary *selectorTable;
+@property (nonatomic, assign) BOOL wantsCharacters;
 @property (nonatomic, retain) PKToken *equals;
 @property (nonatomic, retain) PKToken *curly;
 @property (nonatomic, retain) PKToken *paren;
+@property (nonatomic, retain) PKToken *square;
 @end
 
 @implementation PKParserFactory
@@ -154,11 +155,13 @@ void PKReleaseSubparserTree(PKParser *p) {
 
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.grammarParser = [[[PKGrammarParser alloc] initWithAssembler:self] autorelease];
         self.equals  = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"=" floatValue:0.0];
         self.curly   = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"{" floatValue:0.0];
         self.paren   = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"(" floatValue:0.0];
+        self.square  = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"[" floatValue:0.0];
         self.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnAll;
     }
     return self;
@@ -175,6 +178,7 @@ void PKReleaseSubparserTree(PKParser *p) {
     self.equals = nil;
     self.curly = nil;
     self.paren = nil;
+    self.square = nil;
     [super dealloc];
 }
 
@@ -326,6 +330,8 @@ void PKReleaseSubparserTree(PKParser *p) {
 
 
 - (PKTokenizer *)tokenizerFromGrammarSettings {
+    self.wantsCharacters = [self boolForTokenForKey:@"@wantsCharacters"];
+
     PKTokenizer *t = [PKTokenizer tokenizer];
     [t.commentState removeSingleLineStartMarker:@"//"];
     [t.commentState removeMultiLineStartMarker:@"/*"];
@@ -337,12 +343,10 @@ void PKReleaseSubparserTree(PKParser *p) {
     t.delimitState.balancesEOFTerminatedStrings = [self boolForTokenForKey:@"@balancesEOFTerminatedStrings"];
     t.numberState.allowsTrailingDecimalSeparator = [self boolForTokenForKey:@"@allowsTrailingDecimalSeparator"];
     t.numberState.allowsScientificNotation = [self boolForTokenForKey:@"@allowsScientificNotation"];
-    t.numberState.allowsOctalNotation = [self boolForTokenForKey:@"@allowsOctalNotation"];
-    t.numberState.allowsHexadecimalNotation = [self boolForTokenForKey:@"@allowsHexadecimalNotation"];
     
     BOOL yn = YES;
-    if ([parserTokensTable objectForKey:@"allowsFloatingPoint"]) {
-        yn = [self boolForTokenForKey:@"allowsFloatingPoint"];
+    if ([parserTokensTable objectForKey:@"@allowsFloatingPoint"]) {
+        yn = [self boolForTokenForKey:@"@allowsFloatingPoint"];
     }
     t.numberState.allowsFloatingPoint = yn;
     
@@ -424,14 +428,68 @@ void PKReleaseSubparserTree(PKParser *p) {
     [parserTokensTable removeObjectForKey:@"@multiLineComment"];
     [parserTokensTable removeObjectForKey:@"@multiLineComments"];
     if ([toks count] > 1) {
-        NSInteger i = 0;
-        for ( ; i < [toks count] - 1; i++) {
+        for (NSInteger i = 0; i < [toks count] - 1; i++) {
             PKToken *startTok = [toks objectAtIndex:i];
             PKToken *endTok = [toks objectAtIndex:++i];
             if (startTok.isQuotedString && endTok.isQuotedString) {
                 NSString *start = [startTok.stringValue stringByTrimmingQuotes];
                 NSString *end = [endTok.stringValue stringByTrimmingQuotes];
                 [t.commentState addMultiLineStartMarker:start endMarker:end];
+            }
+        }
+    }
+    
+    // number state prefixes
+    toks = [NSArray arrayWithArray:[parserTokensTable objectForKey:@"@prefixForRadix"]];
+    NSAssert(0 == [toks count] % 2, @"@prefixForRadix must be specified as quoted strings in multiples of 2");
+    [parserTokensTable removeObjectForKey:@"@prefixForRadix"];
+    if ([toks count] > 1) {
+        for (NSInteger i = 0; i < [toks count] - 1; i++) {
+            PKToken *prefixTok = [toks objectAtIndex:i];
+            PKToken *radixTok = [toks objectAtIndex:++i];
+            if (prefixTok.isQuotedString && radixTok.isNumber) {
+                NSString *prefix = [prefixTok.stringValue stringByTrimmingQuotes];
+                PKFloat radix = radixTok.floatValue;
+                [t.numberState addPrefix:prefix forRadix:radix];
+            }
+        }
+    }
+    
+    // number state suffix
+    toks = [NSArray arrayWithArray:[parserTokensTable objectForKey:@"@suffixForRadix"]];
+    NSAssert(0 == [toks count] % 2, @"@suffixForRadix must be specified as quoted strings in multiples of 2");
+    [parserTokensTable removeObjectForKey:@"@suffixForRadix"];
+    if ([toks count] > 1) {
+        for (NSInteger i = 0; i < [toks count] - 1; i++) {
+            PKToken *suffixTok = [toks objectAtIndex:i];
+            PKToken *radixTok = [toks objectAtIndex:++i];
+            if (suffixTok.isQuotedString && radixTok.isNumber) {
+                NSString *suffix = [suffixTok.stringValue stringByTrimmingQuotes];
+                PKFloat radix = radixTok.floatValue;
+                if (radix > 0.0) {
+                    [t.numberState addSuffix:suffix forRadix:radix];
+                }
+            }
+        }
+    }
+    
+    // number grouping separator
+    toks = [NSArray arrayWithArray:[parserTokensTable objectForKey:@"@groupingSeparatorForRadix"]];
+    NSAssert(0 == [toks count] % 2, @"@groupingSeparatorForRadix must be specified as quoted strings in multiples of 2");
+    [parserTokensTable removeObjectForKey:@"@groupingSeparatorForRadix"];
+    if ([toks count] > 1) {
+        for (NSInteger i = 0; i < [toks count] - 1; i++) {
+            PKToken *sepTok = [toks objectAtIndex:i];
+            PKToken *radixTok = [toks objectAtIndex:++i];
+            if (sepTok.isQuotedString && radixTok.isNumber) {
+                NSString *sepStr = [sepTok.stringValue stringByTrimmingQuotes];
+                if (1 == [sepStr length]) {
+                    PKFloat radix = radixTok.floatValue;
+                    if (radix > 0.0) {
+                        PKUniChar c = [sepStr characterAtIndex:0];
+                        [t.numberState addGroupingSeparator:c forRadix:radix];
+                    }
+                }
             }
         }
     }
@@ -443,8 +501,7 @@ void PKReleaseSubparserTree(PKParser *p) {
     [parserTokensTable removeObjectForKey:@"@delimitedString"];
     [parserTokensTable removeObjectForKey:@"@delimitedStrings"];
     if ([toks count] > 1) {
-        NSInteger i = 0;
-        for ( ; i < [toks count] - 2; i++) {
+        for (NSInteger i = 0; i < [toks count] - 2; i++) {
             PKToken *startTok = [toks objectAtIndex:i];
             PKToken *endTok = [toks objectAtIndex:++i];
             PKToken *charSetTok = [toks objectAtIndex:++i];
@@ -700,23 +757,49 @@ void PKReleaseSubparserTree(PKParser *p) {
 
 
 - (void)parser:(PKParser *)p didMatchExpression:(PKAssembly *)a {
-    NSArray *objs = [a objectsAbove:paren];
-    NSAssert([objs count], @"");
-    [a pop]; // pop '('
+    NSParameterAssert(a);
+    id obj = nil;
+    BOOL isTrack = NO;
+    NSMutableArray *objs = [NSMutableArray array];
     
+    while (![a isStackEmpty]) {
+        obj = [a pop];
+        if ([obj isEqual:square]) {
+            isTrack = YES;
+            break;
+        } else if ([obj isEqual:paren]) {
+            break;
+        } else {
+            [objs addObject:obj];
+        }
+    }
+    
+    NSAssert([objs count], @"");
+    
+    // this implements track via '[' ... ']'. It's a bit ugly. could be improved.
     if ([objs count] > 1) {
         PKSequence *seq = nil;
-#if USE_TRACK
-        seq = [PKTrack track];
-#else
-        seq = [PKSequence sequence];
-#endif
+        if (isTrack) {
+            seq = [PKTrack track];
+        } else {
+            seq = [PKSequence sequence];
+        }
+        
         for (id obj in [objs reverseObjectEnumerator]) {
             [seq add:obj];
         }
         [a push:seq];
     } else if ([objs count]) {
-        [a push:[objs objectAtIndex:0]];
+        PKParser *p = [objs objectAtIndex:0];
+        if ([p isKindOfClass:[PKSequence class]] && isTrack) {
+            PKSequence *seq = (PKSequence *)p;
+            PKTrack *tr = [PKTrack track];
+            for (PKParser *sub in seq.subparsers) {
+                [tr add:sub];
+            }
+            p = tr;
+        }
+        [a push:p];
     }
 }
 
@@ -814,7 +897,14 @@ void PKReleaseSubparserTree(PKParser *p) {
     PKToken *tok = [a pop];
 
     NSString *s = [tok.stringValue stringByTrimmingQuotes];
-    PKTerminal *t = [PKCaseInsensitiveLiteral literalWithString:s];
+    PKTerminal *t = nil;
+    
+    NSAssert([s length], @"");
+    if (self.wantsCharacters) {
+        t = [PKSpecificChar specificCharWithChar:[s characterAtIndex:0]];
+    } else {
+        t = [PKCaseInsensitiveLiteral literalWithString:s];
+    }
 
     [a push:t];
 }
@@ -867,6 +957,12 @@ void PKReleaseSubparserTree(PKParser *p) {
         obj = [PKAny any];
     } else if ([s isEqualToString:@"Empty"]) {
         obj = [PKEmpty empty];
+    } else if ([s isEqualToString:@"Char"]) {
+        obj = [PKChar char];
+    } else if ([s isEqualToString:@"Letter"]) {
+        obj = [PKLetter letter];
+    } else if ([s isEqualToString:@"Digit"]) {
+        obj = [PKDigit digit];
     } else if ([s isEqualToString:@"Pattern"]) {
         obj = tok;
     } else if ([s isEqualToString:@"DelimitedString"]) {
@@ -879,6 +975,18 @@ void PKReleaseSubparserTree(PKParser *p) {
     }
     
     [a push:obj];
+}
+
+
+- (void)parser:(PKParser *)p didMatchSpecificConstant:(PKAssembly *)a {
+    PKToken *quoteTok = [a pop];
+    NSString *str = [quoteTok.stringValue stringByTrimmingQuotes];
+    
+    [a pop]; // pop 'Symbol'
+    
+    PKParser *sym = [PKSymbol symbolWithString:str];
+    
+    [a push:sym];
 }
 
 
@@ -901,7 +1009,13 @@ void PKReleaseSubparserTree(PKParser *p) {
 
 - (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a {
     PKToken *tok = [a pop];
-    [a push:[NSNumber numberWithFloat:tok.floatValue]];
+    
+    if (self.wantsCharacters) {
+        PKUniChar c = [tok.stringValue characterAtIndex:0];
+        [a push:[PKSpecificChar specificCharWithChar:c]];
+    } else {
+        [a push:[NSNumber numberWithFloat:tok.floatValue]];
+    }
 }
 
 
@@ -933,12 +1047,11 @@ void PKReleaseSubparserTree(PKParser *p) {
     NSInteger start = r.location;
     NSInteger end = r.length;
     
-    NSInteger i = 0;
-    for ( ; i < start; i++) {
+    for (NSInteger i = 0; i < start; i++) {
         [s add:p];
     }
     
-    for ( ; i < end; i++) {
+    for (NSInteger i = start ; i < end; i++) {
         [s add:[self zeroOrOne:p]];
     }
     
@@ -992,12 +1105,7 @@ void PKReleaseSubparserTree(PKParser *p) {
     }
     
     if ([parsers count] > 1) {
-        PKSequence *seq = nil;
-#if USE_TRACK
-        seq = [PKTrack track];
-#else
-        seq = [PKSequence sequence];
-#endif
+        PKSequence *seq = [PKSequence sequence];
         for (PKParser *p in [parsers reverseObjectEnumerator]) {
             [seq add:p];
         }
@@ -1020,8 +1128,10 @@ void PKReleaseSubparserTree(PKParser *p) {
 @synthesize parserTokensTable;
 @synthesize parserClassTable;
 @synthesize selectorTable;
+@synthesize wantsCharacters;
 @synthesize equals;
 @synthesize curly;
 @synthesize paren;
+@synthesize square;
 @synthesize assemblerSettingBehavior;
 @end

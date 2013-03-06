@@ -121,10 +121,9 @@
 - (NSString *)consumedObjectsJoinedByString:(NSString *)delimiter {
     NSMutableString *s = [NSMutableString string];
     
-    NSInteger i = 0;
     NSInteger len = self.consumedObjectCount;
     
-    for ( ; i < len; i++) {
+    for (NSInteger i = 0; i < len; i++) {
         TDXmlToken *tok = [self.tokens objectAtIndex:i];
         [s appendString:tok.stringValue];
         if (i != len - 1) {
@@ -139,10 +138,9 @@
 - (NSString *)remainingObjectsJoinedByString:(NSString *)delimiter {
     NSMutableString *s = [NSMutableString string];
     
-    NSInteger i = self.consumedObjectCount;
     NSInteger len = [self length];
     
-    for ( ; i < len; i++) {
+    for (NSInteger i = self.consumedObjectCount; i < len; i++) {
         TDXmlToken *tok = [self.tokens objectAtIndex:i];
         [s appendString:tok.stringValue];
         if (i != len - 1) {

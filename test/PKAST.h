@@ -16,18 +16,19 @@
 
 @class PKToken;
 
-@interface PKAST : NSObject {
-    PKToken *token;
-    NSMutableArray *children;
-}
+@interface PKAST : NSObject
 
 + (PKAST *)ASTWithToken:(PKToken *)tok;
 
 - (id)initWithToken:(PKToken *)tok;
 
-- (NSInteger)type;
+- (int)type;
 
 - (void)addChild:(PKAST *)c;
 - (BOOL)isNil;
 
+- (NSString *)treeDescription;
+
+@property (nonatomic, retain) PKToken *token;
+@property (nonatomic, retain) NSMutableArray *children;
 @end

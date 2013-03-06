@@ -26,9 +26,8 @@
     BOOL balancesEOFTerminatedStrings;
     BOOL allowsUnbalancedStrings;
 
-    NSMutableArray *startMarkers;
-    NSMutableArray *endMarkers;
-    NSMutableArray *characterSets;
+    NSMutableDictionary *endMarkers;
+    NSMutableDictionary *characterSets;
 }
 
 /*!

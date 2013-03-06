@@ -23,7 +23,8 @@
 @implementation TDMiniCSSAssembler
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.attributes = [NSMutableDictionary dictionary];
         self.paren = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"(" floatValue:0.0];
         self.curly = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"{" floatValue:0.0];
@@ -101,9 +102,8 @@
     NSArray *objs = [a objectsAbove:curly];
     [a pop]; // discard curly
 
-    NSInteger i = 0;
     NSInteger count = [objs count];
-    for ( ; i < count - 1; i++) {
+    for (NSInteger i = 0; i < count - 1; i++) {
         id propVal = [objs objectAtIndex:i];
         id propName = [objs objectAtIndex:++i];
         [d setObject:propVal forKey:propName];

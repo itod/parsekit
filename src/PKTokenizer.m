@@ -18,7 +18,7 @@
 #define STATE_COUNT 256
 
 @interface PKToken ()
-@property (nonatomic, readwrite) NSUInteger offset;
+@property (nonatomic, readwrite) NSUInteger lineNumber;
 @end
 
 @interface PKTokenizer ()
@@ -26,6 +26,7 @@
 - (PKTokenizerState *)defaultTokenizerStateFor:(PKUniChar)c;
 @property (nonatomic, retain) PKReader *reader;
 @property (nonatomic, retain) NSMutableArray *tokenizerStates;
+@property (nonatomic, readwrite) NSUInteger lineNumber;
 @end
 
 @implementation PKTokenizer
@@ -46,7 +47,8 @@
 
 
 - (id)initWithString:(NSString *)s {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.string = s;
         self.reader = [[[PKReader alloc] init] autorelease];
         
@@ -80,8 +82,7 @@
 
         self.tokenizerStates = [NSMutableArray arrayWithCapacity:STATE_COUNT];
         
-        NSInteger i = 0;
-        for ( ; i < STATE_COUNT; i++) {
+        for (NSInteger i = 0; i < STATE_COUNT; i++) {
             [tokenizerStates addObject:[self defaultTokenizerStateFor:i]];
         }
 
@@ -146,6 +147,7 @@
         PKTokenizerState *state = [self tokenizerStateFor:c];
         if (state) {
             result = [state nextTokenFromReader:reader startingWith:c tokenizer:self];
+            result.lineNumber = lineNumber;
         } else {
             result = [PKToken EOFToken];
         }
@@ -171,8 +173,7 @@
 - (void)setTokenizerState:(PKTokenizerState *)state from:(PKUniChar)start to:(PKUniChar)end {
     NSParameterAssert(state);
 
-    NSInteger i = start;
-    for ( ; i <= end; i++) {
+    for (NSInteger i = start; i <= end; i++) {
         [tokenizerStates replaceObjectAtIndex:i withObject:state];
     }
 }
@@ -190,9 +191,10 @@
 - (void)setString:(NSString *)s {
     if (string != s) {
         [string autorelease];
-        string = [s retain];
+        string = [s copy];
     }
     reader.string = string;
+    self.lineNumber = 1;
 }
 
 
@@ -297,4 +299,5 @@
 @synthesize string;
 @synthesize reader;
 @synthesize tokenizerStates;
+@synthesize lineNumber;
 @end

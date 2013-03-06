@@ -26,7 +26,8 @@
 
 
 - (id)initWithName:(NSString *)s {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.name = s;
     }
     return self;
@@ -46,9 +47,34 @@
 }
 
 
-- (NSString *)description {
-    return [NSString stringWithFormat:@"<PKRuleNode '%@' %@>", name, children];
+//- (NSString *)description {
+//    return [NSString stringWithFormat:@"<PKRuleNode '%@' %@>", name, children];
+//}
+
+
+- (NSString *)treeDescription {
+    if (![children count]) {
+        return name;
+    }
+    
+    NSMutableString *ms = [NSMutableString string];
+    
+    [ms appendFormat:@"(%@ ", name];
+    
+    NSInteger i = 0;
+    for (PKParseTree *child in children) {
+        if (i++) {
+            [ms appendFormat:@" %@", [child treeDescription]];
+        } else {
+            [ms appendFormat:@"%@", [child treeDescription]];
+        }
+    }
+    
+    [ms appendString:@")"];
+    
+    return [[ms copy] autorelease];
 }
+
 
 @synthesize name;
 @end

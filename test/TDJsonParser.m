@@ -37,7 +37,8 @@
 
 
 - (id)initWithIntentToAssemble:(BOOL)yn {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         shouldAssemble = yn;
         self.curly = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"{" floatValue:0.0];
         self.bracket = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"[" floatValue:0.0];
@@ -284,8 +285,7 @@
     NSArray *elements = [a objectsAbove:self.curly];
     NSMutableDictionary *d = [NSMutableDictionary dictionaryWithCapacity:[elements count] / 2.];
     
-    NSInteger i = 0;
-    for ( ; i < [elements count] - 1; i++) {
+    for (NSInteger i = 0; i < [elements count] - 1; i++) {
         id value = [elements objectAtIndex:i++];
         NSString *key = [elements objectAtIndex:i];
         if (key && value) {

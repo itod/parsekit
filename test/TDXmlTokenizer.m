@@ -33,7 +33,8 @@
 
 
 - (id)initWithContentsOfFile:(NSString *)path {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.reader = [[[XMLReader alloc] initWithContentsOfFile:path] autorelease];
     }
     return self;

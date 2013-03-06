@@ -37,7 +37,8 @@
 
 - (id)initWithSubparser:(PKParser *)p {
     //NSParameterAssert(p);
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.subparser = p;
     }
     return self;
@@ -71,6 +72,13 @@
     }
     
     return outAssemblies;
+}
+
+
+- (void)add:(PKParser *)p {
+    NSParameterAssert([p isKindOfClass:[PKParser class]]);
+    NSAssert(!subparser, @"");
+    self.subparser = p;
 }
 
 @synthesize subparser;

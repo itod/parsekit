@@ -56,21 +56,21 @@
     NSNumber *key = [NSNumber numberWithInteger:c];
     PKSymbolNode *child = [p->children objectForKey:key];
     if (!child) {
-        child = [[PKSymbolNode alloc] initWithParent:p character:c];
+        child = [[[PKSymbolNode alloc] initWithParent:p character:c] autorelease];
         [p->children setObject:child forKey:key];
-        [child release];
     }
-
-    NSString *rest = nil;
     
     NSUInteger len = [s length];
-    if (0 == len) {
-        return;
-    } else if (len > 1) {
-        rest = [s substringFromIndex:1];
+
+    if (len) {
+        NSString *rest = nil;
+
+        if (len > 1) {
+            rest = [s substringFromIndex:1];
+        }
+        
+        [self addWithFirst:[s characterAtIndex:0] rest:rest parent:child];
     }
-    
-    [self addWithFirst:[s characterAtIndex:0] rest:rest parent:child];
 }
 
 

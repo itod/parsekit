@@ -14,11 +14,14 @@
 
 #import <ParseKit/PKTrack.h>
 #import <ParseKit/PKAssembly.h>
+#import <ParseKit/PKToken.h>
 #import <ParseKit/PKTrackException.h>
+
+#define NUM_DISPLAY_OBJS 6
 
 @interface PKAssembly ()
 - (id)peek;
-- (NSString *)consumedObjectsJoinedByString:(NSString *)delimiter;
+- (NSString *)lastConsumedObjects:(NSUInteger)len joinedByString:(NSString *)delimiter;
 @end
 
 @interface PKParser ()
@@ -74,24 +77,38 @@
 
 - (void)throwTrackExceptionWithPreviousState:(NSSet *)inAssemblies parser:(PKParser *)p {
     PKAssembly *best = [self best:inAssemblies];
+    
+    id next = [best peek];
+    
+    NSMutableString *reason = [NSMutableString stringWithString:@"\n\n"];
+    
+    NSUInteger lineNum = NSNotFound;
+    if (next && [next isKindOfClass:[PKToken class]]) {
+        lineNum = [next lineNumber];
+        NSAssert(NSNotFound != lineNum, @"");
 
-    NSString *after = [best consumedObjectsJoinedByString:@" "];
+        if (NSNotFound != lineNum) {
+            [reason appendFormat:@"Line : %lu\n", lineNum];
+        }
+    }
+    
+    NSString *after = [best lastConsumedObjects:NUM_DISPLAY_OBJS joinedByString:@" "];
     if (![after length]) {
         after = @"-nothing-";
     }
     
     NSString *expected = [p description];
 
-    id next = [best peek];
     NSString *found = next ? [next description] : @"-nothing-";
     
-    NSString *reason = [NSString stringWithFormat:@"\n\nAfter : %@\nExpected : %@\nFound : %@\n\n", after, expected, found];
+    [reason appendFormat:@"After : %@\nExpected : %@\nFound : %@\n\n", after, expected, found];
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               after, @"after",
                               expected, @"expected",
                               found, @"found",
                               nil];
-    [[PKTrackException exceptionWithName:PKTrackExceptionName reason:reason userInfo:userInfo] raise];
+
+    [[PKTrackException exceptionWithName:PKTrackExceptionName reason:[[reason copy] autorelease] userInfo:userInfo] raise];
 }
 
 @end

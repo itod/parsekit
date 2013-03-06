@@ -53,8 +53,7 @@
     double n2 = tok2.floatValue;
     
     double res = n1;
-    NSUInteger i = 1;
-    for ( ; i < n2; i++) {
+    for (NSUInteger i = 1; i < n2; i++) {
         res *= n1;
     }
     

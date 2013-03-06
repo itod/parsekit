@@ -22,12 +22,17 @@
 //- (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchOr:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchExpression:(PKAssembly *)a;
+
+@property (nonatomic, retain) NSNumber *curly;
 @end
 
 @implementation TDRegularParser
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
+        self.curly = [NSNumber numberWithInt:(int)'{'];
+
         [self add:self.expressionParser];
     }
     return self;
@@ -44,7 +49,11 @@
     self.phraseStarParser = nil;
     self.phrasePlusParser = nil;
     self.phraseQuestionParser = nil;
-    self.letterOrDigitParser = nil;
+    self.phraseIntervalParser = nil;
+    self.charParser = nil;
+    self.metaCharParser = nil;
+    
+    self.curly = nil;
     [super dealloc];
 }
 
@@ -57,16 +66,34 @@
 }
 
 
-// expression        = term orTerm*
-// term              = factor nextFactor*
-// orTerm            = '|' term
-// factor            = phrase | phraseStar | phrasePlus | phraseQuestion
-// nextFactor        = factor
-// phrase            = letterOrDigit | '(' expression ')'
-// phraseStar        = phrase '*'
-// phraseStar        = phrase '+'
-// phraseStar        = phrase '?'
-// letterOrDigit     = Letter | Digit
+- (PKAlternation *)zeroOrOne:(PKParser *)p {
+    PKAlternation *a = [PKAlternation alternation];
+    [a add:[PKEmpty empty]];
+    [a add:p];
+    return a;
+}
+
+
+- (PKSequence *)oneOrMore:(PKParser *)p {
+    PKSequence *s = [PKSequence sequence];
+    [s add:p];
+    [s add:[PKRepetition repetitionWithSubparser:p]];
+    return s;
+}
+
+
+// expression        = term orTerm*;
+// term              = factor nextFactor*;
+// orTerm            = '|' term;
+// factor            = phrase | phraseStar | phrasePlus | phraseQuestion | phraseInterval;
+// nextFactor        = factor;
+// phrase            = char | '(' expression ')';
+// phraseStar        = phrase '*';
+// phrasePlus        = phrase '+';
+// phraseQuestion    = phrase '?';
+// phraseInterval    = phrase '{' Digit (',' Digit)? '}';
+// char              = metaChar | Letter | Digit;
+// metaChar          = '.';
 
 
 // expression        = term orTerm*
@@ -107,7 +134,7 @@
 }
 
 
-// factor            = phrase | phraseStar | phrasePlus | phraseQuestion
+// factor            = phrase | phraseStar | phrasePlus | phraseQuestion | phraseInterval
 - (PKCollectionParser *)factorParser {
     if (!factorParser) {
         self.factorParser = [PKAlternation alternation];
@@ -116,6 +143,7 @@
         [factorParser add:self.phraseStarParser];
         [factorParser add:self.phrasePlusParser];
         [factorParser add:self.phraseQuestionParser];
+        [factorParser add:self.phraseIntervalParser];
     }
     return factorParser;
 }
@@ -130,13 +158,14 @@
         [nextFactorParser add:self.phraseStarParser];
         [nextFactorParser add:self.phrasePlusParser];
         [nextFactorParser add:self.phraseQuestionParser];
+        [nextFactorParser add:self.phraseIntervalParser];
 //        [nextFactorParser setAssembler:self selector:@selector(parser:didMatchAnd:)];
     }
     return nextFactorParser;
 }
 
 
-// phrase            = letterOrDigit | '(' expression ')'
+// phrase            = char | '(' expression ')'
 - (PKCollectionParser *)phraseParser {
     if (!phraseParser) {
         PKSequence *s = [PKSequence sequence];
@@ -146,7 +175,7 @@
 
         self.phraseParser = [PKAlternation alternation];
         phraseParser.name = @"phrase";
-        [phraseParser add:self.letterOrDigitParser];
+        [phraseParser add:self.charParser];
         [phraseParser add:s];
     }
     return phraseParser;
@@ -192,26 +221,70 @@
 }
 
 
-// letterOrDigit    = Letter | Digit
-- (PKCollectionParser *)letterOrDigitParser {
-    if (!letterOrDigitParser) {
-        self.letterOrDigitParser = [PKAlternation alternation];
-        letterOrDigitParser.name = @"letterOrDigit";
-        [letterOrDigitParser add:[PKLetter letter]];
-        [letterOrDigitParser add:[PKDigit digit]];
-        [letterOrDigitParser setAssembler:self selector:@selector(parser:didMatchChar:)];
+// phraseInterval        = phrase '{' Digit (',' Digit)? '}'
+- (PKCollectionParser *)phraseIntervalParser {
+    if (!phraseIntervalParser) {
+        self.phraseIntervalParser = [PKSequence sequence];
+        phraseIntervalParser.name = @"phraseInterval";
+        [phraseIntervalParser add:self.phraseParser];
+        [phraseIntervalParser add:[PKSpecificChar specificCharWithChar:'{']];
+        [phraseIntervalParser add:[PKDigit digit]];
+
+        PKSequence *seq = [PKSequence sequence];
+        [seq add:[[PKSpecificChar specificCharWithChar:','] discard]];
+        [seq add:[PKDigit digit]];
+        [phraseIntervalParser add:[self zeroOrOne:seq]];
+        
+        [phraseIntervalParser add:[[PKSpecificChar specificCharWithChar:'}'] discard]];
+        [phraseIntervalParser setAssembler:self selector:@selector(parser:didMatchInterval:)];
     }
-    return letterOrDigitParser;
+    return phraseIntervalParser;
+}
+
+
+// char    = metaChar | Letter | Digit;
+- (PKCollectionParser *)charParser {
+    if (!charParser) {
+        self.charParser = [PKAlternation alternation];
+        charParser.name = @"char";
+        [charParser add:self.metaCharParser];
+        [charParser add:[PKLetter letter]];
+        [charParser add:[PKDigit digit]];
+        [charParser setAssembler:self selector:@selector(parser:didMatchChar:)];
+    }
+    return charParser;
+}
+
+
+- (PKCollectionParser *)metaCharParser {
+    if (!metaCharParser) {
+        self.metaCharParser = [PKAlternation alternation];
+        metaCharParser.name = @"metaChar";
+        [metaCharParser add:[PKSpecificChar specificCharWithChar:'.']];
+        [metaCharParser setAssembler:self selector:@selector(parser:didMatchMetaChar:)];
+    }
+    return metaCharParser;
 }
 
 
 - (void)parser:(PKParser *)p didMatchChar:(PKAssembly *)a {
-//    NSLog(@"%s", _cmd);
-//    NSLog(@"a: %@", a);
+    //    NSLog(@"%s", _cmd);
+    //    NSLog(@"a: %@", a);
     id obj = [a pop];
     NSAssert([obj isKindOfClass:[NSNumber class]], @"");
     PKUniChar c = (PKUniChar)[obj integerValue];
     [a push:[PKSpecificChar specificCharWithChar:c]];
+}
+
+
+- (void)parser:(PKParser *)p didMatchMetaChar:(PKAssembly *)a {
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
+    id obj = [a pop];
+    NSAssert([obj isKindOfClass:[NSString class]], @"");
+    
+    PKNegation *neg = [PKNegation negationWithSubparser:[PKSpecificChar specificCharWithChar:'\n']];
+    [a push:neg];
 }
 
 
@@ -249,6 +322,40 @@
 }
 
 
+- (void)parser:(PKParser *)p didMatchInterval:(PKAssembly *)a {
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
+    
+    NSArray *digits = [a objectsAbove:curly];
+    [a pop]; // discard '{'
+
+    NSInteger start = -1;
+    NSInteger end = -1;
+    
+    for (NSNumber *n in [digits reverseObjectEnumerator]) {
+        if (-1 == start) {
+            start = [n integerValue] - '0';
+            end = start;
+        } else {
+            end = [n integerValue] - '0';
+        }
+    }
+
+    PKParser *rep = [a pop];
+    PKSequence *seq = [PKSequence sequence];
+
+    for (NSInteger i = 0; i < start; i++) {
+        [seq add:rep];
+    }
+    
+    for (NSInteger i = start; i < end; i++) {
+        [seq add:[self zeroOrOne:rep]];
+    }
+    
+    [a push:seq];
+}
+
+
 //- (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a {
 ////    NSLog(@"%s", _cmd);
 ////    NSLog(@"a: %@", a);
@@ -264,7 +371,7 @@
 
 
 - (void)parser:(PKParser *)p didMatchExpression:(PKAssembly *)a {
-//    NSLog(@"%s", _cmd);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
 //    NSLog(@"a: %@", a);
     
     NSAssert(![a isStackEmpty], @"");
@@ -317,5 +424,8 @@
 @synthesize phraseStarParser;
 @synthesize phrasePlusParser;
 @synthesize phraseQuestionParser;
-@synthesize letterOrDigitParser;
+@synthesize phraseIntervalParser;
+@synthesize charParser;
+@synthesize metaCharParser;
+@synthesize curly;
 @end

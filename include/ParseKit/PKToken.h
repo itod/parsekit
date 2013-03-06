@@ -71,6 +71,7 @@ typedef enum {
     
     id value;
     NSUInteger offset;
+    NSUInteger lineNumber;
 }
 
 /*!
@@ -214,4 +215,10 @@ typedef enum {
     @brief      The character offset of this token in the original source string.
 */
 @property (nonatomic, readonly) NSUInteger offset;
+
+/*!
+    @property   lineNumber
+    @brief      The line number of this token in the original source string.
+*/
+@property (nonatomic, readonly) NSUInteger lineNumber;
 @end

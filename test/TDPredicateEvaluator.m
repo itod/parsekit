@@ -42,7 +42,8 @@
 @implementation TDPredicateEvaluator
 
 - (id)initWithDelegate:(id <TDPredicateEvaluatorDelegate>)d {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         delegate = d;
     }
     return self;

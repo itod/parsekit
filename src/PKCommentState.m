@@ -53,7 +53,8 @@
 @implementation PKCommentState
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
         self.singleLineState = [[[PKSingleLineCommentState alloc] init] autorelease];
         self.multiLineState = [[[PKMultiLineCommentState alloc] init] autorelease];

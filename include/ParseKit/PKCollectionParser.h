@@ -14,12 +14,13 @@
 
 #import <Foundation/Foundation.h>
 #import <ParseKit/PKParser.h>
+#import <ParseKit/PKCompositeParser.h>
 
 /*!
     @class      PKCollectionParser 
     @brief      An Abstract class. This class abstracts the behavior common to parsers that consist of a series of other parsers.
 */
-@interface PKCollectionParser : PKParser {
+@interface PKCollectionParser : PKCompositeParser {
     NSMutableArray *subparsers;
 }
 
@@ -29,12 +30,6 @@
     @result     an initialized instance of a <tt>PKCollectionParser</tt> subclass.
 */
 - (id)initWithSubparsers:(PKParser *)p1, ...;
-
-/*!
-    @brief      Adds a parser to the collection.
-    @param      p parser to add
-*/
-- (void)add:(PKParser *)p;
 
 /*!
     @property   subparsers

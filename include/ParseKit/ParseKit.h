@@ -38,6 +38,7 @@
 #import <ParseKit/PKDifference.h>
 #import <ParseKit/PKNegation.h>
 #import <ParseKit/PKIntersection.h>
+#import <ParseKit/PKCompositeParser.h>
 #import <ParseKit/PKCollectionParser.h>
 #import <ParseKit/PKAlternation.h>
 #import <ParseKit/PKRepetition.h>

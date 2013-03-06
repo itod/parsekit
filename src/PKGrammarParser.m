@@ -20,7 +20,8 @@
 - (void)parser:(PKParser *)p didMatchCallback:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchExpression:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a;
-- (void)parser:(PKParser *)p didMatchIntersection:(PKAssembly *)a;    
+- (void)parser:(PKParser *)p didMatchTrack:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchIntersection:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchDifference:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchPatternOptions:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchPattern:(PKAssembly *)a;
@@ -28,6 +29,7 @@
 - (void)parser:(PKParser *)p didMatchLiteral:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchVariable:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchConstant:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchSpecificConstant:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchDelimitedString:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchStar:(PKAssembly *)a;
@@ -47,7 +49,8 @@
 @implementation PKGrammarParser
 
 - (id)initWithAssembler:(id)a {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         assembler = a;
     }
     return self;
@@ -89,6 +92,7 @@
     self.literalParser = nil;
     self.variableParser = nil;
     self.constantParser = nil;
+    self.specificConstantParser = nil;
     [super dealloc];
 }
 
@@ -132,9 +136,11 @@
 
 // primaryExpr          = negatedPrimaryExpr | barePrimaryExpr;
 // negatedPrimaryExpr   = '~' barePrimaryExpr;
-// barePrimaryExpr      = atomicValue | '(' expr ')';
+// barePrimaryExpr      = atomicValue | subSeqExpr | subTrackExpr;
+// subSeqExpr           = '(' expr ')';
+// subTrackExpr         = '[' expr ']';
 // atomicValue          = parser discard?;
-// parser               = pattern | literal | variable | constant | delimitedString;
+// parser               = pattern | literal | variable | constant | specificConstant | delimitedString;
 // discard              = S* '!';
 // pattern              = DelimitedString('/', '/') (Word & /[imxsw]+/)?;
 // delimitedString      = 'DelimitedString' S* '(' S* QuotedString (S* ',' QuotedString)? S* ')';
@@ -331,7 +337,9 @@
 }
 
 
-// barePrimaryExpr          = atomicValue | '(' expr ')';
+// barePrimaryExpr      = atomicValue | subSeqExpr | subTrackExpr;
+// subSeqExpr           = '(' expr ')';
+// subTrackExpr         = '[' expr ']';
 - (PKCollectionParser *)barePrimaryExprParser {
     if (!barePrimaryExprParser) {
         self.barePrimaryExprParser = [PKAlternation alternation];
@@ -342,8 +350,13 @@
         [s add:[PKSymbol symbolWithString:@"("]];
         [s add:self.exprParser];
         [s add:[[PKSymbol symbolWithString:@")"] discard]];
-        
         [barePrimaryExprParser add:s];
+
+        PKTrack *tr = [PKTrack track];
+        [tr add:[PKSymbol symbolWithString:@"["]];
+        [tr add:self.exprParser];
+        [tr add:[[PKSymbol symbolWithString:@"]"] discard]];
+        [barePrimaryExprParser add:tr];
     }
     return barePrimaryExprParser;
 }
@@ -497,7 +510,7 @@
 }
 
 
-// parser              = pattern | literal | variable | constant | delimitedString;
+// parser               = pattern | literal | variable | constant | specificConstant | delimitedString;
 - (PKCollectionParser *)parserParser {
     if (!parserParser) {
         self.parserParser = [PKAlternation alternation];
@@ -506,6 +519,7 @@
         [parserParser add:self.literalParser];
         [parserParser add:self.variableParser];
         [parserParser add:self.constantParser];
+        [parserParser add:self.specificConstantParser];
         [parserParser add:self.delimitedStringParser];
     }
     return parserParser;
@@ -607,6 +621,21 @@
 }
 
 
+// specificConstant      = UppercaseWord '(' QuotedString ')';
+- (PKParser *)specificConstantParser {
+    if (!specificConstantParser) {
+        self.specificConstantParser = [PKSequence sequence];
+        specificConstantParser.name = @"specificConstant";
+        [specificConstantParser add:[PKUppercaseWord word]];
+        [specificConstantParser add:[[PKSymbol symbolWithString:@"("] discard]];
+        [specificConstantParser add:[PKQuotedString quotedString]];
+        [specificConstantParser add:[[PKSymbol symbolWithString:@")"] discard]];
+        [specificConstantParser setAssembler:assembler selector:@selector(parser:didMatchSpecificConstant:)];
+    }
+    return specificConstantParser;
+}
+
+
 - (PKParser *)whitespaceParser {
     return [[PKWhitespace whitespace] discard];
 }
@@ -645,4 +674,5 @@
 @synthesize literalParser;
 @synthesize variableParser;
 @synthesize constantParser;
+@synthesize specificConstantParser;
 @end

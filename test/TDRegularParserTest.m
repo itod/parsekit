@@ -404,4 +404,59 @@
     TDEqualObjects(@"[b]b^bbaaa", [res description]);
 }
 
+
+- (void)testOneInterval {
+    s = @"a{1}";
+    a = [PKCharacterAssembly assemblyWithString:s];
+    res = [p bestMatchFor:a];
+    TDNotNil(res);
+    TDEqualObjects(@"[Sequence]a{1}^", [res description]);
+    PKSequence *seq = [res pop];
+    TDTrue([seq isMemberOfClass:[PKSequence class]]);
+    
+    // use the result parser
+    p = [TDRegularParser parserFromGrammar:s];
+    TDNotNil(p);
+    TDTrue([p isKindOfClass:[PKSequence class]]);
+    s = @"a";
+    a = [PKCharacterAssembly assemblyWithString:s];
+    res = (PKCharacterAssembly *)[p bestMatchFor:a];
+    TDEqualObjects(@"[a]a^", [res description]);
+
+    s = @"aa";
+    a = [PKCharacterAssembly assemblyWithString:s];
+    res = (PKCharacterAssembly *)[p bestMatchFor:a];
+    TDEqualObjects(@"[a]a^a", [res description]);
+}
+
+
+- (void)testTwoInterval {
+    s = @"a{1,2}";
+    a = [PKCharacterAssembly assemblyWithString:s];
+    res = [p bestMatchFor:a];
+    TDNotNil(res);
+    TDEqualObjects(@"[Sequence]a{1,2}^", [res description]);
+    PKSequence *seq = [res pop];
+    TDTrue([seq isMemberOfClass:[PKSequence class]]);
+    
+    // use the result parser
+    p = [TDRegularParser parserFromGrammar:s];
+    TDNotNil(p);
+    TDTrue([p isKindOfClass:[PKSequence class]]);
+    s = @"a";
+    a = [PKCharacterAssembly assemblyWithString:s];
+    res = (PKCharacterAssembly *)[p bestMatchFor:a];
+    TDEqualObjects(@"[a]a^", [res description]);
+    
+    s = @"aa";
+    a = [PKCharacterAssembly assemblyWithString:s];
+    res = (PKCharacterAssembly *)[p bestMatchFor:a];
+    TDEqualObjects(@"[a, a]aa^", [res description]);
+
+    s = @"aaa";
+    a = [PKCharacterAssembly assemblyWithString:s];
+    res = (PKCharacterAssembly *)[p bestMatchFor:a];
+    TDEqualObjects(@"[a, a]aa^a", [res description]);
+}
+
 @end

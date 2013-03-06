@@ -27,7 +27,8 @@
 @implementation TDNSPredicateEvaluator
 
 - (id)initWithKeyPathResolver:(id <TDKeyPathResolver>)r {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.resolver = r;
 
         self.openCurly = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"{" floatValue:0];

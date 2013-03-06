@@ -46,7 +46,8 @@
 @implementation PKMultiLineCommentState
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.startMarkers = [NSMutableArray array];
         self.endMarkers = [NSMutableArray array];
     }
@@ -99,7 +100,7 @@
     PKSymbolRootNode *rootNode = t.commentState.rootNode;
         
     PKUniChar c;
-    while (1) {
+    for (;;) {
         c = [r read];
         if (PKEOF == c) {
             if (balanceEOF) {

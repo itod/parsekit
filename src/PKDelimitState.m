@@ -36,19 +36,18 @@
 - (NSString *)endMarkerForStartMarker:(NSString *)startMarker;
 - (NSCharacterSet *)allowedCharacterSetForStartMarker:(NSString *)startMarker;
 @property (nonatomic, retain) PKSymbolRootNode *rootNode;
-@property (nonatomic, retain) NSMutableArray *startMarkers;
-@property (nonatomic, retain) NSMutableArray *endMarkers;
-@property (nonatomic, retain) NSMutableArray *characterSets;
+@property (nonatomic, retain) NSMutableDictionary *endMarkers;
+@property (nonatomic, retain) NSMutableDictionary *characterSets;
 @end
 
 @implementation PKDelimitState
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
-        self.startMarkers = [NSMutableArray array];
-        self.endMarkers = [NSMutableArray array];
-        self.characterSets = [NSMutableArray array];
+        self.endMarkers = [NSMutableDictionary dictionary];
+        self.characterSets = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -56,7 +55,6 @@
 
 - (void)dealloc {
     self.rootNode = nil;
-    self.startMarkers = nil;
     self.endMarkers = nil;
     self.characterSets = nil;
     [super dealloc];
@@ -66,54 +64,55 @@
 - (void)addStartMarker:(NSString *)start endMarker:(NSString *)end allowedCharacterSet:(NSCharacterSet *)set {
     NSParameterAssert([start length]);
     [rootNode add:start];
-    [startMarkers addObject:start];
-    
+
+    id endObj = nil;
     if ([end length]) {
         [rootNode add:end];
-        [endMarkers addObject:end];
+        endObj = end;
     } else {
-        [endMarkers addObject:[NSNull null]];
+        endObj = [NSNull null];
     }
+    [endMarkers setObject:endObj forKey:start];
 
+    id setObj = nil;
     if (set) {
-        [characterSets addObject:set];
+        setObj = set;
     } else {
-        [characterSets addObject:[NSNull null]];
+        setObj = [NSNull null];
     }
+    [characterSets setObject:setObj forKey:start];
 }
 
 
 - (void)removeStartMarker:(NSString *)start {
     NSParameterAssert([start length]);
     [rootNode remove:start];
-    NSUInteger i = [startMarkers indexOfObject:start];
-    if (NSNotFound != i) {
-        [startMarkers removeObject:start];
-        [characterSets removeObjectAtIndex:i];
+    
+    NSString *end = [endMarkers objectForKey:start];
+    if (end) {
+        [characterSets removeObjectForKey:start];
         
-        id endOrNull = [endMarkers objectAtIndex:i];
+        id endOrNull = [endMarkers objectForKey:start];
         if ([NSNull null] != endOrNull) {
             [rootNode remove:endOrNull];
         }
-        [endMarkers removeObjectAtIndex:i]; // this should always be in range.
+        [endMarkers removeObjectForKey:start];
     }
 }
 
 
 - (NSString *)endMarkerForStartMarker:(NSString *)startMarker {
-    NSParameterAssert([startMarkers containsObject:startMarker]);
-    NSUInteger i = [startMarkers indexOfObject:startMarker];
-    return [endMarkers objectAtIndex:i];
+    NSParameterAssert([endMarkers objectForKey:startMarker]);
+    return [endMarkers objectForKey:startMarker];
 }
 
 
 - (NSCharacterSet *)allowedCharacterSetForStartMarker:(NSString *)startMarker {
-    NSParameterAssert([startMarkers containsObject:startMarker]);
+    NSParameterAssert([endMarkers objectForKey:startMarker]);
     NSCharacterSet *characterSet = nil;
-    NSUInteger i = [startMarkers indexOfObject:startMarker];
-    id csOrNull = [characterSets objectAtIndex:i];
-    if ([NSNull null] != csOrNull) {
-        characterSet = csOrNull;
+    id setOrNull = [characterSets objectForKey:startMarker];
+    if ([NSNull null] != setOrNull) {
+        characterSet = setOrNull;
     }
     return characterSet;
 }
@@ -125,7 +124,7 @@
     
     NSString *startMarker = [rootNode nextSymbol:r startingWith:cin];
 
-    if (![startMarker length] || ![startMarkers containsObject:startMarker]) {
+    if (![startMarker length] || ![endMarkers objectForKey:startMarker]) {
         [r unread:[startMarker length] - 1];
         return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
     }
@@ -144,7 +143,7 @@
         endMarker = endMarkerOrNull;
         e = [endMarker characterAtIndex:0];
     }
-    while (1) {
+    for (;;) {
         c = [r read];
         if (PKEOF == c) {
             if (balancesEOFTerminatedStrings && endMarker) {
@@ -207,7 +206,6 @@
 @synthesize rootNode;
 @synthesize balancesEOFTerminatedStrings;
 @synthesize allowsUnbalancedStrings;
-@synthesize startMarkers;
 @synthesize endMarkers;
 @synthesize characterSets;
 @end

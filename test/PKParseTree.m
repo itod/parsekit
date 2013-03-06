@@ -84,8 +84,17 @@
 }
 
 
+//- (NSString *)description {
+//    return [NSString stringWithFormat:@"<PKParseTree '%@'>", children];
+//}
+
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<PKParseTree '%@'>", children];
+    return [self treeDescription];
+}
+
+
+- (NSString *)treeDescription {
+    return nil;
 }
 
 @synthesize parent;

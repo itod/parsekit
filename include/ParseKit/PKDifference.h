@@ -13,7 +13,7 @@
 //  limitations under the License.
 
 #import <Foundation/Foundation.h>
-#import <ParseKit/PKParser.h>
+#import <ParseKit/PKCompositeParser.h>
 
 /*!
     @class      PKDifference
@@ -28,7 +28,7 @@
     PKDifference *diff = [PKDifference differenceWithSubparser:[PKWord word] minus:reservedWords];
 @endcode
 */
-@interface PKDifference : PKParser {
+@interface PKDifference : PKCompositeParser {
     PKParser *subparser;
     PKParser *minus;
 }

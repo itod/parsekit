@@ -38,7 +38,8 @@
 
 
 - (id)initWithString:(NSString *)s {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.string = s;
     }
     return self;

@@ -13,13 +13,13 @@
 //  limitations under the License.
 
 #import <Foundation/Foundation.h>
-#import <ParseKit/PKParser.h>
+#import <ParseKit/PKCompositeParser.h>
 
 /*!
     @class      PKRepetition 
     @brief      A <tt>PKRepetition</tt> matches its underlying parser repeatedly against a assembly.
 */
-@interface PKRepetition : PKParser {
+@interface PKRepetition : PKCompositeParser {
     PKParser *subparser;
 }
 

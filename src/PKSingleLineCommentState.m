@@ -40,7 +40,8 @@
 @implementation PKSingleLineCommentState
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.startMarkers = [NSMutableArray array];
     }
     return self;
@@ -77,7 +78,7 @@
     }
     
     PKUniChar c;
-    while (1) {
+    for (;;) {
         c = [r read];
         if ('\n' == c || '\r' == c || PKEOF == c) {
             break;

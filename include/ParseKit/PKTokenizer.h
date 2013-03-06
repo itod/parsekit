@@ -79,6 +79,9 @@
     PKTwitterState *twitterState;
     PKHashtagState *hashtagState;
 #endif
+    
+    NSUInteger lineNumber;
+
 }
 
 /*!
@@ -126,7 +129,7 @@
     @property   string
     @brief      The string to read from.
 */
-@property (nonatomic, retain) NSString *string;
+@property (nonatomic, copy) NSString *string;
 
 /*!
     @property    numberState
@@ -178,4 +181,6 @@
 @property (nonatomic, retain) PKTwitterState *twitterState;
 @property (nonatomic, retain) PKHashtagState *hashtagState;
 #endif
+
+@property (nonatomic, readonly) NSUInteger lineNumber;
 @end

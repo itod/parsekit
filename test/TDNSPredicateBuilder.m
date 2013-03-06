@@ -41,7 +41,8 @@
 @implementation TDNSPredicateBuilder
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.defaultAttr = @"content";
         self.defaultRelation = @"=";
         self.defaultValue = @"";
@@ -523,7 +524,7 @@
 - (void)parser:(PKParser *)p didMatchUnquotedString:(PKAssembly *)a {
     NSMutableArray *wordStrings = [NSMutableArray array];
 
-    while (1) {
+    for (;;) {
         NSArray *objs = [a objectsAbove:nonReservedWordFence];
         id next = [a pop]; // is the next obj a fence?
         if (![nonReservedWordFence isEqual:next]) {

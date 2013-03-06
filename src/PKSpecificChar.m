@@ -30,6 +30,11 @@
 }
 
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"'%@'", string];
+}
+
+
 - (BOOL)qualifies:(id)obj {
     PKUniChar c = [obj intValue];
     return c == [string characterAtIndex:0];
