@@ -83,7 +83,7 @@
         self.tokenizerStates = [NSMutableArray arrayWithCapacity:STATE_COUNT];
         
         for (NSInteger i = 0; i < STATE_COUNT; i++) {
-            [tokenizerStates addObject:[self defaultTokenizerStateFor:i]];
+            [tokenizerStates addObject:[self defaultTokenizerStateFor:(PKUniChar)i]];
         }
 
         [symbolState add:@"<="];
