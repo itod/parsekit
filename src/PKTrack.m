@@ -88,7 +88,13 @@
         NSAssert(NSNotFound != lineNum, @"");
 
         if (NSNotFound != lineNum) {
-            [reason appendFormat:@"Line : %lu\n", lineNum];
+            NSString *fmt = nil;
+#if __LP64__
+            fmt = @"Line : %lu\n";
+#else
+            fmt = @"Line : %u\n";
+#endif
+            [reason appendFormat:fmt, lineNum];
         }
     }
     
