@@ -205,11 +205,12 @@
 		D36E98E70E58C14000496BD3 /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D36E98E40E58C14000496BD3 /* DemoAppDelegate.m */; };
 		D36E98E80E58C14000496BD3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D36E98E50E58C14000496BD3 /* main.m */; };
 		D36E98F80E58C1A000496BD3 /* DemoAppMainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D36E98F70E58C1A000496BD3 /* DemoAppMainMenu.xib */; };
+		D377B54B16E7EE4200BDEDBA /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
+		D377B54C16E7EE4200BDEDBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		D37A28671013942300E936B7 /* PKGrammarParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D3376D5810093A1600E4602E /* PKGrammarParser.m */; };
 		D37A28681013942A00E936B7 /* PKGrammarParser.h in Headers */ = {isa = PBXBuildFile; fileRef = D3376D5710093A1600E4602E /* PKGrammarParser.h */; };
 		D37D3A000FE77A71008C2E4D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		D37D3A010FE77A72008C2E4D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
-		D37D3A020FE77A77008C2E4D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		D37D8DC91571A4F700CDB822 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D37D8DC81571A4F700CDB822 /* SenTestingKit.framework */; };
 		D37D8DDE1571A57300CDB822 /* PKParseTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D36934561038DE5300527AF3 /* PKParseTree.m */; };
 		D37D8DDF1571A57300CDB822 /* PKParseTreeAssembler.m in Sources */ = {isa = PBXBuildFile; fileRef = D36934581038DE5300527AF3 /* PKParseTreeAssembler.m */; };
@@ -1313,7 +1314,8 @@
 				D389F20E0F196A9200558235 /* WebKit.framework in Frameworks */,
 				D389F20C0F196A9200558235 /* ParseKit.framework in Frameworks */,
 				D389F20B0F196A9200558235 /* JSParseKit.framework in Frameworks */,
-				D37D3A020FE77A77008C2E4D /* AppKit.framework in Frameworks */,
+				D377B54B16E7EE4200BDEDBA /* AppKit.framework in Frameworks */,
+				D377B54C16E7EE4200BDEDBA /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3731,7 +3733,6 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -3756,7 +3757,6 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
