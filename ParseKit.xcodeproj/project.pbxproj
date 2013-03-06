@@ -601,7 +601,6 @@
 		D3D9759E16E7F53900D55EAB /* PKAny.m in Sources */ = {isa = PBXBuildFile; fileRef = D34BAE2F0FF9CE6000D7773A /* PKAny.m */; };
 		D3D9759F16E7F55F00D55EAB /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D36C560B0FD363D500141CB7 /* libicucore.dylib */; };
 		D3D975A016E7F56300D55EAB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
-		D3D975A916E7F6F900D55EAB /* libparsekit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3FDC5830FFC4BFC00F1F797 /* libparsekit.a */; };
 		D3D975B016E803A400D55EAB /* PKCaseInsensitiveLiteral.m in Sources */ = {isa = PBXBuildFile; fileRef = D34BAF3C0FF9E19700D7773A /* PKCaseInsensitiveLiteral.m */; };
 		D3D975B216E803A700D55EAB /* PKWhitespace.m in Sources */ = {isa = PBXBuildFile; fileRef = D34BAF4A0FF9E19700D7773A /* PKWhitespace.m */; };
 		D3D975B316E803AB00D55EAB /* PKComment.m in Sources */ = {isa = PBXBuildFile; fileRef = D34BAF3E0FF9E19700D7773A /* PKComment.m */; };
@@ -630,7 +629,7 @@
 		D3D975CA16E8048400D55EAB /* PKNegation.m in Sources */ = {isa = PBXBuildFile; fileRef = D3126D040FFD9BA700CBF4C4 /* PKNegation.m */; };
 		D3D975CB16E804A800D55EAB /* PKEmailState.m in Sources */ = {isa = PBXBuildFile; fileRef = D35F4A8511643630003811F3 /* PKEmailState.m */; };
 		D3D975CC16E804AD00D55EAB /* PKURLState.m in Sources */ = {isa = PBXBuildFile; fileRef = D35F4A8611643630003811F3 /* PKURLState.m */; };
-		D3D975CD16E8055300D55EAB /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D36C560B0FD363D500141CB7 /* libicucore.dylib */; };
+		D3D975D516E8067300D55EAB /* ParseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* ParseKit.framework */; };
 		D3DCB4C40EF6015C00DE5110 /* json.grammar in Resources */ = {isa = PBXBuildFile; fileRef = D3DCB4C20EF6015300DE5110 /* json.grammar */; };
 		D3DCB4C50EF6015C00DE5110 /* json.grammar in Resources */ = {isa = PBXBuildFile; fileRef = D3DCB4C20EF6015300DE5110 /* json.grammar */; };
 		D3DDDA870F0779FD00A58000 /* TDSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = D3DDDA860F0779FD00A58000 /* TDSyntaxHighlighter.m */; };
@@ -743,12 +742,12 @@
 			remoteGlobalIDString = D389F1CD0F1965E600558235;
 			remoteInfo = TDJSParseKit;
 		};
-		D3D975A716E7F6F400D55EAB /* PBXContainerItemProxy */ = {
+		D3D975D616E8067900D55EAB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D3D9753116E7F36700D55EAB;
-			remoteInfo = libParseKit;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = ParseKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1409,8 +1408,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3D975CD16E8055300D55EAB /* libicucore.dylib in Frameworks */,
-				D3D975A916E7F6F900D55EAB /* libparsekit.a in Frameworks */,
+				D3D975D516E8067300D55EAB /* ParseKit.framework in Frameworks */,
 				D37D8DC91571A4F700CDB822 /* SenTestingKit.framework in Frameworks */,
 				D37D8E5A1571A5BA00CDB822 /* OCMock.framework in Frameworks */,
 				D35D18A315D5AD15003DF6BC /* AppKit.framework in Frameworks */,
@@ -2931,7 +2929,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				D3D975A816E7F6F400D55EAB /* PBXTargetDependency */,
+				D3D975D716E8067900D55EAB /* PBXTargetDependency */,
 			);
 			name = Tests;
 			productName = NewTests;
@@ -3656,10 +3654,10 @@
 			target = D389F1CD0F1965E600558235 /* JSParseKit */;
 			targetProxy = D389F2090F196A8000558235 /* PBXContainerItemProxy */;
 		};
-		D3D975A816E7F6F400D55EAB /* PBXTargetDependency */ = {
+		D3D975D716E8067900D55EAB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D3D9753116E7F36700D55EAB /* libParseKit */;
-			targetProxy = D3D975A716E7F6F400D55EAB /* PBXContainerItemProxy */;
+			target = 8DC2EF4F0486A6940098B216 /* ParseKit */;
+			targetProxy = D3D975D616E8067900D55EAB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
