@@ -1014,7 +1014,7 @@ void PKReleaseSubparserTree(PKParser *p) {
         PKUniChar c = [tok.stringValue characterAtIndex:0];
         [a push:[PKSpecificChar specificCharWithChar:c]];
     } else {
-        [a push:[NSNumber numberWithFloat:tok.floatValue]];
+        [a push:[NSNumber numberWithDouble:tok.floatValue]];
     }
 }
 

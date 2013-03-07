@@ -165,7 +165,7 @@ static PKTokenEOF *EOFToken = nil;
     if (!value) {
         id v = nil;
         if (number) {
-            v = [NSNumber numberWithFloat:floatValue];
+            v = [NSNumber numberWithDouble:floatValue];
         } else {
             v = stringValue;
         }
