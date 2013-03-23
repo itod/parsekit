@@ -109,7 +109,6 @@
 
 
 - (void)addGroupingSeparator:(PKUniChar)sepChar forRadix:(NSUInteger)r {
-    PKAssertMainThread();
     NSParameterAssert(NSNotFound != r);
     NSAssert(separatorsForRadix, @"");
     NSAssert(PKEOF != sepChar, @"");
@@ -129,7 +128,6 @@
 
 
 - (void)removeGroupingSeparator:(PKUniChar)sepChar forRadix:(NSUInteger)r {
-    PKAssertMainThread();
     NSParameterAssert(NSNotFound != r);
     NSAssert(separatorsForRadix, @"");
     NSAssert(PKEOF != sepChar, @"");
@@ -145,7 +143,6 @@
 
 
 - (void)addPrefix:(NSString *)s forRadix:(NSUInteger)r {
-    PKAssertMainThread();
     NSParameterAssert([s length]);
     NSParameterAssert(NSNotFound != r);
     NSAssert(radixForPrefix, @"");
@@ -157,7 +154,6 @@
 
 
 - (void)addSuffix:(NSString *)s forRadix:(NSUInteger)r {
-    PKAssertMainThread();
     NSParameterAssert([s length]);
     NSParameterAssert(NSNotFound != r);
     NSAssert(radixForSuffix, @"");
@@ -169,7 +165,6 @@
 
 
 - (void)removePrefix:(NSString *)s {
-    PKAssertMainThread();
     NSParameterAssert([s length]);
     NSAssert(radixForPrefix, @"");
     NSAssert([radixForPrefix objectForKey:s], @"");
@@ -187,7 +182,6 @@
 
 
 - (NSUInteger)radixForPrefix:(NSString *)s {
-    PKAssertMainThread();
     NSParameterAssert([s length]);
     NSAssert(radixForPrefix, @"");
     
@@ -198,7 +192,6 @@
 
 
 - (NSUInteger)radixForSuffix:(NSString *)s {
-    PKAssertMainThread();
     NSParameterAssert([s length]);
     NSAssert(radixForSuffix, @"");
     
@@ -209,7 +202,6 @@
 
 
 - (BOOL)isValidSeparator:(PKUniChar)sepChar {
-    PKAssertMainThread();
     NSAssert(base > 1, @"");
     //NSAssert(PKEOF != sepChar, @"");
     if (PKEOF == sepChar) return NO;

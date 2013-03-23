@@ -14,6 +14,10 @@
 
 #import "TDXMLParserTest.h"
 
+@interface PKSymbolState ()
+@property (nonatomic, retain) NSMutableArray *addedSymbols;
+@end
+
 @implementation TDXMLParserTest
 
 - (void)setUp {
@@ -158,11 +162,19 @@
     res = [eTag bestMatchFor:a];
     TDNil(res);
 }
-    
+
     
 - (void)testETag {
     t.string = @"</foo>";
-    res = [[p parserNamed:@"eTag"] bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
+    NSArray *syms = t.symbolState.addedSymbols;
+    TDTrue([syms containsObject:@"</"]);
+    
+    PKParser *etag = [p parserNamed:@"eTag"];
+    
+    a = [PKTokenAssembly assemblyWithTokenizer:t];
+    TDEqualObjects(@"[]^<//foo/>", [a description]);
+    
+    res = [etag bestMatchFor:a];
     TDEqualObjects(@"[</, foo, >]<//foo/>^", [res description]);
 }
 
@@ -245,7 +257,7 @@
         @"reference = entityRef | charRef;"
         @"entityRef = '&' name ';';"
         @"charRef = '&#' /[0-9]+/ ';' | '&#x' /[0-9a-fA-F]+/ ';';"
-        @"cdSect = DelimitedString('<![CDATA[', ']]>');"
+        @"cdSect = %{'<![CDATA[', ']]>'};"
     ;
     
     PKParser *element = [factory parserFromGrammar:g assembler:nil error:nil];
@@ -342,7 +354,7 @@
 
 
 // [15]       Comment       ::=       '<!--' ((Char - '-') | ('-' (Char - '-')))* '-->'
-// comment = DelimitedString('<!--', '-->');
+// comment = %{'<!--', '-->'};
 - (void)testComment {
     t.string = @"<!-- bar -->";
     res = [[p parserNamed:@"comment"] bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
@@ -355,7 +367,7 @@
 // [16]       PI       ::=       '<?' PITarget (S (Char* - (Char* '?>' Char*)))? '?>'
 // [17]       PITarget       ::=        Name - (('X' | 'x') ('M' | 'm') ('L' | 'l'))
 // pi = '<?' piTarget ~/?>/* '?>';
-// piTarget = name - /xml/i;
+// piTarget = name - /[xX][mM][lL]/;
 
 - (void)testPI {
     NSString *gram = 
@@ -363,7 +375,7 @@
         @"@symbols='<?' '?>';"
         @"@symbolState = '<';"
         @"name=/[^-:\\.]\\w+/;"
-        @"piTarget = name - /xml/i;"
+        @"piTarget = name - /[xX][mM][lL]/;"
         @"@wordState = ':' '.' '-' '_';"
         @"@wordChars = ':' '.' '-' '_';"
         @"pi = '<?' piTarget ~/?>/* '?>';"
@@ -424,6 +436,5 @@
     TDEqualObjects(@"[<?xml,  , version, =, '1.0',  , encoding, =, 'utf-8',  , standalone, =, 'no', ?>]<?xml/ /version/=/'1.0'/ /encoding/=/'utf-8'/ /standalone/=/'no'/?>^", [res description]);    
     
 }
-
 
 @end

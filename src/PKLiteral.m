@@ -15,6 +15,10 @@
 #import <ParseKit/PKLiteral.h>
 #import <ParseKit/PKToken.h>
 
+@interface PKTerminal ()
+@property (nonatomic, readwrite, copy) NSString *string;
+@end
+
 @interface PKLiteral ()
 @property (nonatomic, retain) PKToken *literal;
 @end
@@ -30,7 +34,7 @@
     //NSParameterAssert(s);
     self = [super initWithString:s];
     if (self) {
-        self.literal = [PKToken tokenWithTokenType:PKTokenTypeWord stringValue:s floatValue:0.0];
+
     }
     return self;
 }
@@ -54,6 +58,14 @@
         return [NSString stringWithFormat:@"%@ (%@) %@", className, name, literal.stringValue];
     } else {
         return [NSString stringWithFormat:@"%@ %@", className, literal.stringValue];
+    }
+}
+
+
+- (void)setString:(NSString *)s {
+    [super setString:s];
+    if (s) {
+        self.literal = [PKToken tokenWithTokenType:PKTokenTypeWord stringValue:s floatValue:0.0];
     }
 }
 

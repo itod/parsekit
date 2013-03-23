@@ -58,7 +58,7 @@
 @endcode
                 <p>In addition to allowing modification of the state table, this class makes each of the states above available. Some of these states are customizable. For example, wordState allows customization of what characters can be part of a word, after the first character.</p>
 */
-@interface PKTokenizer : NSObject {
+@interface PKTokenizer : NSObject <NSFastEnumeration> {
     NSString *string;
     PKReader *reader;
     

@@ -399,7 +399,7 @@
 ////    TDEqualObjects(@"[bar, bat]bar/bat^", [res description]);
 ////    [mock verify];
     
-//    NSString *g = @"@delimitState = '$'; @delimitedString = '$' '%' nil; @start = DelimitedString('$', '%');";
+//    NSString *g = @"@delimitState = '$'; @delimitedString = '$' '%' nil; @start = %{'$', '%'};";
 //    PKParser *lp = [[PKParserFactory factory] parserFromGrammar:g assembler:nil];
 //
 //    NSString *s = @"$foo%";
@@ -485,13 +485,33 @@
     path = [@"~/Desktop/input.txt" stringByExpandingTildeInPath];
     NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     
-    PKAssembly *res = [p parse:s error:nil];
-//    p.tokenizer.string = s;
-//    PKAssembly *res = [p bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:p.tokenizer]];
+//    PKAssembly *res = [p parse:s error:nil];
+    p.tokenizer.string = s;
+    PKAssembly *res = [p bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:p.tokenizer]];
     NSLog(@"p %@", p);
     NSLog(@"res %@", res);
     
 }
+
+
+- (void)doTestSqliteGrammar {
+    
+    //    NSString *path = [[NSBundle mainBundle] pathForResource:@"date" ofType:@"grammar"];
+    NSString *path = [@"~/work/parsekit/trunk/res/sqlite.grammar" stringByExpandingTildeInPath];
+    NSString *g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    PKParser *p = [[PKParserFactory factory] parserFromGrammar:g assembler:self error:nil];
+    
+    path = [@"~/work/parsekit/trunk/res/sqlite_input.txt" stringByExpandingTildeInPath];
+    NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    
+    //    PKAssembly *res = [p parse:s error:nil];
+    p.tokenizer.string = s;
+    PKAssembly *res = [p bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:p.tokenizer]];
+    NSLog(@"p %@", p);
+    NSLog(@"res %@", res);
+    
+}
+
 
 - (void)parser:(PKParser *)p didMatchTag:(PKAssembly *)a {
     NSLog(@"%s", __PRETTY_FUNCTION__);
@@ -500,18 +520,19 @@
 }
 
 
-- (void)parser:(PKParser *)p didMatchExpr:(PKAssembly *)a {
-    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
-    NSArray *toks = [a objectsAbove:nil];
-    
-    double total = 0.0;
-    for (PKToken *tok in toks) {
-        double n = tok.floatValue;
-        total += n;
-    }
-    
-    a.target = [NSNumber numberWithDouble:total];
-}
+//- (void)parser:(PKParser *)p didMatchExpr:(PKAssembly *)a {
+//    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
+//    NSArray *toks = [a objectsAbove:nil];
+//    
+//    double total = 0.0;
+//    for (PKToken *tok in toks) {
+//        double n = tok.floatValue;
+//        total += n;
+//    }
+//    
+//    a.target = [NSNumber numberWithDouble:total];
+//}
+
 
 //- (void)parser:(PKParser *)p didMatchTerm:(PKAssembly *)a {
 //    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
@@ -537,30 +558,28 @@
 }
 
 
+- (void)parser:(PKParser *)p didMatchFunctionKeyword:(PKAssembly *)a {
+    [a push:[NSNull null]];
+}
 
 
-    - (void)parser:(PKParser *)p didMatchFunctionKeyword:(PKAssembly *)a {
-        [a push:[NSNull null]];
+- (void)parser:(PKParser *)p didMatchFunctionCloseCurly:(PKAssembly *)a {
+    id obj = [a pop];
+    NSAssert(obj == [NSNull null], @"null should be on the top of the stack");
+}
+
+
+- (void)parser:(PKParser *)p didMatchVarDecl:(PKAssembly *)a {
+    id obj = [a pop];
+    if (obj == [NSNull null]) {
+        [a push:obj]; // we're in a function. put the null back and bail.
+    } else {
+        PKToken *fence = [PKToken tokenWithTokenType:PKTokenTypeWord stringValue:@"var" floatValue:0.0];
+        NSArray *toks = [a objectsAbove:fence]; // get all the tokens for the var decl
+        // now do whatever you want with the var decl tokens here.
     }
-
-
-    - (void)parser:(PKParser *)p didMatchFunctionCloseCurly:(PKAssembly *)a {
-        id obj = [a pop];
-        NSAssert(obj == [NSNull null], @"null should be on the top of the stack");
-    }
-
-
-    - (void)parser:(PKParser *)p didMatchVarDecl:(PKAssembly *)a {
-        id obj = [a pop];
-        if (obj == [NSNull null]) {
-            [a push:obj]; // we're in a function. put the null back and bail.
-        } else {
-            PKToken *fence = [PKToken tokenWithTokenType:PKTokenTypeWord stringValue:@"var" floatValue:0.0];
-            NSArray *toks = [a objectsAbove:fence]; // get all the tokens for the var decl
-            // now do whatever you want with the var decl tokens here.
-        }
-        
-    }
+    
+}
 
 
 
@@ -569,6 +588,7 @@
     
     
     [self doTestGrammar];
+    //[self doTestSqliteGrammar];
     
 //    [self doPlistParser];
 //    [self doHtmlSyntaxHighlighter];
@@ -577,7 +597,7 @@
 
 //    [self doJSParser];
     
-    //    [self doProf];
+//    [self doProf];
 
     //[self doJavaScriptGrammarParser];
     

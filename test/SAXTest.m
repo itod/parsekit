@@ -26,7 +26,9 @@
 
 
 - (void)testSTag {
-    //PKParser *sTag = [p parserNamed:@"sTag"];
+    PKParser *sTag = [p parserNamed:@"sTag"];
+    TDNotNil(sTag);
+    TDTrue([sTag isKindOfClass:[PKParser class]]);
 
 }
 

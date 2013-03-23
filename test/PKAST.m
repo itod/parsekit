@@ -45,6 +45,32 @@
 }
 
 
+- (id)copyWithZone:(NSZone *)zone {
+    PKAST *that = [[[self class] alloc] initWithToken:_token];
+    that->_children = [_children mutableCopyWithZone:zone];
+    return that;
+}
+
+
+- (BOOL)isEqual:(id)obj {
+    if (![obj isMemberOfClass:[self class]]) {
+        return NO;
+    }
+    
+    PKAST *that = (PKAST *)obj;
+    
+    if (![_token isEqual:that->_token]) {
+        return NO;
+    }
+    
+    if (![_children isEqualToArray:that->_children]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+
 - (NSString *)description {
     return [self treeDescription];
 }
@@ -52,22 +78,19 @@
 
 - (NSString *)treeDescription {
     if (![_children count]) {
-        return [_token stringValue];
+        return self.name;
     }
     
     NSMutableString *ms = [NSMutableString string];
     
     if (![self isNil]) {
-        [ms appendFormat:@"(%@ ", [_token stringValue]];
+        [ms appendFormat:@"(%@ ", self.name];
     }
 
     NSInteger i = 0;
     for (PKAST *child in _children) {
-        if (i++) {
-            [ms appendFormat:@" %@", [child treeDescription]];
-        } else {
-            [ms appendFormat:@"%@", [child treeDescription]];
-        }
+        NSString *fmt = 0 == i++ ? @"%@" : @" %@";
+        [ms appendFormat:fmt, [child treeDescription]];
     }
     
     if (![self isNil]) {
@@ -78,22 +101,27 @@
 }
 
 
-- (int)type {
+- (NSUInteger)type {
     NSAssert2(0, @"%s is an abastract method. Must be overridden in %@", __PRETTY_FUNCTION__, NSStringFromClass([self class]));
-    return -1;
+    return NSNotFound;
 }
 
 
-- (void)addChild:(PKAST *)c {
+- (void)addChild:(PKAST *)a {
     if (!_children) {
         self.children = [NSMutableArray array];
     }
-    [_children addObject:c];
+    [_children addObject:a];
 }
 
 
 - (BOOL)isNil {
     return !_token;
+}
+
+
+- (NSString *)name {
+    return [_token stringValue];
 }
 
 @end

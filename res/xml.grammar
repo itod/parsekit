@@ -93,14 +93,14 @@
 
 // [15]       Comment       ::=       '<!--' ((Char - '-') | ('-' (Char - '-')))* '-->'
     
-    comment = DelimitedString('<!--', '-->');
+    comment = %{'<!--', '-->'};
 
 
 // [16]       PI       ::=       '<?' PITarget (S (Char* - (Char* '?>' Char*)))? '?>'
 // [17]       PITarget       ::=        Name - (('X' | 'x') ('M' | 'm') ('L' | 'l'))
     
     pi = '<?' piTarget ~/?>/* '?>';
-    piTarget = name - /xml/i;
+    piTarget = name - /[xX][mM][lL]/;
 
 
 // [18]       CDSect       ::=        CDStart CData CDEnd
@@ -108,7 +108,7 @@
 // [20]       CData       ::=       (Char* - (Char* ']]>' Char*))
 // [21]       CDEnd       ::=       ']]>'
     
-    cdSect = DelimitedString('<![CDATA[', ']]>');
+    cdSect = %{'<![CDATA[', ']]>'};
 
 
 // [22]       prolog       ::=        XMLDecl? Misc* (doctypedecl Misc*)?
@@ -140,7 +140,7 @@
 
 // [28]       doctypedecl       ::=       '<!DOCTYPE' S Name (S ExternalID)? S? ('[' intSubset ']' S?)? '>'
     
-    doctypedecl = '<!DOCTYPE' S name (S externaID)? S? ('[' intSubset ']' S?)? '>';
+    doctypedecl = '<!DOCTYPE' S name (S externalID)? S? ('[' intSubset ']' S?)? '>';
 
 
 // [28a]       DeclSep       ::=        PEReference | S

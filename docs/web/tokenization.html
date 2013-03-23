@@ -227,17 +227,50 @@ t.numberState.allowsScentificNotation = YES;
 ...</pre>
 </div>
 
-<p>Similarly, recognition of common octal and hexadecimal number notation can be enabled to recognize numbers like <tt>&laquo;020&raquo;</tt> (octal 16) and <tt>&laquo;0x20&raquo;</tt> (hex 32).</p>
+<p>Similarly, recognition of common octal and hexadecimal number notation can be enabled to recognize numbers like <tt>&laquo;020&raquo;</tt> (decimal 16 in octal) and <tt>&laquo;0x20&raquo;</tt> (decimal 32 in hex).</p>
 
 <div class="code">
 <pre>
 ...
-t.numberState.allowsOctalNotation = YES;
-t.numberState.allowsHexadecimalNotation = YES;
+[t.numberState addPrefix:@"0" forRadix:8];
+[t.numberState addPrefix:@"0x" forRadix:16];
 ...</pre>
 </div>
 
 <p>The resulting <tt>PKToken</tt> objects will have a <tt>tokenType</tt> of <tt>PKTokenTypeNumber</tt> and a <tt>stringValue</tt> matching the original source notation (<tt>&laquo;020&raquo;</tt> or <tt>&laquo;0x20&raquo;</tt>). Their <tt>floatValue</tt>s will represent the normal decimal value of the number (in this case 16 and 32).</p>
+
+<p>Similarly, number suffixes are also supported. To recognize <tt>&laquo;20h&raquo;</tt> as a hexidecimal number with a value of 32 decimal:</p>
+
+<div class="code">
+<pre>
+...
+[t.numberState addSuffix:@"h" forRadix:16];
+...</pre>
+</div>
+
+<p>The resulting <tt>PKToken</tt> object will have a <tt>tokenType</tt> of <tt>PKTokenTypeNumber</tt>, <tt>stringValue</tt> of <tt>&laquo;20h&raquo;</tt>, and a <tt>floatValue</tt> of 32.</p>
+
+<p><b>Grouping Separators</b> are also supported on a per-radix basis. To recognize <tt>&laquo;1,024&raquo;</tt> as a single decimal number token (rather than as a <tt>&laquo;1&raquo;</tt> number token followed by a <tt>&laquo;,&raquo;</tt> symbol token followed by a <tt>&laquo;024&raquo;</tt> number token), use the <tt>-[PKNumberState addGroupingSeparator:forRadix:]</tt> method:</p>
+
+<div class="code">
+<pre>
+...
+[t.numberState addGroupingSeparator:',' forRadix:10];
+...</pre>
+</div>
+
+<p>As another example, consider <a href="http://en.wikipedia.org/wiki/High_Level_Assembly">HLA</a>-style binary numbers like <tt>&laquo;%0001_0101&raquo;</tt> (decimal 21 in binary). To support this style, add a <tt>&laquo;%&raquo;</tt> prefix and a <tt>&laquo;_&raquo;</tt> grouping separator for the base-2 radix:</p>
+
+<div class="code">
+<pre>
+...
+[t setTokenizerState:t.numberState from:'%' to:'%'];
+[t.numberState addPrefix:@"%" forRadix:2];
+[t.numberState addGroupingSeparator:'_' forRadix:2];
+...</pre>
+</div>
+
+<p>The resulting <tt>PKToken</tt> object will have a <tt>tokenType</tt> of <tt>PKTokenTypeNumber</tt>, <tt>stringValue</tt> of <tt>&laquo;%0001_0101&raquo;</tt>, and a <tt>floatValue</tt> of 21.</p>
 
 <p>You can also configure which characters are recognized as whitespace within a whitespace token. To treat digits as whitespace characters within whitespace tokens:</p>
 

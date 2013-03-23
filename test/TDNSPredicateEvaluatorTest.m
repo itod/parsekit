@@ -65,10 +65,10 @@
 
 
 - (void)testNegatedPredicate {
-    t.string = @"not 0 < 2";
+    t.string = @"NOT 0 < 2";
     a = [PKTokenAssembly assemblyWithTokenizer:t];
     res = [eval.parser completeMatchFor:a];
-    TDEqualObjects(@"[0]not/0/</2^", [res description]);
+    TDEqualObjects(@"[0]NOT/0/</2^", [res description]);
 
     t.string = @"! 0 < 2";
     a = [PKTokenAssembly assemblyWithTokenizer:t];

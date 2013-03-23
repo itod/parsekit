@@ -15,6 +15,10 @@
 #import <ParseKit/PKPattern.h>
 #import "RegexKitLite.h"
 
+@interface PKPattern ()
+@property (nonatomic, assign) PKPatternOptions options;
+@end
+
 @implementation PKPattern
 
 + (PKPattern *)patternWithString:(NSString *)s {
@@ -34,7 +38,7 @@
     
 - (id)initWithString:(NSString *)s options:(PKPatternOptions)opts {
     if (self = [super initWithString:s]) {
-        options = opts;
+        self.options = opts;
     }
     return self;
 }
@@ -48,4 +52,5 @@
     return NSEqualRanges(r, [tok.stringValue rangeOfRegex:self.string options:(uint32_t)options inRange:r capture:0 error:nil]);
 }
 
+@synthesize options;
 @end

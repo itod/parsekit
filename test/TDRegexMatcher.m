@@ -10,6 +10,10 @@
 #import "TDRegexAssembler.h"
 #import <ParseKit/ParseKit.h>
 
+@interface PKParserFactory ()
+@property (nonatomic, assign) BOOL wantsCharacters;
+@end
+
 @interface TDRegexMatcher ()
 - (PKAssembly *)bestMatchFor:(NSString *)inputStr;
 
@@ -37,7 +41,9 @@
         NSString *g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
         
         NSError *err = nil;
-        sRegexParser = [[[PKParserFactory factory] parserFromGrammar:g assembler:[self regexAssembler] error:&err] retain];
+        PKParserFactory *factory = [PKParserFactory factory];
+        factory.wantsCharacters = YES;
+        sRegexParser = [[factory parserFromGrammar:g assembler:[self regexAssembler] error:&err] retain];
         if (err) {
             NSLog(@"%@", err);
             sRegexParser = nil;

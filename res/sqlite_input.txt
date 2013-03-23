@@ -1,0 +1,5 @@
+// DELETE FROM foo;
+
+//SELECT foo from bar.baz;
+
+INSERT INTO foo.bar VALUES (a, b, c);

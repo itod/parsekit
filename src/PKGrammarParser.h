@@ -13,11 +13,17 @@
 //  limitations under the License.
 
 #import <ParseKit/PKCollectionParser.h>
+#import <ParseKit/PKCompositeParser.h>
 
 @interface PKGrammarParser : NSObject {
     id assembler;
+    PKCompositeParser *parser;
     PKCollectionParser *statementParser;
-    PKCollectionParser *declarationParser;
+    PKCollectionParser *tokenizerDirectiveParser;
+    PKCollectionParser *declParser;
+    PKCollectionParser *productionParser;
+    PKParser *varProductionParser;
+    PKCollectionParser *startProductionParser;
     PKCollectionParser *callbackParser;
     PKCollectionParser *selectorParser;
     PKCollectionParser *exprParser;
@@ -45,13 +51,19 @@
     PKParser *literalParser;
     PKParser *variableParser;
     PKParser *constantParser;
+    PKParser *numberParser;
     PKCollectionParser *specificConstantParser;
 }
 
 - (id)initWithAssembler:(id)a;
 
+@property (nonatomic, retain) PKCompositeParser *parser;
 @property (nonatomic, retain) PKCollectionParser *statementParser;
-@property (nonatomic, retain) PKCollectionParser *declarationParser;
+@property (nonatomic, retain) PKCollectionParser *tokenizerDirectiveParser;
+@property (nonatomic, retain) PKCollectionParser *declParser;
+@property (nonatomic, retain) PKCollectionParser *productionParser;
+@property (nonatomic, retain) PKParser *varProductionParser;
+@property (nonatomic, retain) PKCollectionParser *startProductionParser;
 @property (nonatomic, retain) PKCollectionParser *callbackParser;
 @property (nonatomic, retain) PKCollectionParser *selectorParser;
 @property (nonatomic, retain) PKCollectionParser *exprParser;
@@ -79,7 +91,6 @@
 @property (nonatomic, retain) PKParser *literalParser;
 @property (nonatomic, retain) PKParser *variableParser;
 @property (nonatomic, retain) PKParser *constantParser;
+@property (nonatomic, retain) PKParser *numberParser;
 @property (nonatomic, retain) PKCollectionParser *specificConstantParser;
-@property (nonatomic, retain, readonly) PKParser *whitespaceParser;
-@property (nonatomic, retain, readonly) PKParser *optionalWhitespaceParser;
 @end

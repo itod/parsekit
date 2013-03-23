@@ -16,9 +16,9 @@
 @start          = any*;
 any             = element | text | doctype | pi | comment;
 
-pi              = DelimitedString('<?', '?>');
+pi              = %{'<?', '?>'};
 
-doctype         = DelimitedString('<!DOCTYPE', '>');
+doctype         = %{'<!DOCTYPE', '>'};
 element         = emptyTag | startTag elementContent* endTag;
 elementContent  = element | text | comment | pi;
 text            = /[^<]+/;

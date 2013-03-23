@@ -39,7 +39,7 @@
     p = [[PKRepetition alloc] initWithSubparser:[PKWord word]];
     
     NSSet *all = [p allMatchesFor:[NSSet setWithObject:a]];
-    NSLog(@"all: %@", all);
+//    NSLog(@"all: %@", all);
     
     TDNotNil(all);
     NSUInteger c = [all count];
@@ -79,7 +79,7 @@
     p = [[PKRepetition alloc] initWithSubparser:[PKWord word]];
     
     NSSet *all = [p allMatchesFor:[NSSet setWithObject:a]];
-    NSLog(@"all: %@", all);
+//    NSLog(@"all: %@", all);
     
     TDNotNil(all);
     NSUInteger c = [all count];
@@ -94,7 +94,7 @@
     p = [[PKRepetition alloc] initWithSubparser:[PKWord word]];
     
     NSSet *all = [p allMatchesFor:[NSSet setWithObject:a]];
-    NSLog(@"all: %@", all);
+//    NSLog(@"all: %@", all);
     
     TDNotNil(all);
     NSUInteger c = [all count];
@@ -109,7 +109,7 @@
     p = [[PKRepetition alloc] initWithSubparser:[PKNumber number]];
     
     NSSet *all = [p allMatchesFor:[NSSet setWithObject:a]];
-    NSLog(@"all: %@", all);
+//    NSLog(@"all: %@", all);
     
     TDNotNil(all);
     NSUInteger c = [all count];

@@ -170,7 +170,7 @@ term            = unaryOperator? (Number | percentage | length | ems | exs | ang
 //    function
 //      : FUNCTION S* expr ')' S*
 //      ;
-function        = XXX expr ')';
+function        = identifier '(' expr ')';
 
 
 //    *
@@ -200,4 +200,4 @@ freq            = Number ('hz'|'khz');
 dimension       = Number identifier;
 percentage      = Number '%';
 uri             = 'url' '(' (Word|Symbol|Number)+ ')';
-function        = identifier '(';
+//function        = identifier '(';

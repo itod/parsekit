@@ -19,7 +19,7 @@
 - (void)test {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"apple-boss" ofType:@"xml"];
     
-    NSLog(@"\n\npath: %@\n\n", path);
+//    NSLog(@"\n\npath: %@\n\n", path);
 
     XMLReader *p = [XMLReader parserWithContentsOfFile:path];
     NSInteger ret = [p read];

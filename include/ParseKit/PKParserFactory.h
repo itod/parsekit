@@ -8,43 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
-@class PKGrammarParser;
-@class PKToken;
-@class PKTokenizer;
 @class PKParser;
-@class PKCollectionParser;
+@class PKAST;
 
 void PKReleaseSubparserTree(PKParser *p);
 
 typedef enum {
-    PKParserFactoryAssemblerSettingBehaviorOnAll        = 1 << 1, // Default
-    PKParserFactoryAssemblerSettingBehaviorOnTerminals  = 1 << 2,
-    PKParserFactoryAssemblerSettingBehaviorOnExplicit   = 1 << 3,
-    PKParserFactoryAssemblerSettingBehaviorOnNone       = 1 << 4
+    PKParserFactoryAssemblerSettingBehaviorOnNone       = 0,
+    PKParserFactoryAssemblerSettingBehaviorOnTerminals  = 1,
+    PKParserFactoryAssemblerSettingBehaviorOnExplicit   = 2,
+    PKParserFactoryAssemblerSettingBehaviorOnAll        = 4, // Default
 } PKParserFactoryAssemblerSettingBehavior;
 
-@interface PKParserFactory : NSObject {
-    PKParserFactoryAssemblerSettingBehavior assemblerSettingBehavior;
-    PKGrammarParser *grammarParser;
-    id assembler;
-    id preassembler;
-    NSMutableDictionary *parserTokensTable;
-    NSMutableDictionary *parserClassTable;
-    NSMutableDictionary *selectorTable;
-    BOOL wantsCharacters;
-    PKToken *equals;
-    PKToken *curly;
-    PKToken *paren;
-    PKToken *square;
-    BOOL isGatheringClasses;
-}
+@interface PKParserFactory : NSObject
 
 + (PKParserFactory *)factory;
 
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a error:(NSError **)outError;
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa error:(NSError **)outError;
+- (PKParser *)parserFromGrammar:(NSString *)g assembler:(id)a error:(NSError **)outError;
+- (PKParser *)parserFromGrammar:(NSString *)g assembler:(id)a preassembler:(id)pa error:(NSError **)outError;
 
-- (PKCollectionParser *)exprParser;
+- (PKAST *)ASTFromGrammar:(NSString *)g error:(NSError **)outError;
 
-@property (nonatomic) PKParserFactoryAssemblerSettingBehavior assemblerSettingBehavior;
+@property (nonatomic, assign) PKParserFactoryAssemblerSettingBehavior assemblerSettingBehavior;
 @end

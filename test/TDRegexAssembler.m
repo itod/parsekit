@@ -60,8 +60,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchLiteralChar:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
 
     NSNumber *n = [a pop];
     PKUniChar c = [n intValue];
@@ -72,8 +72,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchDot:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
 
     //PKParser *top = [PKNegation negationWithSubparser:[PKSpecificChar specificCharWithChar:'\n']];
     
@@ -84,8 +84,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchWordCharClass:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
     
     PKAlternation *alt = [PKAlternation alternationWithSubparsers:[PKLetter letter], [PKDigit digit], nil];
     [a push:alt];
@@ -93,8 +93,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchNotWordCharClass:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
     
     PKAlternation *alt = [PKAlternation alternationWithSubparsers:[PKLetter letter], [PKDigit digit], nil];
     PKDifference *dif = [PKDifference differenceWithSubparser:[PKChar char] minus:alt];
@@ -103,8 +103,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchDigitCharClass:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
     
     
     [a push:[PKDigit digit]];
@@ -112,8 +112,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchNotDigitCharClass:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
     
     PKDifference *dif = [PKDifference differenceWithSubparser:[PKChar char] minus:[PKDigit digit]];
     [a push:dif];
@@ -121,8 +121,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchCustomCharClass:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
     
     NSArray *nums = [a objectsAbove:square];
     [a pop]; // discard '['
@@ -231,8 +231,8 @@
 
 
 - (void)parser:(PKParser *)p didMatchOrTerm:(PKAssembly *)a {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"a: %@", a);
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+//    NSLog(@"a: %@", a);
     id second = [a pop];
     id first = [a pop];
     //    NSLog(@"first: %@", first);

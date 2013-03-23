@@ -163,34 +163,34 @@
 }
 
 
-- (void)testLtFooGtWithFAllowedAndRemove {
-    s = @"<foo>";
-    t.string = s;
-    NSCharacterSet *cs = nil;
-    
-    [t setTokenizerState:delimitState from:'<' to:'<'];
-    [delimitState addStartMarker:@"<" endMarker:@">" allowedCharacterSet:cs];
-    [delimitState removeStartMarker:@"<"];
-    
-    tok = [t nextToken];
-    
-    TDTrue(tok.isSymbol);
-    TDEqualObjects(tok.stringValue, @"<");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    tok = [t nextToken];
-    TDTrue(tok.isWord);
-    TDEqualObjects(tok.stringValue, @"foo");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    tok = [t nextToken];
-    TDTrue(tok.isSymbol);
-    TDEqualObjects(tok.stringValue, @">");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
-}
+//- (void)testLtFooGtWithFAllowedAndRemove {
+//    s = @"<foo>";
+//    t.string = s;
+//    NSCharacterSet *cs = nil;
+//    
+//    [t setTokenizerState:delimitState from:'<' to:'<'];
+//    [delimitState addStartMarker:@"<" endMarker:@">" allowedCharacterSet:cs];
+//    [delimitState removeStartMarker:@"<"];
+//    
+//    tok = [t nextToken];
+//    
+//    TDTrue(tok.isSymbol);
+//    TDEqualObjects(tok.stringValue, @"<");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isWord);
+//    TDEqualObjects(tok.stringValue, @"foo");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isSymbol);
+//    TDEqualObjects(tok.stringValue, @">");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    tok = [t nextToken];
+//    TDEqualObjects(tok, [PKToken EOFToken]);
+//}
 
 
 - (void)testLtHashFooGt {
@@ -807,36 +807,36 @@
 }
 
 
-- (void)testUnbalancedElementStartTag {
-    s = @"<foo bar=\"baz\" <bat ";
-    NSCharacterSet *cs = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];
-    
-    t.string = s;
-    [t setTokenizerState:delimitState from:'<' to:'<'];
-    [delimitState addStartMarker:@"<" endMarker:@">" allowedCharacterSet:cs];
-    
-    tok = [t nextToken];
-    TDTrue(tok.isSymbol);
-    TDEqualObjects(tok.stringValue,  @"<");
-    TDEquals(tok.floatValue, (double)0.0);
-
-    tok = [t nextToken];
-    TDTrue(tok.isWord);
-    TDEqualObjects(tok.stringValue,  @"foo");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    t.string = s;
-    delimitState.allowsUnbalancedStrings = YES;
-    
-    tok = [t nextToken];
-    TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue,  @"<foo bar=\"baz\" ");
-    TDEquals(tok.floatValue, (double)0.0);
-
-    tok = [t nextToken];
-    TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue,  @"<bat ");
-    TDEquals(tok.floatValue, (double)0.0);
-}
+//- (void)testUnbalancedElementStartTag {
+//    s = @"<foo bar=\"baz\" <bat ";
+//    NSCharacterSet *cs = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];
+//    
+//    t.string = s;
+//    [t setTokenizerState:delimitState from:'<' to:'<'];
+//    [delimitState addStartMarker:@"<" endMarker:@">" allowedCharacterSet:cs];
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isSymbol);
+//    TDEqualObjects(tok.stringValue,  @"<");
+//    TDEquals(tok.floatValue, (double)0.0);
+//
+//    tok = [t nextToken];
+//    TDTrue(tok.isWord);
+//    TDEqualObjects(tok.stringValue,  @"foo");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    t.string = s;
+//    delimitState.allowsUnbalancedStrings = YES;
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isDelimitedString);
+//    TDEqualObjects(@"<foo bar=\"baz\" ", tok.stringValue);
+//    TDEquals(tok.floatValue, (double)0.0);
+//
+//    tok = [t nextToken];
+//    TDTrue(tok.isDelimitedString);
+//    TDEqualObjects(@"<bat ", tok.stringValue);
+//    TDEquals(tok.floatValue, (double)0.0);
+//}
 
 @end

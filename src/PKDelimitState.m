@@ -20,6 +20,9 @@
 #import <ParseKit/PKSymbolRootNode.h>
 #import <ParseKit/PKTypes.h>
 
+#import "PKDelimitDescriptorCollection.h"
+#import "PKDelimitDescriptor.h"
+
 @interface PKToken ()
 @property (nonatomic, readwrite) NSUInteger offset;
 @end
@@ -33,11 +36,8 @@
 @end
 
 @interface PKDelimitState ()
-- (NSString *)endMarkerForStartMarker:(NSString *)startMarker;
-- (NSCharacterSet *)allowedCharacterSetForStartMarker:(NSString *)startMarker;
 @property (nonatomic, retain) PKSymbolRootNode *rootNode;
-@property (nonatomic, retain) NSMutableDictionary *endMarkers;
-@property (nonatomic, retain) NSMutableDictionary *characterSets;
+@property (nonatomic, retain) PKDelimitDescriptorCollection *collection;
 @end
 
 @implementation PKDelimitState
@@ -46,8 +46,7 @@
     self = [super init];
     if (self) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
-        self.endMarkers = [NSMutableDictionary dictionary];
-        self.characterSets = [NSMutableDictionary dictionary];
+        self.collection = [[[PKDelimitDescriptorCollection alloc] init] autorelease];
     }
     return self;
 }
@@ -55,66 +54,24 @@
 
 - (void)dealloc {
     self.rootNode = nil;
-    self.endMarkers = nil;
-    self.characterSets = nil;
+    self.collection = nil;
     [super dealloc];
 }
 
 
 - (void)addStartMarker:(NSString *)start endMarker:(NSString *)end allowedCharacterSet:(NSCharacterSet *)set {
     NSParameterAssert([start length]);
-    [rootNode add:start];
 
-    id endObj = nil;
+    // add markers to root node
+    [rootNode add:start];
     if ([end length]) {
         [rootNode add:end];
-        endObj = end;
-    } else {
-        endObj = [NSNull null];
     }
-    [endMarkers setObject:endObj forKey:start];
-
-    id setObj = nil;
-    if (set) {
-        setObj = set;
-    } else {
-        setObj = [NSNull null];
-    }
-    [characterSets setObject:setObj forKey:start];
-}
-
-
-- (void)removeStartMarker:(NSString *)start {
-    NSParameterAssert([start length]);
-    [rootNode remove:start];
     
-    NSString *end = [endMarkers objectForKey:start];
-    if (end) {
-        [characterSets removeObjectForKey:start];
-        
-        id endOrNull = [endMarkers objectForKey:start];
-        if ([NSNull null] != endOrNull) {
-            [rootNode remove:endOrNull];
-        }
-        [endMarkers removeObjectForKey:start];
-    }
-}
-
-
-- (NSString *)endMarkerForStartMarker:(NSString *)startMarker {
-    NSParameterAssert([endMarkers objectForKey:startMarker]);
-    return [endMarkers objectForKey:startMarker];
-}
-
-
-- (NSCharacterSet *)allowedCharacterSetForStartMarker:(NSString *)startMarker {
-    NSParameterAssert([endMarkers objectForKey:startMarker]);
-    NSCharacterSet *characterSet = nil;
-    id setOrNull = [characterSets objectForKey:startMarker];
-    if ([NSNull null] != setOrNull) {
-        characterSet = setOrNull;
-    }
-    return characterSet;
+    // add descriptor to collection
+    PKDelimitDescriptor *desc = [PKDelimitDescriptor descriptorWithStartMarker:start endMarker:end characterSet:set];
+    NSAssert(collection, @"");
+    [collection add:desc];
 }
 
 
@@ -123,39 +80,51 @@
     NSParameterAssert(t);
     
     NSString *startMarker = [rootNode nextSymbol:r startingWith:cin];
-
-    if (![startMarker length] || ![endMarkers objectForKey:startMarker]) {
-        [r unread:[startMarker length] - 1];
-        return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+    NSArray *descs = nil;
+    
+    if ([startMarker length]) {
+        descs = [collection descriptorsForStartMarker:startMarker];
+        
+        if (![descs count]) {
+            [r unread:[startMarker length] - 1];
+            return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+        }
     }
     
     [self resetWithReader:r];
     [self appendString:startMarker];
-
-    id endMarkerOrNull = [self endMarkerForStartMarker:startMarker];
-    NSString *endMarker = nil;
-    NSCharacterSet *characterSet = [self allowedCharacterSetForStartMarker:startMarker];
     
-    PKUniChar c, e;
-    if ([NSNull null] == endMarkerOrNull) {
-        e = PKEOF;
-    } else {
-        endMarker = endMarkerOrNull;
-        e = [endMarker characterAtIndex:0];
+    NSUInteger count = [descs count];
+    BOOL hasEndMarkers = NO;
+    PKUniChar endChars[count];
+
+    NSUInteger i = 0;
+    for (PKDelimitDescriptor *desc in descs) {
+        NSString *endMarker = desc.endMarker;
+        PKUniChar e = PKEOF;
+        
+        if ([endMarker length]) {
+            e = [endMarker characterAtIndex:0];
+            hasEndMarkers = YES;
+        }
+        endChars[i++] = e;
     }
+    
+    PKUniChar c;
     for (;;) {
         c = [r read];
+        //NSLog(@"%C", (UniChar)c);
         if (PKEOF == c) {
-            if (balancesEOFTerminatedStrings && endMarker) {
-                [self appendString:endMarker];
-            } else if (endMarker && !allowsUnbalancedStrings) {
+            if (hasEndMarkers && balancesEOFTerminatedStrings) {
+                [self appendString:[descs[0] endMarker]];
+            } else if (hasEndMarkers) {
                 [r unread:[[self bufferedString] length] - 1];
                 return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
             }
             break;
         }
         
-        if (!endMarker && [t.whitespaceState isWhitespaceChar:c]) {
+        if (!hasEndMarkers && [t.whitespaceState isWhitespaceChar:c]) {
             // if only the start marker was matched, dont return delimited string token. instead, defer tokenization
             if ([startMarker isEqualToString:[self bufferedString]]) {
                 [r unread:[startMarker length] - 1];
@@ -164,32 +133,56 @@
             // else, return delimited string tok
             break;
         }
+
+        BOOL done = NO;
+        NSString *endMarker = nil;
+        NSCharacterSet *charSet = nil;
         
-        if (e == c) {
-            NSString *peek = [rootNode nextSymbol:r startingWith:e];
-            if (endMarker && [endMarker isEqualToString:peek]) {
-                [self appendString:endMarker];
-                c = [r read];
-                break;
-            } else {
-                [r unread:[peek length] - 1];
-                if (e != [peek characterAtIndex:0]) {
-                    [self append:c];
+        for (NSUInteger i = 0; i < count; ++i) {
+            PKUniChar e = endChars[i];
+            
+            if (e == c) {
+                endMarker = [descs[i] endMarker];
+                charSet = [descs[i] characterSet];
+                
+                NSString *peek = [rootNode nextSymbol:r startingWith:e];
+                if (endMarker && [endMarker isEqualToString:peek]) {
+                    [self appendString:endMarker];
                     c = [r read];
+                    done = YES;
+                    break;
+                } else {
+                    [r unread:[peek length] - 1];
+                    if (e != [peek characterAtIndex:0]) {
+                        [self append:c];
+                        c = [r read];
+                    }
                 }
             }
         }
 
-        // check if char is not in allowed character set (if given)
-        if (characterSet && ![characterSet characterIsMember:c]) {
-            if (allowsUnbalancedStrings) {
-                break;
-            } else {
-                // if not, unwind and return a symbol tok for cin
-                [r unread:[[self bufferedString] length]];
-                return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+        if (done) {
+            if (charSet) {
+                NSString *contents = [self bufferedString];
+                NSUInteger loc = [startMarker length];
+                NSUInteger len = [contents length] - (loc + [endMarker length]);
+                contents = [contents substringWithRange:NSMakeRange(loc, len)];
+                
+                for (NSUInteger i = 0; i < len; ++i) {
+                    PKUniChar c = [contents characterAtIndex:i];
+
+                    // check if char is not in allowed character set (if given)
+                    if (![charSet characterIsMember:c]) {
+                        // if not, unwind and return a symbol tok for cin
+                        [r unread:[[self bufferedString] length] - 1];
+                        return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+                    }
+                }
             }
+
+            break;
         }
+        
         
         [self append:c];
     }
@@ -205,7 +198,5 @@
 
 @synthesize rootNode;
 @synthesize balancesEOFTerminatedStrings;
-@synthesize allowsUnbalancedStrings;
-@synthesize endMarkers;
-@synthesize characterSets;
+@synthesize collection;
 @end

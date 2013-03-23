@@ -1,0 +1,211 @@
+/*
+
+http://sqlite.org/syntaxdiagrams.html#column-def
+
+*/
+
+@singleLineComments = '//';
+@multiLineComments = '/*' '*/';
+
+@start = sqlStmtList;
+sqlStmtList = (sqlStmt ';')*;
+sqlStmt = sqlStmtPrefix? sqlStmtBody;
+
+star                = '*';
+
+name                = Word; // ??
+databaseName        = Word; // ??
+indexName           = Word; // ??
+
+tableName           = Word | star; // ??
+newTableName        = tableName; // ??
+foreignTable        = tableName; // ??
+
+savepointName       = Word; // ?
+
+columnName          = Word | star; // ??
+triggerName         = Word; // ??
+viewName            = Word; // ??
+collationName       = Word; // ??
+qualifiedTableName  = (databaseName '.')? tableName (('INDEXED' 'BY' indexName) | ('NOT' 'INDEXED'))?;
+
+tableOrIndexName    = tableName | indexName;
+
+expr                = literalValue; // TODO
+
+signedNumber        = Number; // TODO
+literalValue        = Number
+                    | QuotedString
+                    | blobLiteral 
+                    | 'NULL' 
+                    | 'CURRENT_TIME' 
+                    | 'CURRENT_DATE' 
+                    | 'CURRENT_TIMESTAMP';
+                    
+blobLiteral         = Word; // ??
+
+sqlStmtPrefix       = 'EXPLAIN' ('QUERY' 'PLAN')?;
+sqlStmtBody         = 
+                      alterTableStmt
+                    | analyzeStmt
+                    | attachStmt
+                    | beginStmt
+                    | commitStmt
+                    /*                      
+                    | createIndexStmt
+                    | createTableStmt
+                    | createTriggerStmt
+                    | createViewStmt
+                    | createVirtualTableStmt
+*/
+                    | deleteStmt
+                    | deleteStmtLimited
+                    | detachStmt
+                    | dropIndexStmt
+                    | dropTableStmt
+                    | dropTriggerStmt
+                    | dropViewStmt
+                    | insertStmt
+/*
+                    | pragmaStmt
+                    | reindexStmt
+                    | releaseStmt
+*/
+                    | rollbackStmt
+/*
+                    | savepointStmt
+*/
+                    | selectStmt
+                    | updateStmt
+                    | updateStmtLimited
+/*
+                    | vacuumStmt*/;
+                
+//
+// ALTER TABLE STMT
+//
+alterTableStmt          = 'ALTER' 'TABLE' (databaseName '.')? tableName
+                          ('RENAME' 'TO' newTableName
+                          | 'ADD' 'COLUMN'? columnDef);
+columnDef               = columnName typeName? columnConstraint*;
+
+typeName                = name+ ('(' signedNumber (',' signedNumber)? ')')?;
+
+columnConstraint        = ('CONSTRAINT' name)?
+                            (
+                            'PRIMARY' 'KEY' ('ASC' | 'DESC')? conflictClause 'AUTOINCREMENT'?
+                            | 'NOT' 'NULL' conflictClause
+                            | 'UNIQUE' conflictClause
+                            | 'CHECK' '(' expr ')'
+                            | 'DEFAULT' (signedNumber | literalValue | '(' expr ')')
+                            | 'COLLATE' collationName
+                            | foreignKeyClause
+                            );
+
+conflictClause =        Empty | 'ON' 'CONFLICT' ('ROLLBACK' | 'ABORT' | 'FAIL' | 'IGNORE' | 'REPLACE');
+
+foreignKeyClause =     'REFERENCES' foreignTable ('(' columnName (',' columnName)* ')')?
+                        (
+                            'ON' ('DELETE' | 'UPDATE') ('SET' 'NULL' | 'SET' 'DEFAULT' | 'CASCADE' | 'RESTRICT' | 'NO' 'ACTION')
+                            | 'MATCH' name
+                        )*
+                        (
+                            'NOT'? 'DEFERRABLE' ('INITIALLY' 'DEFERRED' | 'INITIALLY' 'IMMEDIATE')?
+                        )?;
+
+analyzeStmt             = 'ANALYZE' (databaseName | tableOrIndexName | databaseName '.' tableOrIndexName)?;
+
+attachStmt              = 'ATTACH' 'DATABASE'? expr 'AS' databaseName;
+beginStmt               = 'BEGIN' ('DEFERRED' | 'IMMEDIATE' | 'EXCLUSIVE')? 'TRANSACTION'?;
+commitStmt              = ('COMMIT' | 'END') 'TRANSACTION'?;
+/*
+createIndexStmt         = XXX;
+createTableStmt         = XXX;
+createTriggerStmt       = XXX;
+createViewStmt          = XXX;
+createVirtualTableStmt  = XXX;
+*/
+
+deleteStmt              = 'DELETE' 'FROM' qualifiedTableName ('WHERE' expr)?;
+
+deleteStmtLimited       = deleteStmt (
+                            'ORDER' 'BY' orderingTerm (',' orderingTerm)*
+                            'LIMIT' expr (('OFFSET' | ',') expr)?
+                        )?;
+
+
+detachStmt              = 'DETACH' 'DATABASE'? databaseName;
+
+dropIndexStmt           = 'DROP' 'INDEX'    ('IF' 'EXISTS')? (databaseName '.')? indexName;
+dropTableStmt           = 'DROP' 'TABLE'    ('IF' 'EXISTS')? (databaseName '.')? tableName;
+dropTriggerStmt         = 'DROP' 'TRIGGER'  ('IF' 'EXISTS')? (databaseName '.')? triggerName;
+dropViewStmt            = 'DROP' 'VIEW'     ('IF' 'EXISTS')? (databaseName '.')? viewName;
+
+insertStmt              = 'INSERT' ('OR' ('ROLLBACK' | 'ABORT' | 'REPLACE' | 'FAIL' | 'IGNORE'))? 
+                          'INTO' (databaseName '.')? tableName 
+                          (insertStmtDefaultValues | insertStmtValues | insertStmtSelectStmt);
+                          
+insertStmtDefaultValues = 'DEFAULT' 'VALUES';
+insertStmtValues        = parentheticColumnNames? 'VALUES' parentheticExprs (',' parentheticExprs)*;
+insertStmtSelectStmt    = parentheticColumnNames? selectStmt;
+
+parentheticExprs        = '(' expr (',' expr)* ')';
+parentheticColumnNames  = '(' columnName (',' columnName)* ')';
+/*
+pragmaStmt              = XXX;
+reindexStmt             = XXX;
+releaseStmt             = XXX;
+*/
+rollbackStmt            = 'ROLLBACK' 'TRANSACTION'? ('TO' 'SAVEPOINT'? savepointName)?;
+/*
+savepointStmt           = XXX;
+*/
+
+//
+// SELECT STMT
+//
+selectStmt              = selectCore (compoundOperator selectCore)*
+                          ('ORDER' 'BY' orderingTerm (',' orderingTerm)*)?
+                          ('LIMIT' expr (('OFFSET' | ',') expr)?)?;
+
+selectCore              = 'SELECT' ('DISTINCT' | 'ALL')? resultColumn (',' resultColumn)*
+                          ('FROM' joinSource)?
+                          ('WHERE' expr)?
+                          ('GROUP' 'BY' expr (',' expr)* ('HAVING' expr)?)?;
+                          
+resultColumn            = '*'
+                          | tableName '.' '*'
+                          | expr ('AS'? columnAlias)?;
+
+columnAlias				= Any; // TODO!!!
+tableAlias				= Any; // TODO!!!
+joinSource              = singleSource (joinOp singleSource joinConstraint)*;
+
+singleSource            = (databaseName '.')? tableName ('AS'? tableAlias)? ('INDEXED' 'BY' indexName | 'NOT' 'INDEXED')?
+                          | '(' selectStmt ')' ('AS'? tableAlias)?
+                          | '(' joinSource ')';
+                          
+joinOp                  = ','
+                          | 'NATURAL'? ('LEFT' 'OUTER'? | 'INNER' | 'CROSS')? 'JOIN';
+                          
+joinConstraint          = 'ON' expr
+                          | 'USING' '(' columnName (',' columnName) * ')'
+                          | Empty;
+
+orderingTerm            = expr ('COLLATE' collationName)? ('ASC' | 'DESC')?;
+                          
+compoundOperator        = 'UNION' 'ALL'? | 'INTERSECT' | 'EXCEPT';
+                          
+
+//
+// UPDATE STMT
+//
+updateStmt              = 'UPDATE' ('OR' ('ROLLBACK' | 'ABORT' | 'REPLACE' | 'FAIL' | 'IGNORE'))? qualifiedTableName
+                          'SET' columnNameAssignment (',' columnNameAssignment)* ('WHERE' expr)?;
+columnNameAssignment    = (columnName '=' expr);
+
+updateStmtLimited       = updateStmt ('ORDER' 'BY' orderingTerm (',' orderingTerm)*)?
+                          'LIMIT' expr (('OFFSET' | ',') expr)?;
+/*
+vacuumStmt;             = XXX;
+*/

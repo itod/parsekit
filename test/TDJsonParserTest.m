@@ -132,7 +132,7 @@
     a = [PKTokenAssembly assemblyWithString:s];
     result = [[p arrayParser] bestMatchFor:a];
     
-    NSLog(@"result: %@", result);
+//    NSLog(@"result: %@", result);
     TDNotNil(result);
     id obj = [result pop];
     TDEquals((int)3, (int)[obj count]);

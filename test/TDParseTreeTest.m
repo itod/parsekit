@@ -14,6 +14,10 @@
 
 #import "TDParseTreeTest.h"
 
+@interface PKParserFactory ()
+- (NSDictionary *)symbolTableFromGrammar:(NSString *)g error:(NSError **)outError;
+@end
+
 @implementation TDParseTreeTest
 
 - (void)setUp {
@@ -27,6 +31,21 @@
         @"expr = addExpr;"
         @"addExpr = atom (('+'|'-') atom)*;"
         @"atom = Number;";
+    
+    PKAST *root = [factory ASTFromGrammar:g error:nil];
+    TDEqualObjects(@"(ROOT (@start #expr) ($expr #addExpr) ($addExpr (. #atom (* (. (| '+' '-') #atom)))) ($atom Number))", [root treeDescription]);
+    
+    NSDictionary *symTab = [factory symbolTableFromGrammar:g error:nil];
+    TDNotNil(symTab);
+    TDEquals((NSUInteger)4, [symTab count]);
+    
+    PKSequence *addExprParser = symTab[@"addExpr"];
+    TDTrue([addExprParser isKindOfClass:[PKSequence class]]);
+    TDTrue(2 == [addExprParser.subparsers count]);
+    
+    PKNumber *atomNum = addExprParser.subparsers[0];
+    TDTrue([atomNum isKindOfClass:[PKNumber class]]);
+    
     lp = [factory parserFromGrammar:g assembler:as preassembler:as error:nil];
     
     lp.tokenizer.string = @"1 + 2";
@@ -76,7 +95,31 @@
 - (void)testFoo {
     g = @"@start = expr;"
     @"expr = Word+;";
+
+    PKAST *root = [factory ASTFromGrammar:g error:nil];
+    TDEqualObjects(@"(ROOT (@start #expr) ($expr (+ Word)))", [root treeDescription]);
+
+    NSDictionary *symTab = [factory symbolTableFromGrammar:g error:nil];
+    TDNotNil(symTab);
+    TDEquals((NSUInteger)2, [symTab count]);
+
+    PKSequence *start = symTab[@"@start"];
+    TDTrue([start isKindOfClass:[PKSequence class]]);
+    TDTrue(1 == [start.subparsers count]);
+
+    PKSequence *exprParser = symTab[@"expr"];
+    TDTrue([exprParser isKindOfClass:[PKSequence class]]);
+    TDTrue(2 == [exprParser.subparsers count]);
+
+    TDTrue([exprParser.subparsers[0] isKindOfClass:[PKWord class]]);
+    TDTrue([exprParser.subparsers[1] isKindOfClass:[PKRepetition class]]);
+    
+    PKRepetition *rep = exprParser.subparsers[1];
+    TDTrue([rep.subparser isKindOfClass:[PKWord class]]);
+
+
     lp = [factory parserFromGrammar:g assembler:as preassembler:as error:nil];
+    TDNotNil(lp);
     
     lp.tokenizer.string = @"foo";
     a = [PKTokenAssembly assemblyWithTokenizer:lp.tokenizer];

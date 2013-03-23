@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
-		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11E53</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
-		<string key="IBDocument.AppKitVersion">1138.47</string>
-		<string key="IBDocument.HIToolboxVersion">569.00</string>
+		<int key="IBDocument.SystemTarget">1080</int>
+		<string key="IBDocument.SystemVersion">12C2034</string>
+		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
+		<string key="IBDocument.AppKitVersion">1187.34</string>
+		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2182</string>
+			<string key="NS.object.0">3084</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<string>NSScroller</string>
-			<string>NSMenuItem</string>
-			<string>NSMenu</string>
-			<string>NSTextFieldCell</string>
-			<string>NSScrollView</string>
-			<string>NSButtonCell</string>
 			<string>NSButton</string>
+			<string>NSButtonCell</string>
 			<string>NSCustomObject</string>
+			<string>NSMenu</string>
+			<string>NSMenuItem</string>
+			<string>NSScrollView</string>
+			<string>NSScroller</string>
+			<string>NSTextField</string>
+			<string>NSTextFieldCell</string>
 			<string>NSTextView</string>
 			<string>NSView</string>
 			<string>NSWindowTemplate</string>
-			<string>NSTextField</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1115,7 +1115,7 @@
 							<reference key="NSNextKeyView" ref="525752343"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="449794129">
-								<int key="NSCellFlags">67239424</int>
+								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">134217728</int>
 								<string key="NSContents">Run</string>
 								<object class="NSFont" key="NSSupport">
@@ -1124,13 +1124,14 @@
 									<int key="NSfFlags">1044</int>
 								</object>
 								<reference key="NSControlView" ref="663773455"/>
-								<int key="NSButtonFlags">-2038284033</int>
+								<int key="NSButtonFlags">-2038284288</int>
 								<int key="NSButtonFlags2">129</int>
 								<string key="NSAlternateContents"/>
 								<string type="base64-UTF8" key="NSKeyEquivalent">DQ</string>
 								<int key="NSPeriodicDelay">200</int>
 								<int key="NSPeriodicInterval">25</int>
 							</object>
+							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 						</object>
 						<object class="NSTextField" id="772280458">
 							<reference key="NSNextResponder" ref="127129819"/>
@@ -1141,7 +1142,7 @@
 							<reference key="NSNextKeyView" ref="663773455"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="728180371">
-								<int key="NSCellFlags">67239424</int>
+								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">272629760</int>
 								<string key="NSContents">The purpose of this application is only to run arbtrary test code in "Debug" mode using GDB and breakpoints (which does not seem to be possible fom the UnitTest Bundle). To use, copy some unit test code over to the -[DebugAppDelegate run:] action method which is executed when the "Run" button below is clicked.</string>
 								<object class="NSFont" key="NSSupport">
@@ -1169,6 +1170,7 @@
 									</object>
 								</object>
 							</object>
+							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 						</object>
 						<object class="NSScrollView" id="525752343">
 							<reference key="NSNextResponder" ref="127129819"/>
@@ -1183,10 +1185,10 @@
 										<object class="NSTextView" id="432740214">
 											<reference key="NSNextResponder" ref="1018750903"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{462, 84}</string>
+											<string key="NSFrameSize">{462, 259}</string>
 											<reference key="NSSuperview" ref="1018750903"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="1066186764"/>
+											<reference key="NSNextKeyView" ref="1016141326"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="152014479">
 												<object class="NSLayoutManager" key="NSLayoutManager">
 													<object class="NSTextStorage" key="NSTextStorage">
@@ -1377,7 +1379,7 @@
 														<bool key="EncodedWithXMLCoder">YES</bool>
 														<reference ref="152014479"/>
 													</object>
-													<int key="NSLMFlags">6</int>
+													<int key="NSLMFlags">38</int>
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="432740214"/>
@@ -1385,7 +1387,7 @@
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
-												<int key="NSFlags">11621</int>
+												<int key="NSFlags">67120485</int>
 												<int key="NSTextCheckingTypes">0</int>
 												<nil key="NSMarkedAttributes"/>
 												<object class="NSColor" key="NSBackgroundColor">
@@ -1438,7 +1440,6 @@
 											</object>
 											<int key="NSTVFlags">6</int>
 											<string key="NSMaxSize">{3081, 10000000}</string>
-											<string key="NSMinize">{223, 0}</string>
 											<nil key="NSDelegate"/>
 										</object>
 									</object>
@@ -1462,9 +1463,7 @@
 													<integer value="5"/>
 													<object class="NSURL">
 														<nil key="NS.base"/>
-														<object class="NSMutableString" key="NS.relative">
-															<characters key="NS.bytes">file://localhost/Applications/Xcode.app/Contents/SharedFrameworks/DVTKit.framework/Resources/DVTIbeamCursor.tiff</characters>
-														</object>
+														<string key="NS.relative">file://localhost/Applications/Xcode.app/Contents/SharedFrameworks/DVTKit.framework/Resources/DVTIbeamCursor.tiff</string>
 													</object>
 												</object>
 											</object>
@@ -1479,9 +1478,10 @@
 								<object class="NSScroller" id="1066186764">
 									<reference key="NSNextResponder" ref="525752343"/>
 									<int key="NSvFlags">256</int>
-									<string key="NSFrame">{{448, 1}, {15, 259}}</string>
+									<string key="NSFrame">{{447, 1}, {16, 259}}</string>
 									<reference key="NSSuperview" ref="525752343"/>
 									<reference key="NSWindow"/>
+									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 									<reference key="NSTarget" ref="525752343"/>
 									<string key="NSAction">_doScroller:</string>
 									<double key="NSPercent">0.984375</double>
@@ -1493,6 +1493,7 @@
 									<reference key="NSSuperview" ref="525752343"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="1018750903"/>
+									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 									<int key="NSsFlags">1</int>
 									<reference key="NSTarget" ref="525752343"/>
 									<string key="NSAction">_doScroller:</string>
@@ -1503,11 +1504,14 @@
 							<string key="NSFrame">{{20, 20}, {464, 261}}</string>
 							<reference key="NSSuperview" ref="127129819"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="1016141326"/>
+							<reference key="NSNextKeyView" ref="1018750903"/>
 							<int key="NSsFlags">133138</int>
 							<reference key="NSVScroller" ref="1066186764"/>
 							<reference key="NSHScroller" ref="1016141326"/>
 							<reference key="NSContentView" ref="1018750903"/>
+							<double key="NSMinMagnification">0.25</double>
+							<double key="NSMaxMagnification">4</double>
+							<double key="NSMagnification">1</double>
 						</object>
 					</object>
 					<string key="NSFrameSize">{504, 447}</string>
@@ -2038,6 +2042,14 @@
 						<reference key="destination" ref="128783481"/>
 					</object>
 					<int key="connectionID">422</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="100995220"/>
+						<reference key="destination" ref="663773455"/>
+					</object>
+					<int key="connectionID">463</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -3327,7 +3339,7 @@
 				<reference key="dict.values" ref="1049"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">462</int>
+			<int key="maxID">463</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

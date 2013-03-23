@@ -29,14 +29,14 @@
     @"and <= 3 'ticks' later /* wince */, it's blast-off!";
     t = [PKTokenizer tokenizerWithString:s];
     
-    NSLog(@"\n\n starting!!! \n\n");
+//    NSLog(@"\n\n starting!!! \n\n");
 
     [t enumerateTokensUsingBlock:^(PKToken *tok, BOOL *stop) {
-        NSLog(@"(%@)", tok.stringValue);
+//        NSLog(@"(%@)", tok.stringValue);
     }];
                                          
     
-    NSLog(@"\n\n done!!! \n\n");
+//    NSLog(@"\n\n done!!! \n\n");
 }
 
 @end

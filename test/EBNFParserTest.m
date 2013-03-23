@@ -36,7 +36,8 @@
     
     s = @"bar foo bar foo";
     PKAssembly *a = [res completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
-    NSLog(@"\n\na: %@\n\n", a);
+    TDEqualObjects(@"[bar, foo, bar, foo]bar/foo/bar/foo^", [a description]);
+//    NSLog(@"\n\na: %@\n\n", a);
     
 }
 

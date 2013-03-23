@@ -27,7 +27,7 @@
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"apple-boss" ofType:@"xml"];
 
     TDXmlTokenizer *t = [TDXmlTokenizer tokenizerWithContentsOfFile:path];
-    NSLog(@"\n\n %@\n\n", t);
+//    NSLog(@"\n\n %@\n\n", t);
     
     TDXmlToken *eof = [TDXmlToken EOFToken];
     TDXmlToken *tok = nil;
@@ -50,8 +50,9 @@
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"small-xml-file" ofType:@"xml"];
     TDXmlTokenAssembly *a = (TDXmlTokenAssembly *)[TDXmlTokenAssembly assemblyWithString:path];
     
-    PKAssembly *result = [s bestMatchFor:a];
-    NSLog(@"\n\n\n result: %@ \n\n\n", result);
+    //PKAssembly *result =
+    [s bestMatchFor:a];
+//    NSLog(@"\n\n\n result: %@ \n\n\n", result);
 }
 
 @end

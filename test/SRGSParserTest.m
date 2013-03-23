@@ -30,7 +30,7 @@
     a = [p assemblyWithString:s];
     result = [p bestMatchFor:a];
     TDNotNil(result);
-    NSLog(@"\n\n\n result: %@ \n\n\n", result);
+//    NSLog(@"\n\n\n result: %@ \n\n\n", result);
 //    TDEqualObjects(@"[#, ABNF, 1.0, ;]#/ABNF/1.0/;^", [result description]);
 }
 #endif

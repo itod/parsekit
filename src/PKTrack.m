@@ -89,7 +89,7 @@
 
         if (NSNotFound != lineNum) {
             NSString *fmt = nil;
-#if __LP64__
+#if defined(__LP64__)
             fmt = @"Line : %lu\n";
 #else
             fmt = @"Line : %u\n";

@@ -170,6 +170,33 @@
 }
 
 
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len {
+    NSUInteger count = 0;
+
+    if (0 == state->state) {
+        state->mutationsPtr = &state->extra[0];
+    }
+    
+    PKToken *eof = [PKToken EOFToken];
+    PKToken *tok = [self nextToken];
+
+    if (eof != tok) {
+        state->itemsPtr = stackbuf;
+
+        do  {
+            stackbuf[count] = tok;
+            state->state++;
+            count++;
+        } while (eof != (tok = [self nextToken]) && (count < len));
+
+    } else {
+        count = 0;
+    }
+
+    return count;
+}
+
+
 - (void)setTokenizerState:(PKTokenizerState *)state from:(PKUniChar)start to:(PKUniChar)end {
     NSParameterAssert(state);
 

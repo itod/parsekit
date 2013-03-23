@@ -114,7 +114,11 @@
     
     m = [self matcherForRegex:s];
     TDNotNil(m);
-    TDTrue([m.parser isKindOfClass:[PKAlternation class]]);
+
+    PKParser *p = m.parser;
+    TDNotNil(p);
+    
+    TDTrue([p isKindOfClass:[PKAlternation class]]);
     s = @"b";
     res = [m bestMatchFor:s];
     TDEqualObjects(@"[b]b^", [res description]);

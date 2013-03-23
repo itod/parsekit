@@ -12,4 +12,6 @@ dotWord = ('.' Word);
 
 printStartMarker = '<@=';
 evalStartMarker = '<@';
+
+startMarker = printStartMarker | evalStartMarker;
 endMarker = '@>';

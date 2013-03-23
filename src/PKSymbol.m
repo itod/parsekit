@@ -15,6 +15,10 @@
 #import <ParseKit/PKSymbol.h>
 #import <ParseKit/PKToken.h>
 
+@interface PKTerminal ()
+@property (nonatomic, readwrite, copy) NSString *string;
+@end
+
 @interface PKSymbol ()
 @property (nonatomic, retain) PKToken *symbol;
 @end
@@ -34,9 +38,7 @@
 - (id)initWithString:(NSString *)s {
     self = [super initWithString:s];
     if (self) {
-        if ([s length]) {
-            self.symbol = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:s floatValue:0.0];
-        }
+    
     }
     return self;
 }
@@ -72,6 +74,14 @@
         } else {
             return [NSString stringWithFormat:@"%@", className];
         }
+    }
+}
+
+
+- (void)setString:(NSString *)s {
+    [super setString:s];
+    if (s) {
+        self.symbol = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:s floatValue:0.0];
     }
 }
 
