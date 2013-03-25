@@ -12,16 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#import <Cocoa/Cocoa.h>
+#import "DemoBaseViewController.h"
 
-@class DemoTokensViewController;
-@class DemoTreesViewController;
-@class DemoASTViewController;
+@class PKASTView;
 
-@interface DemoAppDelegate : NSObject
+@interface DemoASTViewController : DemoBaseViewController
 
-@property (nonatomic, retain) IBOutlet NSTabView *tabView;
-@property (nonatomic, retain) DemoTokensViewController *tokensViewController;
-@property (nonatomic, retain) DemoTreesViewController *treesViewController;
-@property (nonatomic, retain) DemoASTViewController *ASTViewController;
+@property (retain) IBOutlet PKASTView *ASTView;
 @end

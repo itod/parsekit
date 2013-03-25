@@ -84,15 +84,19 @@
 
     NSAssert(2 == [node.children count], @"");
     
-    PKBaseNode *lhs = node.children[0];
-    BOOL simplify = PKNodeTypeAlternation == lhs.type;
+    BOOL simplify = NO;
     
-    // nested Alts should always be on the lhs. never on rhs.
-    NSAssert(PKNodeTypeAlternation != [(PKBaseNode *)node.children[1] type], @"");
-
-    if (simplify) {
-        [node replaceChild:lhs withChildren:lhs.children];
-    }
+    do {
+        PKBaseNode *lhs = node.children[0];
+        simplify = PKNodeTypeAlternation == lhs.type;
+        
+        // nested Alts should always be on the lhs. never on rhs.
+        NSAssert(PKNodeTypeAlternation != [(PKBaseNode *)node.children[1] type], @"");
+        
+        if (simplify) {
+            [node replaceChild:lhs withChildren:lhs.children];
+        }
+    } while (simplify);
 
     [self recurse:node];
 }

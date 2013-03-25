@@ -12,9 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#import "DemoTreesViewController.h"
-#import "PKParseTreeView.h"
-#import "TDSourceCodeTextView.h"
+#import "DemoASTViewController.h"
+#import "PKASTView.h"
 #import "PKParseTree.h"
 #import "PKRuleNode.h"
 #import "PKTokenNode.h"
@@ -24,15 +23,15 @@
 #define PKAssertMainThread() NSAssert1([NSThread isMainThread], @"%s should be called on the main thread only.", __PRETTY_FUNCTION__);
 #define PKAssertNotMainThread() NSAssert1(![NSThread isMainThread], @"%s should be called on the main thread only.", __PRETTY_FUNCTION__);
 
-@implementation DemoTreesViewController
+@implementation DemoASTViewController
 
 - (id)init {
-    return [self initWithNibName:@"TreesView" bundle:nil];
+    return [self initWithNibName:@"ASTView" bundle:nil];
 }
 
 
 - (void)dealloc {
-    self.parseTreeView = nil;
+    self.ASTView = nil;
     [super dealloc];
 }
 
@@ -57,16 +56,9 @@
 - (void)doParse {
     PKAssertNotMainThread();
 
-    PKParseTreeAssembler *as = [[[PKParseTreeAssembler alloc] init] autorelease];
-    PKParser *p = [[PKParserFactory factory] parserFromGrammar:self.grammarString assembler:as preassembler:as error:nil];
-    PKParseTree *tr = [p parse:self.inputString error:nil];
-    if ([tr isKindOfClass:[PKParseTree class]]) {
-        [_parseTreeView drawParseTree:tr];
-    }
+    PKAST *root = [[PKParserFactory factory] ASTFromGrammar:self.grammarString error:nil];
+    [_ASTView drawAST:root];
     
-    // release
-    PKReleaseSubparserTree(p);
-
     dispatch_async(dispatch_get_main_queue(), ^{
         [self done];
     });

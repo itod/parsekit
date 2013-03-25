@@ -1,0 +1,26 @@
+@symbols = '!=' '<=' '>=';
+ 
+@start = expr;
+expr = orExpr;
+ 
+orExpr = andExpr orTerm*;
+orTerm = 'or' andExpr;
+ 
+andExpr = relExpr andTerm*;
+andTerm = 'and' relExpr;
+ 
+relExpr = callExpr (relOp callExpr)*;
+relOp = '<' | '>' | '=' | '!=' | '<=' | '>=';
+ 
+callExpr = primary ('(' argList ')')?;
+argList = Empty | atom (',' atom)*;
+ 
+primary = atom | '(' expr ')';
+atom = obj | literal;
+ 
+obj = id member*;
+id = Word;
+member = '.' id;
+ 
+literal = QuotedString | Number | bool;
+bool = 'yes' | 'no';

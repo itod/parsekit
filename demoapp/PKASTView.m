@@ -12,12 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#import "PKParseTreeView.h"
+#import "PKASTView.h"
 #import <ParseKit/ParseKit.h>
-#import "PKParseTree.h"
-#import "PKRuleNode.h"
-#import "PKTokenNode.h"
-#import "PKParseTreeAssembler.h"
+#import "PKAST.h"
 
 #define ROW_HEIGHT 50.0
 #define CELL_WIDTH 55.0
@@ -27,18 +24,15 @@
 #define FUDGE 0.5
 #define PKAlign(x) (floor((x)) + FUDGE)
 
-@interface PKParseTreeView ()
-- (void)drawTree:(PKParseTree *)n atPoint:(NSPoint)p;
-- (void)drawParentNode:(PKParseTree *)n atPoint:(NSPoint)p;
-- (void)drawLeafNode:(PKTokenNode *)n atPoint:(NSPoint)p;
+@interface PKASTView ()
+- (void)drawTree:(PKAST *)n atPoint:(NSPoint)p;
 
-- (PKFloat)widthForNode:(PKParseTree *)n;
-- (PKFloat)depthForNode:(PKParseTree *)n;
-- (NSString *)labelFromNode:(PKParseTree *)n;
+- (PKFloat)widthForNode:(PKAST *)n;
+- (PKFloat)depthForNode:(PKAST *)n;
 - (void)drawLabel:(NSString *)label atPoint:(NSPoint)p withAttrs:(NSDictionary *)attrs;
 @end
 
-@implementation PKParseTreeView
+@implementation PKASTView
 
 - (id)initWithFrame:(NSRect)frame {
     if (self = [super initWithFrame:frame]) {
@@ -68,7 +62,7 @@
 }
 
 
-- (void)drawParseTree:(PKParseTree *)t {
+- (void)drawAST:(PKAST *)t {
     self.root = t;
     
     PKFloat w = [self widthForNode:_root] * CELL_WIDTH;
@@ -82,7 +76,7 @@
 //    NSRect visRect = [self visibleRect];
 //    visRect.origin.x = w / 2.0 - visRect.size.width / 2.0;
 //    [self scrollRectToVisible:visRect];
-    
+
     [self setNeedsDisplay:YES];
 }
 
@@ -99,18 +93,11 @@
 }
 
 
-- (void)drawTree:(PKParseTree *)n atPoint:(NSPoint)p {
-    if ([n isKindOfClass:[PKTokenNode class]]) {
-        [self drawLeafNode:(id)n atPoint:p];
-    } else {
-        [self drawParentNode:n atPoint:p];
-    }
-}
-
-
-- (void)drawParentNode:(PKParseTree *)n atPoint:(NSPoint)p {
+- (void)drawTree:(PKAST *)n atPoint:(NSPoint)p {
     // draw own label
-    [self drawLabel:[self labelFromNode:n] atPoint:NSMakePoint(p.x, p.y) withAttrs:_parentAttrs];
+    NSString *label = [n name];
+    NSDictionary *attrs = [label hasPrefix:@"$"] || [label hasPrefix:@"@"] ? _parentAttrs : _leafAttrs;
+    [self drawLabel:label atPoint:NSMakePoint(p.x, p.y) withAttrs:attrs];
 
     NSUInteger i = 0;
     NSUInteger c = [[n children] count];
@@ -118,7 +105,7 @@
     // get total width
     PKFloat widths[c];
     PKFloat totalWidth = 0.0;
-    for (PKParseTree *child in [n children]) {
+    for (PKAST *child in [n children]) {
         widths[i] = [self widthForNode:child] * CELL_WIDTH;
         totalWidth += widths[i++];
     }
@@ -154,38 +141,22 @@
 }
 
 
-- (void)drawLeafNode:(PKTokenNode *)n atPoint:(NSPoint)p {
-    [self drawLabel:[self labelFromNode:n] atPoint:NSMakePoint(p.x, p.y) withAttrs:_leafAttrs];
-}
-
-
-- (PKFloat)widthForNode:(PKParseTree *)n {
+- (PKFloat)widthForNode:(PKAST *)n {
     PKFloat res = 0.0;
-    for (PKParseTree *child in [n children]) {
+    for (PKAST *child in [n children]) {
         res += [self widthForNode:child];
     }
     return res ? res : 1.0;
 }
     
     
-- (PKFloat)depthForNode:(PKParseTree *)n {
+- (PKFloat)depthForNode:(PKAST *)n {
     PKFloat res = 0.0;
-    for (PKParseTree *child in [n children]) {
+    for (PKAST *child in [n children]) {
         PKFloat n = [self depthForNode:child];
         res = n > res ? n : res;
     }
     return res + 1.0;
-}
-
-
-- (NSString *)labelFromNode:(PKParseTree *)n {
-    if ([n isKindOfClass:[PKTokenNode class]]) {
-        return [[(PKTokenNode *)n token] stringValue];
-    } else if ([n isKindOfClass:[PKRuleNode class]]) {
-        return [(PKRuleNode *)n name];
-    } else {
-        return @"root";
-    }
 }
 
 
@@ -198,7 +169,7 @@
     }
     
     p.x -= labelSize.width / 2.0;
-    NSRect r = NSMakeRect(p.x, p.y + LABEL_MARGIN_Y, labelSize.width, labelSize.height);
+    NSRect r = NSMakeRect(floor(p.x), floor(p.y) + LABEL_MARGIN_Y, labelSize.width, labelSize.height);
     NSUInteger opts = NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin;
     [label drawWithRect:r options:opts attributes:attrs];
 }

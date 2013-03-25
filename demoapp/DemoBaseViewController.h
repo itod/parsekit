@@ -14,14 +14,19 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class DemoTokensViewController;
-@class DemoTreesViewController;
-@class DemoASTViewController;
+@class TDSourceCodeTextView;
 
-@interface DemoAppDelegate : NSObject
+@interface DemoBaseViewController : NSViewController
 
-@property (nonatomic, retain) IBOutlet NSTabView *tabView;
-@property (nonatomic, retain) DemoTokensViewController *tokensViewController;
-@property (nonatomic, retain) DemoTreesViewController *treesViewController;
-@property (nonatomic, retain) DemoASTViewController *ASTViewController;
+- (IBAction)parse:(id)sender;
+
+- (void)done;
+- (void)renderGutters;
+
+@property (retain) IBOutlet TDSourceCodeTextView *grammarTextView;
+@property (retain) IBOutlet TDSourceCodeTextView *inputTextView;
+
+@property (retain) NSString *grammarString;
+@property (retain) NSString *inputString;
+@property BOOL busy;
 @end

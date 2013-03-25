@@ -12,24 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#import <Cocoa/Cocoa.h>
+#import "DemoBaseViewController.h"
 
 @class PKParseTreeView;
-@class TDSourceCodeTextView;
 
-@interface DemoTreesViewController : NSViewController {
-    IBOutlet TDSourceCodeTextView *grammarTextView;
-    IBOutlet TDSourceCodeTextView *inputTextView;
-    IBOutlet PKParseTreeView *parseTreeView;    
+@interface DemoTreesViewController : DemoBaseViewController
 
-    NSString *grammarString;
-    NSString *inString;
-    BOOL busy;
-}
-
-- (IBAction)parse:(id)sender;
-
-@property (retain) NSString *grammarString;
-@property (retain) NSString *inString;
-@property BOOL busy;
+@property (retain) IBOutlet PKParseTreeView *parseTreeView;
 @end

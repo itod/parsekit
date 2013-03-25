@@ -32,28 +32,29 @@
     if (self = [super initWithNibName:name bundle:b]) {
         self.tokenizer = [[[PKTokenizer alloc] init] autorelease];
         
-        [tokenizer.symbolState add:@"::"];
-        [tokenizer.symbolState add:@"<="];
-        [tokenizer.symbolState add:@">="];
-        [tokenizer.symbolState add:@"=="];
-        [tokenizer.symbolState add:@"!="];
-        [tokenizer.symbolState add:@"+="];
-        [tokenizer.symbolState add:@"-="];
-        [tokenizer.symbolState add:@"*="];
-        [tokenizer.symbolState add:@"/="];
-        [tokenizer.symbolState add:@":="];
-        [tokenizer.symbolState add:@"++"];
-        [tokenizer.symbolState add:@"--"];
-        [tokenizer.symbolState add:@"<>"];
-        [tokenizer.symbolState add:@"=:="];
+        [_tokenizer.symbolState add:@"::"];
+        [_tokenizer.symbolState add:@"<="];
+        [_tokenizer.symbolState add:@">="];
+        [_tokenizer.symbolState add:@"=="];
+        [_tokenizer.symbolState add:@"!="];
+        [_tokenizer.symbolState add:@"+="];
+        [_tokenizer.symbolState add:@"-="];
+        [_tokenizer.symbolState add:@"*="];
+        [_tokenizer.symbolState add:@"/="];
+        [_tokenizer.symbolState add:@":="];
+        [_tokenizer.symbolState add:@"++"];
+        [_tokenizer.symbolState add:@"--"];
+        [_tokenizer.symbolState add:@"<>"];
+        [_tokenizer.symbolState add:@"=:="];
     }
     return self;
 }
 
 
 - (void)dealloc {
+    self.tokenField = nil;
     self.tokenizer = nil;
-    self.inString = nil;
+    self.inputString = nil;
     self.outString = nil;
     self.tokString = nil;
     self.toks = nil;
@@ -64,62 +65,55 @@
 - (void)awakeFromNib {
     NSString *s = [NSString stringWithFormat:@"%C", (unichar)0xab];
     NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:s];
-    [tokenField setTokenizingCharacterSet:set];
+    [_tokenField setTokenizingCharacterSet:set];
 }
 
 
 - (IBAction)parse:(id)sender {
-    if (![inString length]) {
+    if (![_inputString length]) {
         NSBeep();
         return;
     }
     
     self.busy = YES;
     
-    //[self doParse];
-    [NSThread detachNewThreadSelector:@selector(doParse) toTarget:self withObject:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self doParse];
+    });
 }
 
 
 - (void)doParse {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
     //self.tokenizer = [PKTokenizer tokenizer];
-    self.tokenizer.string = self.inString;
+    self.tokenizer.string = self.inputString;
     
     
     self.toks = [NSMutableArray array];
     PKToken *tok = nil;
     PKToken *eof = [PKToken EOFToken];
-    while (eof != (tok = [tokenizer nextToken])) {
-        [toks addObject:tok];
+    while (eof != (tok = [_tokenizer nextToken])) {
+        [_toks addObject:tok];
     }
-    
-    [self performSelectorOnMainThread:@selector(done) withObject:nil waitUntilDone:NO];
-    
-    [pool drain];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self done];
+    });
 }
 
 
 - (void)done {
     NSMutableString *s = [NSMutableString string];
-    for (PKToken *tok in toks) {
+    for (PKToken *tok in _toks) {
         [s appendFormat:@"%@ %C", tok.stringValue, (unichar)0xab];
     }
     self.tokString = [[s copy] autorelease];
     
     s = [NSMutableString string];
-    for (PKToken *tok in toks) {
+    for (PKToken *tok in _toks) {
         [s appendFormat:@"%@\n", [tok debugDescription]];
     }
     self.outString = [[s copy] autorelease];
     self.busy = NO;
 }
 
-@synthesize tokenizer;
-@synthesize inString;
-@synthesize outString;
-@synthesize tokString;
-@synthesize toks;
-@synthesize busy;
 @end

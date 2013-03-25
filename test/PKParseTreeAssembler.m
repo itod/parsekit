@@ -106,6 +106,8 @@
 - (void)willMatchRuleNamed:(NSString *)name assembly:(PKAssembly *)a {
     //NSLog(@"%s %@ %@", __PRETTY_FUNCTION__, name, a);
     PKParseTree *current = [self currentFrom:a];
+    if (![current isKindOfClass:[PKParseTree class]]) return;
+
     [self parser:nil didMatchToken:a];
     current = [current addChildRule:name];
     a.target = current;
@@ -115,6 +117,8 @@
 - (void)didMatchRuleNamed:(NSString *)name assembly:(PKAssembly *)a {
     //NSLog(@"%s %@ %@", __PRETTY_FUNCTION__, name, a);
     PKParseTree *current = [self currentFrom:a];
+    if (![current isKindOfClass:[PKParseTree class]]) return;
+    NSAssert([current isKindOfClass:[PKParseTree class]], @"");
 
     NSArray *origChildren = [[[current children] mutableCopy] autorelease];
 
@@ -166,6 +170,7 @@
 - (void)parser:(PKParser *)p didMatchToken:(PKAssembly *)a {
     //NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
     PKParseTree *current = [self currentFrom:a];
+    if (![current isKindOfClass:[PKParseTree class]]) return;
     if ([current isMatched]) return;
     
     NSMutableArray *toks = [NSMutableArray arrayWithCapacity:[a.stack count]];

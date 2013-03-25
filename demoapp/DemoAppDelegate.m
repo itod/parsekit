@@ -15,12 +15,15 @@
 #import "DemoAppDelegate.h"
 #import "DemoTokensViewController.h"
 #import "DemoTreesViewController.h"
+#import "DemoASTViewController.h"
 
 @implementation DemoAppDelegate
 
 - (void)dealloc {
+    self.tabView = nil;
     self.tokensViewController = nil;
     self.treesViewController = nil;
+    self.ASTViewController = nil;
     [super dealloc];
 }
 
@@ -28,14 +31,16 @@
 - (void)awakeFromNib {
     self.tokensViewController = [[[DemoTokensViewController alloc] init] autorelease];
     self.treesViewController = [[[DemoTreesViewController alloc] init] autorelease];
+    self.ASTViewController = [[[DemoASTViewController alloc] init] autorelease];
     
-    NSTabViewItem *item = [tabView tabViewItemAtIndex:0];
-    [item setView:[tokensViewController view]];
-
-    item = [tabView tabViewItemAtIndex:1];
-    [item setView:[treesViewController view]];
+    NSTabViewItem *item = [_tabView tabViewItemAtIndex:0];
+    [item setView:[_tokensViewController view]];
+    
+    item = [_tabView tabViewItemAtIndex:1];
+    [item setView:[_treesViewController view]];
+    
+    item = [_tabView tabViewItemAtIndex:2];
+    [item setView:[_ASTViewController view]];
 }
 
-@synthesize tokensViewController;
-@synthesize treesViewController;
 @end

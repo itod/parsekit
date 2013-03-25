@@ -68,7 +68,6 @@
         self.currentParser = p;
     } else {
         self.currentParser = nil;
-        parent = child;
         child.parser = p;
     }
     
