@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Parsekit : Using ParseKit to rapidly implement parsers for iOS or Mac applications." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Parsekit</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/itod/parsekit">View on GitHub</a>
+
+          <h1 id="project_title">Parsekit</h1>
+          <h2 id="project_tagline">Using ParseKit to rapidly implement parsers for iOS or Mac applications.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/itod/parsekit/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/itod/parsekit/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>Hey there, it looks like you're trying to parse text input in Objective-C. You've come to the right place.</p>
+
+<p>ParseKit is a parser generator implemented in Objective-C, which converts grammars into parsers intended for use in Cocoa applications running on iOS or Mac OS X.</p>
+
+<p>With ParseKit, you can define your language with a high-level, easy-to-use, BNF-style grammar, and ParseKit will generate source code for a parser for your language.</p>
+
+<p>Specifically, parsers produced by ParseKit are <strong>recursive descent</strong>, <strong>deterministic</strong>, <strong>packrat</strong>, <strong>LL(k)</strong> (this is, <em>infinite-lookahead</em>) parsers written in Objective-C. That's a mouthful, but what it means in practice is that ParseKit offers you a great deal of flexibility and expressive power when designing your grammars, but also produces parsers which exhibit good (linear) performance characteristics at runtime. Also, the Objective-C code produced by ParseKit is clean, readable, and easy to debug or tweak by hand.</p>
+
+<p>The design of ParseKit has been heavily influenced by <a href="http://antlr.org">ANTLR</a> and a <a href="http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622">book by Stephen J Metsker</a>.</p>
+
+<p>In this tutorial, I'll show how to use ParseKit to implement a small "MiniMath" expression language in an iOS application.</p>
+
+<h3>Desginging the Grammar</h3>
+
+<p>First, let's design a ParseKit grammar for our "MiniMath" language. "MiniMath" should allow expressions like:</p>
+
+<pre><code>1            // bare numbers
+2 + 2 + 42   // addition (including repetition)
+2 * (2 + 4)  // multiplication and sub-expressions
+</code></pre>
+
+<p>OK, now that we know what the expected input looks like, let's build the grammar. Every ParseKit grammar has to start with a rule called <code>@start</code>. Since MiniMath is an expression language, let's define our <code>@start</code> rule as an expression.</p>
+
+<pre><code>@start = expr;
+</code></pre>
+
+<p>But how do we define <code>expr</code>?</p>
+
+<pre><code>expr =  ???  // TODO
+</code></pre>
+
+<p>Rather than designing our grammar from the top down, let's hold that thought, and work from the bottom up instead.</p>
+
+<p>Working from the bottom, we'll start with a rule called <code>atom</code>. And since MiniMath deals with numbers, we'll define <code>atom</code> as a <code>Number</code>.</p>
+
+<pre><code>atom = Number;
+</code></pre>
+
+<p>Notice how the rules we define ourselves (like <code>expr</code> and <code>atom</code>) start with lowercase letters. There are also built-in terminal rules like <code>Number</code>, <code>Word</code>, <code>QuotedString</code> and more. The built-in rules always start with uppercase letters, while the rules we define ourselves must start with lowercase letters.</p>
+
+<p>The built-in <code>Number</code> rule matches a series of digits as you would expect. By default, it also matches optional floating-point and exponential parts of a number (this behavior is easily configurable).</p>
+
+<p>Now that we have defined an <code>atom</code> rule, let's define a primary expression.</p>
+
+<pre><code>primary = atom | '(' expr ')';
+</code></pre>
+
+<p>A <code>primary</code> expression is either an atom or a parenthesized sub expression. The parentheses here can be used to alter operator precedence.</p>
+
+<p>Notice how we are using recursion to call our own <code>expr</code> rule. There is no problem with that (although in ParseKit grammars, you must always avoid <a href="http://en.wikipedia.org/wiki/Left_recursion">left recursion</a>). </p>
+
+<p>Now let's move on to multiplication and addition. As usual, we want multiplication to bind more tightly than addition. Since we are working from the bottom up, we can make multiplication bind more tightly by defining it first.</p>
+
+<p>Let's define multiplication as a primary expression times a primary expression.</p>
+
+<pre><code>multExpr = primary '*' primary;
+</code></pre>
+
+<p>But we want to allow repetition in our multiplication expressions, like <code>2 * 8 * 0</code>, so we'll change our <code>multExpr</code> rule by wrapping the operator and the right-hand side operand in an optional repetition using <code>*</code>.</p>
+
+<pre><code>multExpr = primary ('*' primary)*;
+</code></pre>
+
+<p>Our addition rule will look very similar:</p>
+
+<pre><code>addExpr = multExpr ('+' multExpr)*;
+</code></pre>
+
+<p>Since our addition rule is defined in terms of multiplication operands, this will force multiplication to bind more tightly than addition. </p>
+
+<p>Now we can define our <code>expr</code> rule as an addition expression:</p>
+
+<pre><code>@start = expr;
+expr = addExpr;
+</code></pre>
+
+<p>Finally, let's change our grammar to discard unnecessary tokens. The post-fix <code>!</code> operator can be used to discard a token which is not needed to compute a result. In the case of MiniMath, we'll want to discard any token that is not a number (all of the literal strings in our grammar).</p>
+
+<p>Here's the complete grammar:</p>
+
+<pre><code>@start = expr;
+expr = addExpr;
+addExpr = multExpr ('+'! multExpr)*;
+multExpr = primary ('*'! primary)*;
+primary = atom | '('! expr ')'!;
+atom = Number;
+</code></pre>
+
+<h3>Adding Actions to the Grammar</h3>
+
+<p>OK, so we designed a grammar for our MiniMath language that can be fed to ParseKit to produce Objective-C source code for our parser.</p>
+
+<p>But we don't just want to parse input, we also want to compute a result. The easiest way to do this is to use <strong>grammar actions</strong>. Grammar actions are small pieces of Objective-C source code embedded directly in a ParseKit grammar.</p>
+
+<p>We'll start by adding an Action to the <code>atom</code> rule:</p>
+
+<pre><code>atom = Number 
+{
+    PKToken *tok = [self.assembly pop]; // pop the Number token
+    NSAssert(tok.isNumber, @"a number token just matched in `atom`");
+
+    NSNumber *n = @(tok.floatValue);
+    [self.assembly push:n];  // push an NSNumber object
+};
+</code></pre>
+
+<p>As you can see, actions are blocks of Objective-C code enclosed in curly braces and placed after any rule reference.  In any action, there is an <code>assembly</code> object available which serves as a <strong>stack</strong>. The <code>assembly</code>'s stack contains the most recently parsed tokens (instances of <code>PKToken</code>), and also serves as a place to store your work as you compute the result.</p>
+
+<p>Actions are executed immediately after their preceeding rule matches. So tokens which have recently been matched are available at the top of the <code>assembly</code>'s stack.</p>
+
+<p>In this case, we are popping a number token off the stack, converting it to a float value, and pushing an <code>NSNumber</code> back onto the stack for later use.</p>
+
+<p>ParseKit includes some handy macros that can make this code more concise. Here's the <code>atom</code> rule and action rewritten using those macros:</p>
+
+<pre><code>atom = Number { 
+    // pop a token off the stack and push it back as a float value 
+    PUSH_FLOAT(POP_FLOAT()); 
+};
+</code></pre>
+
+<p>This shortened action is exactly equivalent to the more verbose version above.</p>
+
+<p>Now let's add an action to perform multiplication in the <code>multExpr</code> rule:</p>
+
+<pre><code>multExpr = primary ('*'! primary { 
+    NSNumber *rhs = [self.assembly pop];
+    NSNumber *lhs = [self.assembly pop];
+    NSNumber *n = @([lhs floatValue] * [rhs floatValue]);
+    [self.assembly push:n];
+})*;
+</code></pre>
+
+<p>This action executes immediately after the multiply operator (<code>*</code>) and right-hand side <code>primary</code> operand have been matched. Since the <code>*</code> operator has been discarded,  we can be assured that the top 2 objects on the stack are NSNumbers placed by our <code>atom</code> rule action.  </p>
+
+<p>Again, we can use ParseKit's handy built-in macros to simplify our Objective-C action code. Here's the same action simplified:</p>
+
+<pre><code>multExpr = primary ('*'! primary { 
+    PUSH_FLOAT(POP_FLOAT() * POP_FLOAT());
+})*;
+</code></pre>
+
+<p>Finally, we'll need a similar action for our addition expression rule. Here's the complete grammar including actions:</p>
+
+<pre><code>@start = expr;
+expr = addExpr;
+addExpr = multExpr ('+'! multExpr {
+    PUSH_FLOAT(POP_FLOAT() + POP_FLOAT());
+})*;
+multExpr = primary ('*'! primary { 
+    PUSH_FLOAT(POP_FLOAT() * POP_FLOAT());
+})*;
+primary = atom | '('! expr ')'!;
+atom = Number { 
+    PUSH_FLOAT(POP_FLOAT()); 
+};
+</code></pre>
+
+<h3>Interlude: Checkout the Example App (and ParseKit Dependency)</h3>
+
+<h3>Generating Parser Source Code</h3>
+
+<p>Now that our MiniMath grammar is complete, we can use ParseKit to generate Objective-C source code for our parser.</p>
+
+<p>Open the ParseKit Xcode project, then select and run the <strong>ParserGenApp</strong> target.</p>
+
+<p>Paste the MiniMath grammar into the large text area at the bottom of the ParseGenApp window, and select the options shown below.</p>
+
+<p>IMG</p>
+
+<p>Click the <strong>Generate</strong> button and notice that a MniniMathParser.h MniniMathParser.m file have been created, and appear on your Desktop. You'll need to drag this source code into your app's Xcode project.</p>
+
+<p>IMG</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Parsekit maintained by <a href="https://github.com/itod">itod</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
