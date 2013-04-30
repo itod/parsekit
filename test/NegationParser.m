@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -52,6 +53,8 @@
     self = [super init];
     if (self) {
         self._tokenKindTab[@"foo"] = @(NEGATION_TOKEN_KIND_FOO);
+
+        self._tokenKindNameTab[NEGATION_TOKEN_KIND_FOO] = @"foo";
 
         self.s_memo = [NSMutableDictionary dictionary];
         self.foo_memo = [NSMutableDictionary dictionary];
@@ -81,7 +84,7 @@
 - (void)__s {
     
     if (![self predicts:NEGATION_TOKEN_KIND_FOO, 0]) {
-        [self match:TOKEN_KIND_BUILTIN_ANY expecting:@"s" discard:NO];
+        [self match:TOKEN_KIND_BUILTIN_ANY discard:NO];
     } else {
         [self raise:@"negation test failed in s"];
     }
@@ -95,7 +98,7 @@
 
 - (void)__foo {
     
-    [self match:NEGATION_TOKEN_KIND_FOO expecting:@"'foo'" discard:NO]; 
+    [self match:NEGATION_TOKEN_KIND_FOO discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchFoo:)];
 }

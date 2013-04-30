@@ -1,5 +1,5 @@
 {%for 1 to depth %}    {%/for%}if (![self speculate:^{ {%if predicate %}{{predicate}}; {%/if%}{{ifTest}}}]) {
-{%for 1 to depth %}    {%/for%}    [self match:TOKEN_KIND_BUILTIN_ANY expecting:@"{{methodName}}" discard:{%if discard %}YES{%else%}NO{%/if%}];
+{%for 1 to depth %}    {%/for%}    [self match:TOKEN_KIND_BUILTIN_ANY discard:{%if discard %}YES{%else%}NO{%/if%}];
 {%for 1 to depth %}    {%/for%}} else {
 {%for 1 to depth %}    {%/for%}    [self raise:@"negation test failed in {{methodName}}"];
 {%for 1 to depth %}    {%/for%}}

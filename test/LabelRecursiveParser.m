@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -55,6 +56,10 @@
         self._tokenKindTab[@"="] = @(LABELRECURSIVE_TOKEN_KIND_EQUALS);
         self._tokenKindTab[@"return"] = @(LABELRECURSIVE_TOKEN_KIND_RETURN);
         self._tokenKindTab[@":"] = @(LABELRECURSIVE_TOKEN_KIND_COLON);
+
+        self._tokenKindNameTab[LABELRECURSIVE_TOKEN_KIND_EQUALS] = @"=";
+        self._tokenKindNameTab[LABELRECURSIVE_TOKEN_KIND_RETURN] = @"return";
+        self._tokenKindNameTab[LABELRECURSIVE_TOKEN_KIND_COLON] = @":";
 
         self.s_memo = [NSMutableDictionary dictionary];
         self.label_memo = [NSMutableDictionary dictionary];
@@ -86,14 +91,14 @@
 
 - (void)__s {
     
-    if ([self speculate:^{ [self label]; [self matchWord:NO];[self match:LABELRECURSIVE_TOKEN_KIND_EQUALS expecting:@"'='" discard:NO]; [self expr]; }]) {
+    if ([self speculate:^{ [self label]; [self matchWord:NO];[self match:LABELRECURSIVE_TOKEN_KIND_EQUALS discard:NO]; [self expr]; }]) {
         [self label]; 
         [self matchWord:NO];
-        [self match:LABELRECURSIVE_TOKEN_KIND_EQUALS expecting:@"'='" discard:NO]; 
+        [self match:LABELRECURSIVE_TOKEN_KIND_EQUALS discard:NO]; 
         [self expr]; 
-    } else if ([self speculate:^{ [self label]; [self match:LABELRECURSIVE_TOKEN_KIND_RETURN expecting:@"'return'" discard:NO]; [self expr]; }]) {
+    } else if ([self speculate:^{ [self label]; [self match:LABELRECURSIVE_TOKEN_KIND_RETURN discard:NO]; [self expr]; }]) {
         [self label]; 
-        [self match:LABELRECURSIVE_TOKEN_KIND_RETURN expecting:@"'return'" discard:NO]; 
+        [self match:LABELRECURSIVE_TOKEN_KIND_RETURN discard:NO]; 
         [self expr]; 
     } else {
         [self raise:@"No viable alternative found in rule 's'."];
@@ -110,7 +115,7 @@
     
     if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
         [self matchWord:NO];
-        [self match:LABELRECURSIVE_TOKEN_KIND_COLON expecting:@"':'" discard:NO]; 
+        [self match:LABELRECURSIVE_TOKEN_KIND_COLON discard:NO]; 
         [self label]; 
     }
 

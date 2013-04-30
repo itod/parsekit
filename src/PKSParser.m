@@ -33,9 +33,11 @@
 @property (nonatomic, assign) NSInteger _skip;
 @property (nonatomic, assign, readonly) BOOL _isSpeculating;
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 @property (nonatomic, retain) NSCountedSet *_resyncSet;
 
-- (NSInteger)tokenKindForString:(NSString *)s;
+- (NSInteger)tokenKindForString:(NSString *)str;
+- (NSString *)stringForTokenKind:(NSInteger)tokenKind;
 - (BOOL)lookahead:(NSInteger)x predicts:(NSInteger)tokenKind;
 - (void)fireSyntaxSelector:(SEL)sel withRuleName:(NSString *)ruleName;
 
@@ -81,7 +83,25 @@
         self._exception = [[[PKSRecognitionException alloc] initWithName:NSStringFromClass([PKSRecognitionException class]) reason:nil userInfo:nil] autorelease];
         
         self._tokenKindTab = [NSMutableDictionary dictionary];
-    }
+
+        self._tokenKindNameTab = [NSMutableArray array];
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_INVALID] = @"";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_NUMBER] = @"Number";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_QUOTEDSTRING] = @"Quoted String";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_SYMBOL] = @"Symbol";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_WORD] = @"Word";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_LOWERCASEWORD] = @"Lowercase Word";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_UPPERCASEWORD] = @"Uppercase Word";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_WHITESPACE] = @"Whitespace";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_COMMENT] = @"Comment";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_DELIMITEDSTRING] = @"Delimited String";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_URL] = @"URL";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_EMAIL] = @"Email";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_TWITTER] = @"Twitter";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_HASHTAG] = @"Hashtag";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_EMPTY] = @"Empty";
+        self._tokenKindNameTab[TOKEN_KIND_BUILTIN_ANY] = @"Any";
+}
     return self;
 }
 
@@ -94,6 +114,7 @@
     self._lookahead = nil;
     self._markers = nil;
     self._tokenKindTab = nil;
+    self._tokenKindNameTab = nil;
     self._resyncSet = nil;
     [super dealloc];
 }
@@ -108,15 +129,28 @@
 }
 
 
-- (NSInteger)tokenKindForString:(NSString *)s {
-    NSInteger x = TOKEN_KIND_BUILTIN_INVALID;
+- (NSInteger)tokenKindForString:(NSString *)str {
+    NSInteger tokenKind = TOKEN_KIND_BUILTIN_INVALID;
     
-    id obj = self._tokenKindTab[s];
+    id obj = self._tokenKindTab[str];
     if (obj) {
-        x = [obj integerValue];
+        tokenKind = [obj integerValue];
     }
     
-    return x;
+    return tokenKind;
+}
+
+
+- (NSString *)stringForTokenKind:(NSInteger)tokenKind {
+    NSString *str = nil;
+    
+    if (TOKEN_KIND_BUILTIN_EOF == tokenKind) {
+        str = [[PKToken EOFToken] stringValue];
+    } else {
+        str = self._tokenKindNameTab[tokenKind];
+    }
+
+    return str;
 }
 
 
@@ -221,7 +255,7 @@
 }
 
 
-- (void)match:(NSInteger)tokenKind expecting:(NSString *)expecting discard:(BOOL)discard {
+- (void)match:(NSInteger)tokenKind discard:(BOOL)discard {
     NSParameterAssert(tokenKind != TOKEN_KIND_BUILTIN_INVALID);
     NSAssert(_lookahead, @"");
     
@@ -248,7 +282,7 @@
                 if (discard) [self _discard];
             }
         } else {
-            NSString *msg = [NSString stringWithFormat:@"Expected : %@", expecting];
+            NSString *msg = [NSString stringWithFormat:@"Expected : %@", [self stringForTokenKind:tokenKind]];
             [self raise:msg];
         }
     }
@@ -440,12 +474,11 @@
     NSMutableString *after = [NSMutableString string];
     NSString *delim = _silentlyConsumesWhitespace ? @"" : @" ";
     
-    if ([_lookahead count]) {
-        for (PKToken *tok in [_lookahead reverseObjectEnumerator]) {
-            if (NSNotFound == tok.lineNumber || tok.lineNumber < lineNum - 1) break;
-            if (tok.lineNumber == lineNum) {
-                [after insertString:[NSString stringWithFormat:@"%@%@", tok.stringValue, delim] atIndex:0];
-            }
+    for (PKToken *tok in [_lookahead reverseObjectEnumerator]) {
+        NSAssert(NSNotFound != tok.lineNumber, @"");
+        if (tok.lineNumber < lineNum - 1) break;
+        if (tok.lineNumber == lineNum) {
+            [after insertString:[NSString stringWithFormat:@"%@%@", tok.stringValue, delim] atIndex:0];
         }
     }
     
@@ -723,12 +756,12 @@
 
 
 - (void)matchEOF:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_EOF expecting:@"XXX" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_EOF discard:discard];
 }
 
 
 - (void)matchAny:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_ANY expecting:@"Any" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_ANY discard:discard];
 }
 
 
@@ -738,37 +771,37 @@
 
 
 - (void)matchWord:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_WORD expecting:@"Word" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_WORD discard:discard];
 }
 
 
 - (void)matchNumber:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_NUMBER expecting:@"Number" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_NUMBER discard:discard];
 }
 
 
 - (void)matchSymbol:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_SYMBOL expecting:@"Symbol" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_SYMBOL discard:discard];
 }
 
 
 - (void)matchComment:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_COMMENT expecting:@"Comment" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_COMMENT discard:discard];
 }
 
 
 - (void)matchWhitespace:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_WHITESPACE expecting:@"Whitespace" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_WHITESPACE discard:discard];
 }
 
 
 - (void)matchQuotedString:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_QUOTEDSTRING expecting:@"QuotedString" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_QUOTEDSTRING discard:discard];
 }
 
 
 - (void)matchDelimitedString:(BOOL)discard {
-    [self match:TOKEN_KIND_BUILTIN_DELIMITEDSTRING expecting:@"DelimitedString" discard:discard];
+    [self match:TOKEN_KIND_BUILTIN_DELIMITEDSTRING discard:discard];
 }
 
 @synthesize _exception = _exception;

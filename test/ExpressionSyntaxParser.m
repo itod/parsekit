@@ -334,7 +334,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"lt"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"lt"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_LT expecting:@"'<'" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_LT discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"lt"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"lt"];
@@ -345,7 +345,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"gt"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"gt"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_GT expecting:@"'>'" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_GT discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"gt"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"gt"];
@@ -356,7 +356,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"eq"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"eq"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_EQ expecting:@"'='" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_EQ discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"eq"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"eq"];
@@ -367,7 +367,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"ne"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"ne"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_NE expecting:@"'!='" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_NE discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"ne"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"ne"];
@@ -378,7 +378,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"le"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"le"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_LE expecting:@"'<='" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_LE discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"le"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"le"];
@@ -389,7 +389,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"ge"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"ge"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_GE expecting:@"'>='" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_GE discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"ge"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"ge"];
@@ -400,7 +400,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"openParen"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"openParen"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_OPENPAREN expecting:@"'('" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_OPENPAREN discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"openParen"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"openParen"];
@@ -411,7 +411,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"closeParen"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"closeParen"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_CLOSEPAREN expecting:@"')'" discard:YES]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_CLOSEPAREN discard:YES]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"closeParen"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"closeParen"];
@@ -422,7 +422,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"yes"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"yes"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_YES expecting:@"'yes'" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_YES discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"yes"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"yes"];
@@ -433,7 +433,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"no"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"no"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_NO expecting:@"'no'" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_NO discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"no"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"no"];
@@ -444,7 +444,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"dot"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"dot"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_DOT expecting:@"'.'" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_DOT discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"dot"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"dot"];
@@ -455,7 +455,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"comma"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"comma"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_COMMA expecting:@"','" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_COMMA discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"comma"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"comma"];
@@ -466,7 +466,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"or"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"or"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_OR expecting:@"'or'" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_OR discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"or"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"or"];
@@ -477,7 +477,7 @@
     [self fireSyntaxSelector:@selector(parser:willMatchInterior:) withRuleName:@"and"];
     [self fireSyntaxSelector:@selector(parser:willMatchLeaf:) withRuleName:@"and"];
 
-    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_AND expecting:@"'and'" discard:NO]; 
+    [self match:EXPRESSIONSYNTAXPARSER_TOKEN_KIND_AND discard:NO]; 
 
     [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"and"];
     [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"and"];

@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -55,6 +56,8 @@
 {%if enableAutomaticErrorRecovery %}        self.enableAutomaticErrorRecovery = YES;
 
 {%/if%}{%for kind in tokenKinds %}        self._tokenKindTab[@"{{kind.stringValue}}"] = @({{kind.name}});
+{%/for%}
+{%for kind in tokenKinds %}        self._tokenKindNameTab[{{kind.name}}] = @"{{kind.stringValue}}";
 {%/for%}
 {%if enableMemoization %}{%for methodName in ruleMethodNames %}        self.{{methodName}}_memo = [NSMutableDictionary dictionary];
 {%/for%}{%/if%}    }

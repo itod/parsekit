@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -58,6 +59,10 @@
         self._tokenKindTab[@"foo"] = @(ALT_TOKEN_KIND_FOO);
         self._tokenKindTab[@"bar"] = @(ALT_TOKEN_KIND_BAR);
         self._tokenKindTab[@"baz"] = @(ALT_TOKEN_KIND_BAZ);
+
+        self._tokenKindNameTab[ALT_TOKEN_KIND_FOO] = @"foo";
+        self._tokenKindNameTab[ALT_TOKEN_KIND_BAR] = @"bar";
+        self._tokenKindNameTab[ALT_TOKEN_KIND_BAZ] = @"baz";
 
         self.s_memo = [NSMutableDictionary dictionary];
         self.a_memo = [NSMutableDictionary dictionary];
@@ -145,7 +150,7 @@
 
 - (void)__foo {
     
-    [self match:ALT_TOKEN_KIND_FOO expecting:@"'foo'" discard:NO]; 
+    [self match:ALT_TOKEN_KIND_FOO discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchFoo:)];
 }
@@ -156,7 +161,7 @@
 
 - (void)__bar {
     
-    [self match:ALT_TOKEN_KIND_BAR expecting:@"'bar'" discard:NO]; 
+    [self match:ALT_TOKEN_KIND_BAR discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchBar:)];
 }
@@ -167,7 +172,7 @@
 
 - (void)__baz {
     
-    [self match:ALT_TOKEN_KIND_BAZ expecting:@"'baz'" discard:NO]; 
+    [self match:ALT_TOKEN_KIND_BAZ discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchBaz:)];
 }

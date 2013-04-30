@@ -963,7 +963,6 @@
     vars[TOKEN_KIND] = node.tokenKind;
     vars[DEPTH] = @(_depth);
     vars[DISCARD] = @(node.discard);
-    vars[METHOD_NAME] = node.token.stringValue;
 
     // merge
     NSMutableString *output = [NSMutableString string];

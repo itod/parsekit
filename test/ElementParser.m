@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -58,6 +59,10 @@
         self._tokenKindTab[@"["] = @(ELEMENT_TOKEN_KIND_LBRACKET);
         self._tokenKindTab[@"]"] = @(ELEMENT_TOKEN_KIND_RBRACKET);
         self._tokenKindTab[@","] = @(ELEMENT_TOKEN_KIND_COMMA);
+
+        self._tokenKindNameTab[ELEMENT_TOKEN_KIND_LBRACKET] = @"[";
+        self._tokenKindNameTab[ELEMENT_TOKEN_KIND_RBRACKET] = @"]";
+        self._tokenKindNameTab[ELEMENT_TOKEN_KIND_COMMA] = @",";
 
         self.list_memo = [NSMutableDictionary dictionary];
         self.elements_memo = [NSMutableDictionary dictionary];
@@ -147,7 +152,7 @@
 
 - (void)__lbracket {
     
-    [self match:ELEMENT_TOKEN_KIND_LBRACKET expecting:@"'['" discard:NO]; 
+    [self match:ELEMENT_TOKEN_KIND_LBRACKET discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchLbracket:)];
 }
@@ -158,7 +163,7 @@
 
 - (void)__rbracket {
     
-    [self match:ELEMENT_TOKEN_KIND_RBRACKET expecting:@"']'" discard:YES]; 
+    [self match:ELEMENT_TOKEN_KIND_RBRACKET discard:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchRbracket:)];
 }
@@ -169,7 +174,7 @@
 
 - (void)__comma {
     
-    [self match:ELEMENT_TOKEN_KIND_COMMA expecting:@"','" discard:YES]; 
+    [self match:ELEMENT_TOKEN_KIND_COMMA discard:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchComma:)];
 }

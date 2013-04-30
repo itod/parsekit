@@ -87,7 +87,7 @@
     NSString *str = LS(1);
     
     if ([regex numberOfMatchesInString:str options:0 range:NSMakeRange(0, [str length])]) {
-        [self match:TOKEN_KIND_BUILTIN_ANY expecting:@"s" discard:NO];
+        [self match:TOKEN_KIND_BUILTIN_ANY discard:NO];
     } else {
         [self raise:@"pattern test failed in s"];
     }

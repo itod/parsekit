@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -53,6 +54,9 @@
     if (self) {
         self._tokenKindTab[@"a"] = @(GREED_TOKEN_KIND_A);
         self._tokenKindTab[@"b"] = @(GREED_TOKEN_KIND_B);
+
+        self._tokenKindNameTab[GREED_TOKEN_KIND_A] = @"a";
+        self._tokenKindNameTab[GREED_TOKEN_KIND_B] = @"b";
 
         self.a_memo = [NSMutableDictionary dictionary];
         self.b_memo = [NSMutableDictionary dictionary];
@@ -95,7 +99,7 @@
 
 - (void)__a {
     
-    [self match:GREED_TOKEN_KIND_A expecting:@"'a'" discard:NO]; 
+    [self match:GREED_TOKEN_KIND_A discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchA:)];
 }
@@ -106,7 +110,7 @@
 
 - (void)__b {
     
-    [self match:GREED_TOKEN_KIND_B expecting:@"'b'" discard:NO]; 
+    [self match:GREED_TOKEN_KIND_B discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchB:)];
 }

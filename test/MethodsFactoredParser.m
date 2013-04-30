@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -61,6 +62,15 @@
         self._tokenKindTab[@"{"] = @(METHODSFACTORED_TOKEN_KIND_OPEN_CURLY);
         self._tokenKindTab[@")"] = @(METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN);
         self._tokenKindTab[@";"] = @(METHODSFACTORED_TOKEN_KIND_SEMI_COLON);
+
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_INT] = @"int";
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_CLOSE_CURLY] = @"}";
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_COMMA] = @",";
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_VOID] = @"void";
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_OPEN_PAREN] = @"(";
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_OPEN_CURLY] = @"{";
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN] = @")";
+        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_SEMI_COLON] = @";";
 
         self.method_memo = [NSMutableDictionary dictionary];
         self.type_memo = [NSMutableDictionary dictionary];
@@ -99,14 +109,14 @@
     
     [self type]; 
     [self matchWord:NO];
-    [self match:METHODSFACTORED_TOKEN_KIND_OPEN_PAREN expecting:@"'('" discard:NO]; 
+    [self match:METHODSFACTORED_TOKEN_KIND_OPEN_PAREN discard:NO]; 
     [self args]; 
-    [self match:METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN expecting:@"')'" discard:NO]; 
+    [self match:METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN discard:NO]; 
     if ([self predicts:METHODSFACTORED_TOKEN_KIND_SEMI_COLON, 0]) {
-        [self match:METHODSFACTORED_TOKEN_KIND_SEMI_COLON expecting:@"';'" discard:NO]; 
+        [self match:METHODSFACTORED_TOKEN_KIND_SEMI_COLON discard:NO]; 
     } else if ([self predicts:METHODSFACTORED_TOKEN_KIND_OPEN_CURLY, 0]) {
-        [self match:METHODSFACTORED_TOKEN_KIND_OPEN_CURLY expecting:@"'{'" discard:NO]; 
-        [self match:METHODSFACTORED_TOKEN_KIND_CLOSE_CURLY expecting:@"'}'" discard:NO]; 
+        [self match:METHODSFACTORED_TOKEN_KIND_OPEN_CURLY discard:NO]; 
+        [self match:METHODSFACTORED_TOKEN_KIND_CLOSE_CURLY discard:NO]; 
     } else {
         [self raise:@"No viable alternative found in rule 'method'."];
     }
@@ -121,9 +131,9 @@
 - (void)__type {
     
     if ([self predicts:METHODSFACTORED_TOKEN_KIND_VOID, 0]) {
-        [self match:METHODSFACTORED_TOKEN_KIND_VOID expecting:@"'void'" discard:NO]; 
+        [self match:METHODSFACTORED_TOKEN_KIND_VOID discard:NO]; 
     } else if ([self predicts:METHODSFACTORED_TOKEN_KIND_INT, 0]) {
-        [self match:METHODSFACTORED_TOKEN_KIND_INT expecting:@"'int'" discard:NO]; 
+        [self match:METHODSFACTORED_TOKEN_KIND_INT discard:NO]; 
     } else {
         [self raise:@"No viable alternative found in rule 'type'."];
     }
@@ -140,8 +150,8 @@
     if ([self predicts:METHODSFACTORED_TOKEN_KIND_INT, 0]) {
         [self arg]; 
         while ([self predicts:METHODSFACTORED_TOKEN_KIND_COMMA, 0]) {
-            if ([self speculate:^{ [self match:METHODSFACTORED_TOKEN_KIND_COMMA expecting:@"','" discard:NO]; [self arg]; }]) {
-                [self match:METHODSFACTORED_TOKEN_KIND_COMMA expecting:@"','" discard:NO]; 
+            if ([self speculate:^{ [self match:METHODSFACTORED_TOKEN_KIND_COMMA discard:NO]; [self arg]; }]) {
+                [self match:METHODSFACTORED_TOKEN_KIND_COMMA discard:NO]; 
                 [self arg]; 
             } else {
                 break;
@@ -158,7 +168,7 @@
 
 - (void)__arg {
     
-    [self match:METHODSFACTORED_TOKEN_KIND_INT expecting:@"'int'" discard:NO]; 
+    [self match:METHODSFACTORED_TOKEN_KIND_INT discard:NO]; 
     [self matchWord:NO];
 
     [self fireAssemblerSelector:@selector(parser:didMatchArg:)];

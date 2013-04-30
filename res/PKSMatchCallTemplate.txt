@@ -1,1 +1,1 @@
-{%for 1 to depth %}    {%/for%}[self match:{{tokenKind.name}} expecting:@"{{methodName}}" discard:{%if discard %}YES{%else%}NO{%/if%}]; 
+{%for 1 to depth %}    {%/for%}[self match:{{tokenKind.name}} discard:{%if discard %}YES{%else%}NO{%/if%}]; 

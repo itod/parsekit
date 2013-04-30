@@ -29,6 +29,7 @@
 
 @interface PKSParser ()
 @property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
 
 - (BOOL)_popBool;
 - (NSInteger)_popInteger;
@@ -57,6 +58,13 @@
         self._tokenKindTab[@"="] = @(ELEMENTASSIGN_TOKEN_KIND_EQ);
         self._tokenKindTab[@";"] = @(ELEMENTASSIGN_TOKEN_KIND_SEMI);
         self._tokenKindTab[@"."] = @(ELEMENTASSIGN_TOKEN_KIND_DOT);
+
+        self._tokenKindNameTab[ELEMENTASSIGN_TOKEN_KIND_RBRACKET] = @"]";
+        self._tokenKindNameTab[ELEMENTASSIGN_TOKEN_KIND_LBRACKET] = @"[";
+        self._tokenKindNameTab[ELEMENTASSIGN_TOKEN_KIND_COMMA] = @",";
+        self._tokenKindNameTab[ELEMENTASSIGN_TOKEN_KIND_EQ] = @"=";
+        self._tokenKindNameTab[ELEMENTASSIGN_TOKEN_KIND_SEMI] = @";";
+        self._tokenKindNameTab[ELEMENTASSIGN_TOKEN_KIND_DOT] = @".";
 
     }
     return self;
@@ -155,42 +163,42 @@
 
 - (void)lbracket {
     
-    [self match:ELEMENTASSIGN_TOKEN_KIND_LBRACKET expecting:@"'['" discard:NO]; 
+    [self match:ELEMENTASSIGN_TOKEN_KIND_LBRACKET discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchLbracket:)];
 }
 
 - (void)rbracket {
     
-    [self match:ELEMENTASSIGN_TOKEN_KIND_RBRACKET expecting:@"']'" discard:YES]; 
+    [self match:ELEMENTASSIGN_TOKEN_KIND_RBRACKET discard:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchRbracket:)];
 }
 
 - (void)comma {
     
-    [self match:ELEMENTASSIGN_TOKEN_KIND_COMMA expecting:@"','" discard:YES]; 
+    [self match:ELEMENTASSIGN_TOKEN_KIND_COMMA discard:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchComma:)];
 }
 
 - (void)eq {
     
-    [self match:ELEMENTASSIGN_TOKEN_KIND_EQ expecting:@"'='" discard:NO]; 
+    [self match:ELEMENTASSIGN_TOKEN_KIND_EQ discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchEq:)];
 }
 
 - (void)dot {
     
-    [self match:ELEMENTASSIGN_TOKEN_KIND_DOT expecting:@"'.'" discard:NO]; 
+    [self match:ELEMENTASSIGN_TOKEN_KIND_DOT discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchDot:)];
 }
 
 - (void)semi {
     
-    [self match:ELEMENTASSIGN_TOKEN_KIND_SEMI expecting:@"';'" discard:NO]; 
+    [self match:ELEMENTASSIGN_TOKEN_KIND_SEMI discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchSemi:)];
 }
