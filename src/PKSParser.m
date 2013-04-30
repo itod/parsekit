@@ -475,7 +475,6 @@
     NSString *delim = _silentlyConsumesWhitespace ? @"" : @" ";
     
     for (PKToken *tok in [_lookahead reverseObjectEnumerator]) {
-        NSAssert(NSNotFound != tok.lineNumber, @"");
         if (tok.lineNumber < lineNum - 1) break;
         if (tok.lineNumber == lineNum) {
             [after insertString:[NSString stringWithFormat:@"%@%@", tok.stringValue, delim] atIndex:0];
