@@ -132,52 +132,6 @@
 }
 
 
-- (void)visitCardinal:(PKCardinalNode *)node {
-    //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
-    
-    // create cardinal parser
-    PKSequence *seq = [self parserFromNode:node];
-    NSAssert([seq isKindOfClass:[PKSequence class]], @"");
-    
-    // add to parser tree
-    [self.currentParser add:seq];
-    
-    // prepare for recursion
-    PKCompositeParser *oldParser = _currentParser;
-
-    // recurse
-    NSAssert(1 == [node.children count], @"");
-    PKBaseNode *child = node.children[0];
-    
-    self.currentParser = seq;
-    [child visit:self];
-    
-    // get result sub parser
-    NSAssert(1 == [seq.subparsers count], @"");
-    PKParser *sub = seq.subparsers[0];
-    
-    // duplicate sub parser specified number of times
-    {
-        NSUInteger start = node.rangeStart;
-        NSUInteger end = node.rangeEnd;
-        
-        NSAssert(start >= 1 && NSNotFound != start, @"");
-        NSAssert(end >= 1 && NSNotFound != end, @"");
-        for (NSUInteger i = 1; i < start; i++) {
-            [seq add:sub];
-        }
-        
-        for (NSInteger i = start ; i < end; i++) {
-            PKAlternation *alt = [PKAlternation alternationWithSubparsers:sub, [PKEmpty empty], nil];
-            [seq add:alt];
-        }
-    }
-    
-    // restore from recursion
-    self.currentParser = oldParser;
-}
-
-
 - (void)visitOptional:(PKOptionalNode *)node {
     //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
     
@@ -297,6 +251,12 @@
     if (node.discard) [p discard];
     
     [self.currentParser add:p];
+}
+
+
+- (void)visitAction:(PKActionNode *)node {
+    //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
+    
 }
 
 @end

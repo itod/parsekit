@@ -28,7 +28,7 @@
         NSColor *commentColor = [NSColor colorWithDeviceRed:.24 green:.70 blue:.27 alpha:1.];
         NSColor *piColor = [NSColor colorWithDeviceRed:.09 green:.62 blue:.74 alpha:1.];
 
-        NSFont *monacoFont = [NSFont fontWithName:@"Monaco" size:11.];
+        NSFont *monacoFont = [NSFont fontWithName:@"Monaco" size:11.0];
             
         self.defaultAttrs      = [NSDictionary dictionaryWithObjectsAndKeys:
                                   textColor, NSForegroundColorAttributeName,

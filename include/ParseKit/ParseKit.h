@@ -93,3 +93,9 @@
 
 // grammar
 #import <ParseKit/PKParserFactory.h>
+
+// static
+#import <ParseKit/PKSParser.h>
+#import <ParseKit/PKSTokenAssembly.h>
+#import <ParseKit/PKSRecognitionException.h>
+

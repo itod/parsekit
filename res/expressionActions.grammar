@@ -1,0 +1,54 @@
+@symbols = '!=' '<=' '>=';
+ 
+@start = expr;
+expr = orExpr;
+ 
+orExpr = andExpr orTerm*;
+orTerm = 'or'! andExpr {
+	BOOL rhs = POP_BOOL();
+	BOOL lhs = POP_BOOL();
+	PUSH_BOOL(lhs || rhs);
+};
+ 
+andExpr = relExpr andTerm*;
+andTerm = 'and'! relExpr {
+	BOOL rhs = POP_BOOL();
+	BOOL lhs = POP_BOOL();
+	PUSH_BOOL(lhs && rhs);
+};
+ 
+relExpr   = callExpr relOpTerm*;
+relOp     = '<' | '>' | '=' | '!=' | '<=' | '>=';
+relOpTerm = relOp callExpr {
+	NSInteger rhs = POP_INT();
+	NSString  *op = POP_STR();
+	NSInteger lhs = POP_INT();
+
+	     if (EQ(op, @"<"))  PUSH_BOOL(lhs <  rhs);
+	else if (EQ(op, @">"))  PUSH_BOOL(lhs >  rhs);
+	else if (EQ(op, @"="))  PUSH_BOOL(lhs == rhs);
+	else if (EQ(op, @"!=")) PUSH_BOOL(lhs != rhs);
+	else if (EQ(op, @"<=")) PUSH_BOOL(lhs <= rhs);
+	else if (EQ(op, @">=")) PUSH_BOOL(lhs >= rhs);
+};
+
+callExpr = primary ('(' argList? ')')?;
+argList = atom (',' atom)*;
+ 
+primary = atom | '(' expr ')';
+atom = obj | literal;
+ 
+obj = id member*;
+id = Word;
+member = '.' id;
+ 
+literal = {LA(1) != EXPRESSIONACTIONS_TOKEN_KIND_YES_UPPER}? bool { PUSH_BOOL(EQ_IGNORE_CASE(POP_STR(), @"yes")); }// this predicate makes no sense. it's just for testing expr predicates.
+		| Number { PUSH_FLOAT(POP_FLOAT()); }
+	    | QuotedString { PUSH(POP_STR()); }
+		;
+
+bool = 'yes'
+	 | 'YES'
+	 | 'no' 
+	 | { return NE(LS(1), @"NO"); }? 'NO' // this predicate makes no sense. it's just for testing stat predicates.
+	 ;

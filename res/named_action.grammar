@@ -1,0 +1,8 @@
+@start = a b;
+
+a 
+@before {PUSH(@"foo");}
+@after {PUSH(@"bar");}
+= 'a';
+
+b = 'b';

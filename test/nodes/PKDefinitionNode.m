@@ -72,4 +72,10 @@
     [v visitDefinition:self];
 }
 
+
+- (BOOL)isTerminal {
+    NSAssert2(0, @"%s is an abastract method. Must be overridden in %@", __PRETTY_FUNCTION__, NSStringFromClass([self class]));
+    return NO;
+}
+
 @end

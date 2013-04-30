@@ -1,0 +1,9 @@
+
+- (void)__{{methodName}} {
+    
+{{preCallback}}{{methodBody}}{{postCallback}}
+}
+
+- (void){{methodName}} {
+    [self parseRule:@selector(__{{methodName}}) withMemo:_{{methodName}}_memo];
+}

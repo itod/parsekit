@@ -1,0 +1,141 @@
+/*
+A Grammar for Apple's NSPredicate String Format Syntax
+
+See: http://developer.apple.com/documentation/Cocoa/Conceptual/Predicates/Articles/pSyntax.html
+
+*/
+
+@wordState = '#';
+@wordChars = '.' '[' ']';
+
+@symbols = '==' '>=' '=>' '<=' '=<' '!=' '<>' '&&' '||';
+
+@start 
+@before {
+	PKTokenizer *t = self.tokenizer;
+	[t setTokenizerState:t.wordState from:'#' to:'#'];
+	[t.wordState setWordChars:YES from:'.' to:'.'];
+	[t.wordState setWordChars:YES from:'[' to:'['];
+	[t.wordState setWordChars:YES from:']' to:']'];
+
+	[t.symbolState add:@"=="];
+	[t.symbolState add:@">="];
+	[t.symbolState add:@"=>"];
+	[t.symbolState add:@"<="];
+	[t.symbolState add:@"=<"];
+	[t.symbolState add:@"!="];
+	[t.symbolState add:@"<>"];
+	[t.symbolState add:@"&&"];
+	[t.symbolState add:@"||"];
+ }
+
+
+	= expr;
+
+// Expressions
+    expr                 = orTerm orOrTerm*;
+    orOrTerm             = orKeyword orTerm;
+    orTerm               = andTerm andAndTerm*;
+    andAndTerm           = andKeyword andTerm;
+    andTerm              = primaryExpr | compoundExpr; 
+    compoundExpr         = '('! expr ')'!;
+    primaryExpr          = predicate | negatedPredicate;
+    negatedPredicate     = notKeyword predicate;
+
+    predicate      = collectionTestPredicate | boolPredicate | comparisonPredicate | stringTestPredicate;
+
+
+// values
+    value   = keyPath | string | num | bool | array;
+
+    string  = QuotedString;
+    num     = Number;
+    bool    = trueLiteral | falseLiteral;
+    trueLiteral    = 'true'!;
+    falseLiteral   = 'false'!;
+
+// arrays
+    array               = '{' arrayContentsOpt '}'!;
+    arrayContentsOpt    = Empty | arrayContents;
+    arrayContents       = value commaValue*;
+    commaValue          = ','! value;
+
+
+// keyPaths
+    keyPath = Word;
+
+//    keyPath        = key dotKey*;
+//    key            = name memberAccess?;
+//    name           = Word;
+//    dotKey         = '.' key;
+//    memberAccess   = '[' (num | 'FIRST' | 'LAST' | 'SIZE') ']';
+
+
+// Comparison Tests
+    comparisonPredicate     = numComparisonPredicate | collectionComparisonPredicate;
+
+    numComparisonPredicate  = numComparisonValue comparisonOp numComparisonValue;
+    numComparisonValue      = keyPath | num;
+
+    comparisonOp            = eq | gt | lt | gtEq | ltEq | notEq | between;
+
+    eq      = '=' | '==';
+    gt      = '>';
+    lt      = '<';
+    gtEq    = '>=' | '=>';
+    ltEq    = '<=' | '=<';
+    notEq   = '!=' | '<>';
+    between = 'BETWEEN';
+
+// breaking these out to make the assembler callbacks simpler
+    collectionComparisonPredicate   = collectionLtPredicate | collectionGtPredicate | collectionLtEqPredicate | collectionGtEqPredicate | collectionEqPredicate | collectionNotEqPredicate;
+    
+    collectionLtPredicate           = aggregateOp collection lt value;
+    collectionGtPredicate           = aggregateOp collection gt value;
+    collectionLtEqPredicate         = aggregateOp collection ltEq value;
+    collectionGtEqPredicate         = aggregateOp collection gtEq value;
+    collectionEqPredicate           = aggregateOp collection eq value;
+    collectionNotEqPredicate        = aggregateOp collection notEq value;
+    
+
+
+// Boolean Value Predicates
+    boolPredicate  = truePredicate | falsePredicate;
+
+    truePredicate  = 'TRUEPREDICATE'!;
+    falsePredicate = 'FALSEPREDICATE'!;
+
+
+
+// Compound Expressions
+    andKeyword = 'AND'! | '&&'!;
+    orKeyword  = 'OR'!  | '||'!;
+    notKeyword = 'NOT'! | '!'!;
+
+
+
+// String Tests
+    stringTestPredicate = string stringTestOp value;
+
+    stringTestOp = beginswith | contains | endswith | like | matches;
+
+    beginswith  = 'BEGINSWITH';
+    contains    = 'CONTAINS';
+    endswith    = 'ENDSWITH';
+    like        = 'LIKE';
+    matches     = 'MATCHES';
+
+
+// Collection Tests
+    collectionTestPredicate = value inKeyword collection;
+    collection              = keyPath | array;
+    inKeyword               = 'IN'!;
+
+
+// Aggregate Operators
+    aggregateOp = any | some | all | none;
+    any         = 'ANY';
+    some        = 'SOME';
+    all         = 'ALL';
+    none        = 'NONE';
+

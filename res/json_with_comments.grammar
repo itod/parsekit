@@ -6,7 +6,22 @@
 @singleLineComments = '#';
 @multiLineComments = '/*' '*/';
 
-@start        = (Empty | array | object) comment?;
+@start        
+@before {
+	PKTokenizer *t = self.tokenizer;
+	
+    // whitespace
+    self.silentlyConsumesWhitespace = YES;
+    t.whitespaceState.reportsWhitespaceTokens = YES;
+    self.assembly.preservesWhitespaceTokens = YES;
+
+    // comments
+	t.commentState.reportsCommentTokens = YES;
+	[t setTokenizerState:t.commentState from:'/' to:'/'];
+	[t.commentState addSingleLineStartMarker:@"//"];
+	[t.commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
+}
+              = (Empty | array | object) comment?;
 
 object        = openCurly comment? objectContent closeCurly;
 objectContent = Empty | actualObject;
@@ -20,14 +35,14 @@ arrayContent  = Empty | actualArray;
 actualArray   = value commaValue*;
 commaValue    = comma comment? value;
 
-value         = (null | true | false | number | string | array | object) comment?;
+value         = (nullLiteral | trueLiteral | falseLiteral | number | string | array | object) comment?;
 
 comment       = Comment;
 string        = QuotedString;
 number        = Number;
-null          = 'null';
-true          = 'true';
-false         = 'false';
+nullLiteral   = 'null';
+trueLiteral   = 'true';
+falseLiteral  = 'false';
 
 openCurly     = '{';
 closeCurly    = '}';
@@ -39,7 +54,7 @@ colon         = ':';
 
 /*
 
-    The built-in terminal production types are (note titlecase) : Empty, Number, QuotedString, Word, UppercaseWord, LowercaseWord
+    The built-in terminal production types are (note titlecase) : Empty, Number, QuotedString, Word, etc.
     You define collections (alternations, repetitions or sequences) and literal terminals (in quotes). These should be lowercase.
     The special '@start' production is the outermost production.
     

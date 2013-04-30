@@ -61,8 +61,8 @@
     s = @"var foo = 'bar';";
     lp.tokenizer.string = s;
     a = [PKTokenAssembly assemblyWithTokenizer:lp.tokenizer];
-//    res = [lp bestMatchFor:a];
-//    TDEqualObjects(@"[var, foo, =, 'bar', ;]var/foo/=/bar/;^", [res description]);
+    res = [lp bestMatchFor:a];
+    TDEqualObjects(@"[var, foo, =, 'bar', ;]var/foo/=/'bar'/;^", [res description]);
 }
 
 
@@ -90,7 +90,7 @@
     PKParser *selectorParser = [lp parserNamed:@"selector"];
     TDNotNil(selectorParser);
     TDEqualObjects(selectorParser.name, @"selector");
-    TDEqualObjects([selectorParser class], [PKLowercaseWord class]);
+    TDEqualObjects([selectorParser class], [PKWord class]);
 
     PKParser *declParser = [lp parserNamed:@"decl"];
     TDNotNil(declParser);
@@ -345,10 +345,10 @@
 }
 
 
-- (void)testAssemblerSettingBehaviorOnAll {
+- (void)testAssemblerSettingBehaviorAll {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo = 'bar'; baz = 'bat';";
-    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnAll;
+    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorAll;
     lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
@@ -366,10 +366,10 @@
 }
 
 
-- (void)testAssemblerSettingBehaviorOnTerminals {
+- (void)testAssemblerSettingBehaviorTerminals {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo = 'bar'; baz = 'bat';";
-    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnTerminals;
+    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorTerminals;
     lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
@@ -386,30 +386,10 @@
 }
 
 
-- (void)testAssemblerSettingBehaviorOnExplicit {
-    id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
-    s = @"@start = foo|baz; foo (parser:didMatchFoo:) = 'bar'; baz (parser:didMatchBaz:) = 'bat';";
-    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnExplicit;
-    lp = [factory parserFromGrammar:s assembler:mock error:nil];
-    TDNotNil(lp);
-    TDTrue([lp isKindOfClass:[PKParser class]]);
-    TDEqualObjects(lp.name, @"@start");
-    TDNil(lp.assembler);
-    TDNil(NSStringFromSelector(lp.assemblerSelector));
-    
-    [[mock expect] parser:OCMOCK_ANY didMatchFoo:OCMOCK_ANY];
-    s = @"bar";
-    a = [PKTokenAssembly assemblyWithString:s];
-    res = [lp completeMatchFor:a];
-    TDEqualObjects(@"[bar]bar^", [res description]);
-    [mock verify];
-}
-
-
-- (void)testAssemblerSettingBehaviorOnExplicitNone {
+- (void)testAssemblerSettingBehaviorExplicitNone {
     id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
     s = @"@start = foo|baz; foo = 'bar'; baz = 'bat';";
-    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnExplicit;
+    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorExplicit;
     lp = [factory parserFromGrammar:s assembler:mock error:nil];
     TDNotNil(lp);
     TDTrue([lp isKindOfClass:[PKParser class]]);
@@ -425,44 +405,25 @@
 }
 
 
-- (void)testAssemblerSettingBehaviorOnExplicitOrTerminal {
-    id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
-    s = @"@start = (foo|baz)+; foo (parser:didMatchFoo:) = 'bar'; baz = 'bat';";
-    factory.assemblerSettingBehavior = (PKParserFactoryAssemblerSettingBehaviorOnExplicit | PKParserFactoryAssemblerSettingBehaviorOnTerminals);
-    lp = [factory parserFromGrammar:s assembler:mock error:nil];
-    TDNotNil(lp);
-    TDTrue([lp isKindOfClass:[PKParser class]]);
-    TDEqualObjects(lp.name, @"@start");
-    TDNil(lp.assembler);
-    TDNil(NSStringFromSelector(lp.assemblerSelector));
-    
-    [[mock expect] parser:OCMOCK_ANY didMatchFoo:OCMOCK_ANY];
-    [[mock expect] parser:OCMOCK_ANY didMatchBaz:OCMOCK_ANY];
-    s = @"bar bat";
-    a = [PKTokenAssembly assemblyWithString:s];
-    res = [lp completeMatchFor:a];
-    TDEqualObjects(@"[bar, bat]bar/bat^", [res description]);
-    [mock verify];
-}
-
-
-- (void)testStartLiteralWithCallback {
-    id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
-    s = @"@start (parser:didMatchStart:) = 'bar';";
-    lp = [factory parserFromGrammar:s assembler:mock error:nil];
-    TDNotNil(lp);
-    TDTrue([lp isKindOfClass:[PKParser class]]);
-    TDEqualObjects(lp.name, @"@start");
-    TDTrue(lp.assembler == mock);
-    TDEqualObjects(NSStringFromSelector(lp.assemblerSelector), @"parser:didMatchStart:");
-
-    [[mock expect] parser:OCMOCK_ANY didMatchStart:OCMOCK_ANY];
-    s = @"bar";
-    a = [PKTokenAssembly assemblyWithString:s];
-    res = [lp bestMatchFor:a];
-    TDEqualObjects(@"[bar]bar^", [res description]);
-    [mock verify];
-}
+//- (void)testAssemblerSettingBehaviorExplicitOrTerminal {
+//    id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
+//    s = @"@start = (foo|baz)+; foo = 'bar'; baz = 'bat';";
+//    factory.assemblerSettingBehavior = (PKParserFactoryAssemblerSettingBehaviorExplicit | PKParserFactoryAssemblerSettingBehaviorTerminals);
+//    lp = [factory parserFromGrammar:s assembler:mock error:nil];
+//    TDNotNil(lp);
+//    TDTrue([lp isKindOfClass:[PKParser class]]);
+//    TDEqualObjects(lp.name, @"@start");
+//    TDNil(lp.assembler);
+//    TDNil(NSStringFromSelector(lp.assemblerSelector));
+//    
+//    [[mock expect] parser:OCMOCK_ANY didMatchFoo:OCMOCK_ANY];
+//    [[mock expect] parser:OCMOCK_ANY didMatchBaz:OCMOCK_ANY];
+//    s = @"bar bat";
+//    a = [PKTokenAssembly assemblyWithString:s];
+//    res = [lp completeMatchFor:a];
+//    TDEqualObjects(@"[bar, bat]bar/bat^", [res description]);
+//    [mock verify];
+//}
 
 
 - (void)testStartRefToLiteral {
@@ -568,21 +529,6 @@
     STAssertThrowsSpecificNamed([factory parserFromGrammar:s assembler:nil], PKTrackException, PKTrackExceptionName, @"");
 
     s = @"@start=%{'/', ;";
-    STAssertThrowsSpecificNamed([factory parserFromGrammar:s assembler:nil], PKTrackException, PKTrackExceptionName, @"");
-}
-
-
-- (void)testCardinalityTrackException {
-    s = @"@start='foo'{;";
-    STAssertThrowsSpecificNamed([factory parserFromGrammar:s assembler:nil], PKTrackException, PKTrackExceptionName, @"");
-
-    s = @"@start='foo'{};";
-    STAssertThrowsSpecificNamed([factory parserFromGrammar:s assembler:nil], PKTrackException, PKTrackExceptionName, @"");
-    
-    s = @"@start='foo'{,};";
-    STAssertThrowsSpecificNamed([factory parserFromGrammar:s assembler:nil], PKTrackException, PKTrackExceptionName, @"");
-    
-    s = @"@start='foo'{m};";
     STAssertThrowsSpecificNamed([factory parserFromGrammar:s assembler:nil], PKTrackException, PKTrackExceptionName, @"");
 }
 #endif
@@ -1057,91 +1003,6 @@
 //    a = [PKTokenAssembly assemblyWithString:s];
 //    res = [lp bestMatchFor:a];
 //    TDEqualObjects(@"[333]333^444", [res description]);
-//    
-//    s = @"hello hello";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [lp bestMatchFor:a];
-//    TDNil(res);
-//}
-//
-//
-//- (void)testExprNumCardinality {
-//    s = @"Number{2}";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [exprSeq bestMatchFor:a];
-//    TDNotNil(res);
-//    TDEqualObjects(@"[Sequence]Number/{/2/}^", [res description]);
-//    PKSequence *seq = [res pop];
-//    TDEqualObjects([seq class], [PKSequence class]);
-//    
-//    TDEquals((NSUInteger)2, [seq.subparsers count]);
-//    PKNumber *n = [seq.subparsers objectAtIndex:0];
-//    TDEqualObjects([n class], [PKNumber class]);
-//
-//    n = [seq.subparsers objectAtIndex:1];
-//    TDEqualObjects([n class], [PKNumber class]);
-//
-//    // use the result parser
-//    lp = [factory parserFromExpression:s];
-//    TDNotNil(lp);
-//    TDTrue([lp isKindOfClass:[PKSequence class]]);
-//    
-//    s = @"333 444";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [lp bestMatchFor:a];
-//    TDEqualObjects(@"[333, 444]333/444^", [res description]);
-//    
-//    s = @"1.1 2.2 3.3";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [lp bestMatchFor:a];
-//    TDEqualObjects(@"[1.1, 2.2]1.1/2.2^3.3", [res description]);
-//    
-//    s = @"hello hello";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [lp bestMatchFor:a];
-//    TDNil(res);
-//}
-//
-//
-//- (void)testExprNumCardinality2 {
-//    s = @"Number{2,3}";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [exprSeq bestMatchFor:a];
-//    TDNotNil(res);
-//    TDEqualObjects(@"[Sequence]Number/{/2/,/3/}^", [res description]);
-//    PKSequence *seq = [res pop];
-//    TDEqualObjects([seq class], [PKSequence class]);
-//    
-//    TDEquals((NSUInteger)3, [seq.subparsers count]);
-//
-//    PKNumber *n = [seq.subparsers objectAtIndex:0];
-//    TDEqualObjects([n class], [PKNumber class]);
-//    
-//    n = [seq.subparsers objectAtIndex:1];
-//    TDEqualObjects([n class], [PKNumber class]);
-//    
-//    n = [seq.subparsers objectAtIndex:2];
-//    TDEqualObjects([n class], [PKAlternation class]);
-//    
-//    // use the result parser
-//    lp = [factory parserFromExpression:s];
-//    TDNotNil(lp);
-//    TDTrue([lp isKindOfClass:[PKSequence class]]);
-//    
-//    s = @"333 444";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [lp bestMatchFor:a];
-//    TDEqualObjects(@"[333, 444]333/444^", [res description]);
-//    
-//    s = @"1.1 2.2 3.3";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [lp bestMatchFor:a];
-//    TDEqualObjects(@"[1.1, 2.2, 3.3]1.1/2.2/3.3^", [res description]);
-//    
-//    s = @"1.1 2.2 3.3 4";
-//    a = [PKTokenAssembly assemblyWithString:s];
-//    res = [lp bestMatchFor:a];
-//    TDEqualObjects(@"[1.1, 2.2, 3.3]1.1/2.2/3.3^4", [res description]);
 //    
 //    s = @"hello hello";
 //    a = [PKTokenAssembly assemblyWithString:s];

@@ -1,0 +1,9 @@
+@start = list;
+
+list = lbracket elements rbracket;
+elements = element (comma element)*;
+element = Number | list;
+
+lbracket = '['; // fence
+rbracket = ']'!;
+comma = ','!;

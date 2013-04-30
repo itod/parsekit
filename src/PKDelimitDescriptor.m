@@ -51,7 +51,7 @@
         return NO;
     }
 
-    if (![_characterSet isEqualTo:desc->_characterSet]) {
+    if (![_characterSet isEqual:desc->_characterSet]) {
         return NO;
     }
     
@@ -62,6 +62,5 @@
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@ %p %@ %@>", [self class], self, _startMarker, _endMarker];
 }
-
 
 @end

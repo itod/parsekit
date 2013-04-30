@@ -1,0 +1,10 @@
+    static NSRegularExpression *regex = nil;
+    if (!regex) {
+        NSError *err = nil;
+        regex = [[NSRegularExpression regularExpressionWithPattern:{{pattern}} options:NSRegularExpressionCaseInsensitive error:&err] retain];
+        if (!regex) {
+            if (err) NSLog(@"%@", err);
+        }
+    }
+
+    NSString *str = LS(1);

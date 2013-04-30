@@ -5,7 +5,7 @@
 @start        = ruleset*;
 ruleset       = selectors '{' decls '}'!;
 selectors     = selector commaSelector*;
-selector      = LowercaseWord;            // forcing selectors to be lowercase words for use in a future syntax-highlight framework where i want that
+selector      = Word;
 commaSelector = ','! selector;
 decls         = Empty | actualDecls;
 actualDecls   = decl decl*;

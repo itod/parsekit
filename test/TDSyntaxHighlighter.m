@@ -123,14 +123,14 @@
     
     if (!parser) {
         // get attributes from css && give to the generic assembler
-        parserFactory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnAll;
+        parserFactory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorAll;
         self.genericAssembler.attributes = [self attributesForGrammarNamed:grammarName];
         
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:grammarName ofType:@"grammar"];
         NSString *grammarString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 
         // generate a parser for the requested grammar
-        parserFactory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnTerminals;
+        parserFactory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorTerminals;
         parser = [self.parserFactory parserFromGrammar:grammarString assembler:self.genericAssembler error:nil];
         
         if (cacheParsers) {

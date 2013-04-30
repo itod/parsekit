@@ -10,4 +10,5 @@
 
 @interface PKAlternationNode : PKCollectionNode
 
+@property (nonatomic, assign) BOOL hasEmptyAlternative;
 @end

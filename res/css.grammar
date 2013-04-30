@@ -6,21 +6,71 @@
     
 */
 
+@symbols = '//';
+@singleLineComments = '//';
 @multiLineComments = '/*' '*/';
-@wordState = '-';
+@wordState = '-' '@';
 
-@start                  = ruleset*;
+@start                  
+@before {
+    PKTokenizer *t = self.tokenizer;
+
+    // whitespace
+//    self.silentlyConsumesWhitespace = YES;
+//    t.whitespaceState.reportsWhitespaceTokens = YES;
+//    self.assembly.preservesWhitespaceTokens = YES;
+
+    // symbols
+    [t.symbolState add:@"/*"];
+    [t.symbolState add:@"*/"];
+    [t.symbolState add:@"//"];
+    [t.symbolState add:@"url("];
+    [t.symbolState add:@"URL("];
+
+    // word chars -moz, -webkit, @media, #id, .class, :hover
+    [t setTokenizerState:t.wordState from:'-' to:'-'];
+    [t setTokenizerState:t.wordState from:'@' to:'@'];
+    [t setTokenizerState:t.wordState from:'.' to:'.'];
+    [t setTokenizerState:t.wordState from:'#' to:'#'];
+    [t.wordState setWordChars:YES from:'-' to:'-'];
+    [t.wordState setWordChars:YES from:'@' to:'@'];
+    [t.wordState setWordChars:YES from:'.' to:'.'];
+    [t.wordState setWordChars:YES from:'#' to:'#'];
+/*    [t.wordState setFallbackState:t.symbolState from:'-' to:'-'];
+    [t.wordState setFallbackState:t.symbolState from:'@' to:'@'];
+    [t.wordState setFallbackState:t.symbolState from:'.' to:'.'];
+    [t.wordState setFallbackState:t.symbolState from:'#' to:'#'];
+*/
+    // comments
+    [t setTokenizerState:t.commentState from:'/' to:'/'];
+    [t.commentState setFallbackState:t.symbolState from:'/' to:'/'];
+    [t.commentState addSingleLineStartMarker:@"//"];
+    [t.commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
+    t.commentState.reportsCommentTokens = YES;
+
+	// urls
+    [t setTokenizerState:t.delimitState from:'u' to:'u'];
+    [t setTokenizerState:t.delimitState from:'U' to:'U'];
+	[t.delimitState addStartMarker:@"url(" endMarker:@")" allowedCharacterSet:nil];
+	[t.delimitState addStartMarker:@"URL(" endMarker:@")" allowedCharacterSet:nil];
+}
+                        = ruleset*;
 ruleset                 = selectors openCurly decls closeCurly;
 selectors               = selector commaSelector*;
-selector                = (selectorWord | hash | dot |colon | gt | openBracket | closeBracket | eq | selectorQuotedString | tilde | pipe)+;
+selector                = (selectorWord | hashSym | dot | colon | gt | openBracket | closeBracket | eq | selectorQuotedString | tilde | pipe)+;
 selectorWord            = Word;
 selectorQuotedString    = QuotedString;
 commaSelector           = comma selector;
 decls                   = Empty | actualDecls;
 actualDecls             = decl decl*;
-decl                    = property colon expr semi;
+decl                    = property colon expr important? semi;
 property                = Word;
-expr                    = (string | constant | num | openParen | closeParen | comma | fwdSlash)+;
+expr                    = (string | constant | num | url | openParen | closeParen | comma | nonTerminatingSymbol)+;
+url						= urlLower | urlUpper;
+urlLower				= %{'url(', ')'};
+urlUpper				= %{'URL(', ')'};
+nonTerminatingSymbol    = {return NE(LS(1), @";") && NE(LS(1), @"!");}? fwdSlash | Symbol;
+important               = bang Word;
 string                  = QuotedString;
 constant                = Word;
 
@@ -38,7 +88,9 @@ gt              = '>';
 tilde           = '~';
 pipe            = '|';
 fwdSlash        = '/';
-hash            = '#';
+hashSym         = '#';
 dot             = '.';
+at              = '@';
+bang            = '!';
 
 num = Number;

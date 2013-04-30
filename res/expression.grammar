@@ -4,23 +4,42 @@
 expr = orExpr;
  
 orExpr = andExpr orTerm*;
-orTerm = 'or' andExpr;
+orTerm = or andExpr;
  
 andExpr = relExpr andTerm*;
-andTerm = 'and' relExpr;
+andTerm = and relExpr;
  
 relExpr = callExpr (relOp callExpr)*;
-relOp = '<' | '>' | '=' | '!=' | '<=' | '>=';
+relOp = lt | gt | eq | ne | le | ge;
+
+callExpr = primary (openParen argList? closeParen)?;
+argList = atom (comma atom)*;
  
-callExpr = primary ('(' argList ')')?;
-argList = Empty | atom (',' atom)*;
- 
-primary = atom | '(' expr ')';
+primary = atom | openParen expr closeParen;
 atom = obj | literal;
  
 obj = id member*;
 id = Word;
-member = '.' id;
+member = dot id;
  
 literal = QuotedString | Number | bool;
-bool = 'yes' | 'no';
+bool = yes | no;
+
+// TOKENS
+
+lt = '<';
+gt = '>';
+eq = '=';
+ne = '!=';
+le = '<=';
+ge = '>=';
+
+openParen = '(';
+closeParen = ')'!;
+yes = 'yes';
+no = 'no';
+
+dot = '.';
+comma = ',';
+or = 'or';
+and = 'and';

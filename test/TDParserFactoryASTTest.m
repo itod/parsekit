@@ -30,6 +30,38 @@
 }
 
 
+- (void)testSemanticPredicateNumber {
+    NSString *g = @"@start=foo;foo= {YES}? Number;";
+    //NSLog(@"%@", g);
+    
+    NSError *err = nil;
+    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
+    TDNotNil(rootNode);
+    TDEqualObjects(@"(ROOT (@start #foo) ($foo Number))", [rootNode treeDescription]);
+}
+
+
+- (void)testSemanticPredicateAlt {
+    NSString *g = @"@start=foo;foo= {YES}? Number | {NO}? Word;";
+    //NSLog(@"%@", g);
+    
+    NSError *err = nil;
+    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
+    TDNotNil(rootNode);
+    TDEqualObjects(@"(ROOT (@start #foo) ($foo (| Number Word)))", [rootNode treeDescription]);
+}
+
+
+- (void)testAction {
+    NSString *g = @"@start=foo;foo=Word {NSLog(@\"hi\");};";
+    
+    NSError *err = nil;
+    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
+    TDNotNil(rootNode);
+    TDEqualObjects(@"(ROOT (@start #foo) ($foo Word))", [rootNode treeDescription]);
+}
+
+
 - (void)testAlternationAST2 {
     NSString *g = @"@start=foo;foo=Word;";
     
@@ -292,37 +324,6 @@
     rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
     TDEqualObjects(@"(ROOT (@start #foo) ($foo (- Any Word)))", [rootNode treeDescription]);
-}
-
-
-- (void)testIntersectionAST {
-    NSString *g = @"@start=foo;foo=Word&LowercaseWord;";
-    
-    NSError *err = nil;
-    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (& Word LowercaseWord)))", [rootNode treeDescription]);
-    
-    g = @"@start=foo;foo=Word & LowercaseWord;";
-    
-    err = nil;
-    rootNode = [_factory ASTFromGrammar:g error:&err];
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (& Word LowercaseWord)))", [rootNode treeDescription]);
-    
-    g = @"@start=foo;foo=Word &LowercaseWord;";
-    
-    err = nil;
-    rootNode = [_factory ASTFromGrammar:g error:&err];
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (& Word LowercaseWord)))", [rootNode treeDescription]);
-    
-    g = @"@start=foo;foo=Word& LowercaseWord;";
-    
-    err = nil;
-    rootNode = [_factory ASTFromGrammar:g error:&err];
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (& Word LowercaseWord)))", [rootNode treeDescription]);
 }
 
 
@@ -771,28 +772,6 @@
 }
 
 
-- (void)testCardinal {
-    NSString *g = @"@start=Number{1,2};";
-    
-    NSError *err = nil;
-    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
-    
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start ({ Number)))", [rootNode treeDescription]);
-}
-
-
-- (void)testCardinal2 {
-    NSString *g = @"@start=foo{2,4};foo=Number;";
-    
-    NSError *err = nil;
-    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
-    
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start ({ #foo)) ($foo Number))", [rootNode treeDescription]);
-}
-
-
 - (void)testDelimited {
     NSString *g = @"@start=%{'<', '>'};";
     
@@ -860,17 +839,6 @@
 //}
 //
 //
-- (void)testCallback {
-    NSString *g = @"@start=foo;foo(parser:didMatchSomething:)=Word;";
-    
-    NSError *err = nil;
-    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
-    
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo(parser:didMatchSomething:) Word))", [rootNode treeDescription]);
-}
-
-
 - (void)testDirective {
     
     // TODO

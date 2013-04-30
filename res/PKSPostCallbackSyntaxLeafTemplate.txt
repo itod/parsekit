@@ -1,0 +1,3 @@
+
+    [self fireSyntaxSelector:@selector(parser:didMatchLeaf:) withRuleName:@"{{methodName}}"];
+    [self fireSyntaxSelector:@selector(parser:didMatchInterior:) withRuleName:@"{{methodName}}"];

@@ -19,9 +19,9 @@
 @class PKCompositeNode;
 @class PKCollectionNode;
 @class PKAlternationNode;
-@class PKCardinalNode;
 @class PKOptionalNode;
 @class PKMultipleNode;
+@class PKActionNode;
 
 @protocol PKNodeVisitor <NSObject>
 - (void)visitRoot:(PKRootNode *)node;
@@ -34,9 +34,9 @@
 - (void)visitComposite:(PKCompositeNode *)node;
 - (void)visitCollection:(PKCollectionNode *)node;
 - (void)visitAlternation:(PKAlternationNode *)node;
-- (void)visitCardinal:(PKCardinalNode *)node;
 - (void)visitOptional:(PKOptionalNode *)node;
 - (void)visitMultiple:(PKMultipleNode *)node;
+- (void)visitAction:(PKActionNode *)node;
 
 @property (nonatomic, retain) PKBaseNode *rootNode;
 @end

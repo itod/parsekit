@@ -1,0 +1,3 @@
+{%for 1 to depth %}    {%/for%}} else {
+{%for 1 to depth %}    {%/for%}    [self raise:@"No viable alternative found in rule '{{methodName}}'."];
+{%for 1 to depth %}    {%/for%}}

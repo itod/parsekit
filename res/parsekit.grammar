@@ -1,0 +1,45 @@
+@start               = statement+;
+statement            = decl | tokenizerDirective;
+tokenizerDirective   = '@'! Word '=' (Word | QuotedString)+ ';'!;
+decl                 = production namedAction* '=' action? expr ';'!;
+production           = startProduction | varProduction;
+startProduction      = '@'! 'start'!;
+namedAction		     = '@'! (beforeKey | afterKey) action;
+beforeKey    		 = 'before';
+afterKey    		 = 'after';
+varProduction        = Word;
+expr                 = term orTerm*;
+term                 = semanticPredicate? factor nextFactor*;
+orTerm               = '|' term;
+factor               = phrase (phraseStar | phrasePlus | phraseQuestion)? action?;
+
+nextFactor           = factor;
+phrase               = primaryExpr predicate*;
+
+phraseStar = '*'!;
+phrasePlus = '+'!;
+phraseQuestion = '?'!;
+
+action               = %{'{', '}'};
+semanticPredicate    = %{'{', '}?'};
+
+predicate            = (intersection | difference);
+intersection         = '&'! primaryExpr;
+difference           = '-'! primaryExpr;
+
+primaryExpr          = negatedPrimaryExpr | barePrimaryExpr;
+negatedPrimaryExpr   = '~'! barePrimaryExpr;
+barePrimaryExpr      = atomicValue | subSeqExpr | subTrackExpr;
+subSeqExpr           = '(' expr ')'!;
+subTrackExpr         = '[' expr ']'!;
+atomicValue          = parser discard?;
+parser               = variable | literal | pattern | delimitedString | constant;
+discard              = '!'!;
+pattern              = patternNoOpts | patternIgnoreCase;
+patternNoOpts		 = %{'/', '/'};
+patternIgnoreCase    = %{'/', '/i'};
+delimitedString      = delimOpen QuotedString (','! QuotedString)? '}'!;
+literal              = QuotedString;
+constant             = 'EOF' | 'Word' | 'Number' | 'QuotedString' | 'Symbol' | 'Comment' | 'Empty' | 'Any' | 'S' | 'Digit' | 'Letter' | 'Char' | 'SpecificChar';
+variable             = Word;
+delimOpen		     = '%{';

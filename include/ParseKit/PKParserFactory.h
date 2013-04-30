@@ -14,10 +14,11 @@
 void PKReleaseSubparserTree(PKParser *p);
 
 typedef enum {
-    PKParserFactoryAssemblerSettingBehaviorOnNone       = 0,
-    PKParserFactoryAssemblerSettingBehaviorOnTerminals  = 1,
-    PKParserFactoryAssemblerSettingBehaviorOnExplicit   = 2,
-    PKParserFactoryAssemblerSettingBehaviorOnAll        = 4, // Default
+    PKParserFactoryAssemblerSettingBehaviorAll        = 0, // Default
+    PKParserFactoryAssemblerSettingBehaviorNone       = 1,
+    PKParserFactoryAssemblerSettingBehaviorTerminals  = 2,
+    PKParserFactoryAssemblerSettingBehaviorExplicit   = 3,
+    PKParserFactoryAssemblerSettingBehaviorSyntax     = 4,
 } PKParserFactoryAssemblerSettingBehavior;
 
 @interface PKParserFactory : NSObject
@@ -30,4 +31,5 @@ typedef enum {
 - (PKAST *)ASTFromGrammar:(NSString *)g error:(NSError **)outError;
 
 @property (nonatomic, assign) PKParserFactoryAssemblerSettingBehavior assemblerSettingBehavior;
+@property (nonatomic, assign) BOOL collectTokenKinds;
 @end

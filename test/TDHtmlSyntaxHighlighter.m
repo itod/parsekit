@@ -94,7 +94,7 @@
 //        self.endScriptToken = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"</script>" floatValue:0.0];
 //        [tokenizer.symbolState add:endScriptToken.stringValue];
 
-        NSFont *monacoFont = [NSFont fontWithName:@"Monaco" size:11.];
+        NSFont *monacoFont = [NSFont fontWithName:@"Monaco" size:11.0];
         
         NSColor *textColor = nil;
         NSColor *tagColor = nil;

@@ -1,0 +1,1 @@
+{%for 1 to depth %}    {%/for%}[self match{{methodName}}:{%if discard %}YES{%else%}NO{%/if%}];

@@ -1,0 +1,4 @@
+@start = a Any? a;
+
+a = 'a';
+//b = 'b';

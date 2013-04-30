@@ -389,7 +389,7 @@
 //    PKParserFactory *factory = [PKParserFactory factory];
 //    NSString *s = nil;
 //    s = @"@start = foo|baz; foo (parser:didMatchFooAssembly:) = 'bar'; baz (parser:didMatchBazAssembly:) = 'bat'";
-//    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorOnExplicit;
+//    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorExplicit;
 //    PKParser *lp = [factory parserFromGrammar:s assembler:mock];
 //    
 ////    [[mock expect] didMatchBazAssembly:OCMOCK_ANY];

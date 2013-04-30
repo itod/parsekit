@@ -15,6 +15,7 @@
 #import <ParseKit/PKAssembly.h>
 
 static NSString * const PKAssemblyDefaultDelimiter = @"/";
+static NSString * const PKAssemblyDefaultCursor = @"^";
 
 @interface PKAssembly ()
 - (id)peek;
@@ -27,7 +28,8 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 @property (nonatomic, readwrite, retain) NSMutableArray *stack;
 @property (nonatomic) NSUInteger index;
 @property (nonatomic, retain) NSString *string;
-@property (nonatomic, readwrite, retain) NSString *defaultDelimiter;
+@property (nonatomic, retain) NSString *defaultDelimiter;
+@property (nonatomic, retain) NSString *defaultCursor;
 @property (nonatomic, readonly) NSUInteger length;
 @property (nonatomic, readonly) NSUInteger objectsConsumed;
 @property (nonatomic, readonly) NSUInteger objectsRemaining;
@@ -60,6 +62,7 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
     self.string = nil;
     self.target = nil;
     self.defaultDelimiter = nil;
+    self.defaultCursor = nil;
     [super dealloc];
 }
 
@@ -70,12 +73,19 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
     PKAssembly *a = NSAllocateObject([self class], 0, zone);
     a->stack = [stack mutableCopyWithZone:zone];
     a->string = [string retain];
+
     if (defaultDelimiter) {
         a->defaultDelimiter = [defaultDelimiter retain];
     } else {
         a->defaultDelimiter = nil;
     }
-
+    
+    if (defaultCursor) {
+        a->defaultCursor = [defaultCursor retain];
+    } else {
+        a->defaultCursor = nil;
+    }
+    
     if (target) {
         if ([target conformsToProtocol:@protocol(NSMutableCopying)]) {
             a->target = [target mutableCopyWithZone:zone];
@@ -242,7 +252,8 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
     }
 
     NSString *d = defaultDelimiter ? defaultDelimiter : PKAssemblyDefaultDelimiter;
-    [s appendFormat:@"]%@^%@", [self consumedObjectsJoinedByString:d], [self remainingObjectsJoinedByString:d]];
+    NSString *c = defaultCursor ? defaultCursor : PKAssemblyDefaultCursor;
+    [s appendFormat:@"]%@%@%@", [self consumedObjectsJoinedByString:d], c, [self remainingObjectsJoinedByString:d]];
     
     return [[s copy] autorelease];
 }
@@ -252,4 +263,5 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 @synthesize index;
 @synthesize string;
 @synthesize defaultDelimiter;
+@synthesize defaultCursor;
 @end

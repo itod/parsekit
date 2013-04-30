@@ -12,6 +12,12 @@
 
 @implementation PKLiteralNode
 
+- (void)dealloc {
+    self.tokenKind = nil;
+    [super dealloc];
+}
+
+
 - (NSUInteger)type {
     return PKNodeTypeLiteral;
 }
@@ -28,6 +34,11 @@
     } else {
         return [PKCaseInsensitiveLiteral class];
     }
+}
+
+
+- (BOOL)isTerminal {
+    return YES;
 }
 
 @end

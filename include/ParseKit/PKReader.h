@@ -21,6 +21,7 @@
 */
 @interface PKReader : NSObject {
     NSString *string;
+    NSInputStream *stream;
     NSUInteger offset;
     NSUInteger length;
 }
@@ -32,6 +33,8 @@
     @result     an initialized reader
 */
 - (id)initWithString:(NSString *)s;
+
+- (id)initWithStream:(NSInputStream *)s;
 
 /*!
     @brief      Read a single UTF-16 unicode character
@@ -57,6 +60,7 @@
     @brief      This reader's string.
 */
 @property (nonatomic, copy) NSString *string;
+@property (nonatomic, retain) NSStream *stream;
 
 /*!
     @property   offset

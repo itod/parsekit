@@ -21,6 +21,10 @@
 #import "PKParseTreeAssembler.h"
 #import <ParseKit/ParseKit.h>
 
+#import "JavaScriptSyntaxParser.h"
+#import "ExpressionSyntaxParser.h"
+#import "PKSParseTreeAssembler.h"
+
 #define PKAssertMainThread() NSAssert1([NSThread isMainThread], @"%s should be called on the main thread only.", __PRETTY_FUNCTION__);
 #define PKAssertNotMainThread() NSAssert1(![NSThread isMainThread], @"%s should be called on the main thread only.", __PRETTY_FUNCTION__);
 
@@ -46,26 +50,48 @@
     
     NSString *path = [[NSBundle mainBundle] pathForResource:@"expression" ofType:@"grammar"];
     self.grammarString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    
+//    self.grammarString =
+//    @"@start    = expr;\n"
+//    @"expr      = orExpr;\n"
+//    @"orExpr    = andExpr orTerm*;\n"
+//    @"orTerm    = 'or' andExpr;\n"
+//    @"andExpr   = atom andTerm*;\n"
+//    @"andTerm   = 'and' atom;\n"
+//    @"atom      = Word;\n";
+
+
 
 //    self.inString = @"4.0*.4 + 2e-12/-47 +3";
 //    self.inString = @"[1,2]";
 //    self.inString = @"foo";
-    self.inputString = @"foo or bar.baz('hello', yes, 10.1)";
+    self.inputString = @"bar('foo');";
+//    self.inputString = @"foo or bar";
 }
 
 
 - (void)doParse {
     PKAssertNotMainThread();
 
-    PKParseTreeAssembler *as = [[[PKParseTreeAssembler alloc] init] autorelease];
-    PKParser *p = [[PKParserFactory factory] parserFromGrammar:self.grammarString assembler:as preassembler:as error:nil];
-    PKParseTree *tr = [p parse:self.inputString error:nil];
+//    PKParseTreeAssembler *as = [[[PKParseTreeAssembler alloc] init] autorelease];
+//    PKParser *p = [[PKParserFactory factory] parserFromGrammar:self.grammarString assembler:as preassembler:as error:nil];
+//    PKParseTree *tr = [p parse:self.inputString error:nil];
+
+
+//    PKSParser *p = [[[ExpressionSyntaxParser alloc] init] autorelease];
+    PKSParser *p = [[[JavaScriptSyntaxParser alloc] init] autorelease];
+    PKSParseTreeAssembler *ass = [[[PKSParseTreeAssembler alloc] init] autorelease];
+    
+    [p parseString:self.inputString assembler:ass error:nil];
+    
+    PKParseTree *tr = ass.root;
+    
     if ([tr isKindOfClass:[PKParseTree class]]) {
         [_parseTreeView drawParseTree:tr];
     }
     
-    // release
-    PKReleaseSubparserTree(p);
+//    // release
+//    PKReleaseSubparserTree(p);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         [self done];

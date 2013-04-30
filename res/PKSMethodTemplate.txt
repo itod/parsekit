@@ -1,0 +1,5 @@
+
+- (void){{methodName}} {
+    
+{{preCallback}}{{methodBody}}{{postCallback}}
+}

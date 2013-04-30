@@ -8,7 +8,10 @@
 
 #import "PKBaseNode.h"
 
+@class PKSTokenKindDescriptor;
+
 @interface PKLiteralNode : PKBaseNode
 
 @property (nonatomic, assign) BOOL wantsCharacters;
+@property (nonatomic, retain) PKSTokenKindDescriptor *tokenKind;
 @end

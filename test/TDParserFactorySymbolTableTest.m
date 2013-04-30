@@ -432,70 +432,6 @@
 }
 
 
-- (void)testCardinalAST1 {
-    NSString *g = @"@start=foo;foo=Word{1,2};";
-    
-    NSError *err = nil;
-    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo ({ Word)))", [rootNode treeDescription]);
-    
-    err = nil;
-    NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
-    TDNotNil(symTab);
-    
-    PKCollectionParser *start = symTab[@"@start"];
-    TDNotNil(start);
-    TDTrue([start isKindOfClass:[PKSequence class]]);
-    
-    PKSequence *foo = symTab[@"foo"];
-    TDNotNil(foo);
-    TDTrue([foo isKindOfClass:[PKSequence class]]);
-    
-    TDEquals(start.subparsers[0], foo);
-    TDTrue([foo.subparsers[0] isKindOfClass:[PKWord class]]);
-    TDTrue([foo.subparsers[1] isKindOfClass:[PKAlternation class]]);
-    
-    PKAlternation *alt = foo.subparsers[1];
-    TDTrue([alt.subparsers[0] isKindOfClass:[PKWord class]]);
-    TDTrue([alt.subparsers[1] isKindOfClass:[PKEmpty class]]);
-}
-
-
-- (void)testCardinalAST2 {
-    NSString *g = @"@start=foo;foo=Symbol Word{1,2};";
-    
-    NSError *err = nil;
-    PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
-    TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (. Symbol ({ Word))))", [rootNode treeDescription]);
-    
-    err = nil;
-    NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
-    TDNotNil(symTab);
-    
-    PKCollectionParser *start = symTab[@"@start"];
-    TDNotNil(start);
-    TDTrue([start isKindOfClass:[PKSequence class]]);
-    
-    PKSequence *foo = symTab[@"foo"];
-    TDNotNil(foo);
-    TDTrue([foo isKindOfClass:[PKSequence class]]);
-    
-    TDEquals(start.subparsers[0], foo);
-    TDTrue([foo.subparsers[0] isKindOfClass:[PKSymbol class]]);
-    TDTrue([foo.subparsers[1] isKindOfClass:[PKSequence class]]);
-    
-    PKSequence *seq = foo.subparsers[1];
-    TDTrue([seq.subparsers[0] isKindOfClass:[PKWord class]]);
-    TDTrue([seq.subparsers[1] isKindOfClass:[PKAlternation class]]);
-    
-    PKAlternation *alt = seq.subparsers[1];
-    TDTrue([alt.subparsers[0] isKindOfClass:[PKWord class]]);
-    TDTrue([alt.subparsers[1] isKindOfClass:[PKEmpty class]]);
-}
-
-
 - (void)testLiteralAST1 {
     NSString *g = @"@start='bar';";
     
@@ -633,51 +569,6 @@
     
     TDEqualObjects(self, foo.assembler);
     TDEquals(@selector(parser:didMatchFoo:), foo.assemblerSelector);
-    TDNil(foo.assemblerBlock);
-    TDEqualObjects(self, foo.preassembler);
-    TDEquals(@selector(parser:willMatchFoo:), foo.preassemblerSelector);
-    TDNil(foo.preassemblerBlock);
-}
-
-
-- (void)parser:(PKParser *)p didMatchSomething:(PKAssembly *)a {}
-- (void)testCustomAssemblerSetting {
-    NSString *g = @"@start=foo;foo(parser:didMatchSomething:)=Word;";
-    
-    NSError *err = nil;
-    PKCollectionParser *start = (id)[_factory parserFromGrammar:g assembler:self error:&err];
-    TDNotNil(start);
-    
-    PKParser *foo = start.subparsers[0];
-    TDNotNil(foo);
-    TDTrue([foo isKindOfClass:[PKWord class]]);
-    
-    TDEquals(start.subparsers[0], foo);
-    
-    TDEqualObjects(self, foo.assembler);
-    TDEquals(@selector(parser:didMatchSomething:), foo.assemblerSelector);
-    TDNil(foo.assemblerBlock);
-    TDNil(foo.preassembler);
-    TDEquals((SEL)NULL, foo.preassemblerSelector);
-    TDNil(foo.preassemblerBlock);
-}
-
-
-- (void)testCustomPreassemblerSetting {
-    NSString *g = @"@start=foo;foo(parser:didMatchSomething:)=Word;";
-    
-    NSError *err = nil;
-    PKCollectionParser *start = (id)[_factory parserFromGrammar:g assembler:self preassembler:self error:&err];
-    TDNotNil(start);
-    
-    PKParser *foo = start.subparsers[0];
-    TDNotNil(foo);
-    TDTrue([foo isKindOfClass:[PKWord class]]);
-    
-    TDEquals(start.subparsers[0], foo);
-    
-    TDEqualObjects(self, foo.assembler);
-    TDEquals(@selector(parser:didMatchSomething:), foo.assemblerSelector);
     TDNil(foo.assemblerBlock);
     TDEqualObjects(self, foo.preassembler);
     TDEquals(@selector(parser:willMatchFoo:), foo.preassemblerSelector);

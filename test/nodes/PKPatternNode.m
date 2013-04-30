@@ -1,5 +1,5 @@
 //
-//  PKNodePattern.m
+//  PKPatternNode.m
 //  ParseKit
 //
 //  Created by Todd Ditchendorf on 10/4/12.
@@ -70,6 +70,11 @@
 
 - (Class)parserClass {
     return [PKPattern class];
+}
+
+
+- (BOOL)isTerminal {
+    return YES;
 }
 
 @end

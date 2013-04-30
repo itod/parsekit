@@ -80,7 +80,7 @@ typedef enum {
     XMLReaderNodeTypeWhitespace = 13,
     XMLReaderNodeTypeSignificantWhitespace = 14,
     XMLReaderNodeTypeEndElement = 15,
-    XMLReaderNodeTypeEndEntity = 16,
+    XMLReaderNodeTypeEndEntity = 14,
     XMLReaderNodeTypeXmlDeclaration = 17
 } XMLReaderNodeType;
 

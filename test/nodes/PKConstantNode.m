@@ -16,6 +16,7 @@ static NSDictionary *sClassTab = nil;
 + (void)initialize {
     if ([PKConstantNode class] == self) {
         sClassTab = [@{
+            @"EOF"              : [PKAny class], // TODO
             @"Word"             : [PKWord class],
             @"LowercaseWord"    : [PKLowercaseWord class],
             @"UppercaseWord"    : [PKUppercaseWord class],
@@ -38,6 +39,7 @@ static NSDictionary *sClassTab = nil;
 
 - (void)dealloc {
     self.literal = nil;
+    self.tokenKind = nil;
     [super dealloc];
 }
 
@@ -70,6 +72,11 @@ static NSDictionary *sClassTab = nil;
     Class cls = sClassTab[typeName];
     NSAssert1(cls, @"missing constant class for token %@", typeName);
     return cls;
+}
+
+
+- (BOOL)isTerminal {
+    return YES;
 }
 
 @end

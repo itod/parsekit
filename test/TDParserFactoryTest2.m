@@ -25,43 +25,61 @@
     g = @"@start = Word | Number Symbol;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
-    
+}
+
+- (void)testOrVsAndPrecendence1 {
+    g = @"@start = Word | Number Symbol;";
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+
     s = @"foo";
     res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
     TDEqualObjects(@"[foo]foo^", [res description]);
-    
-    s = @"foo %";
-    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
-    TDNil(res);
-    
-    g = @"@start = Word Number | Symbol;";
+}
+
+- (void)testOrVsAndPrecendence2 {
+    g = @"@start = Word | Number Symbol;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
-    TDNotNil(lp);
-    
-    s = @"foo 3";
-    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
-    TDEqualObjects(@"[foo, 3]foo/3^", [res description]);
-    
-    s = @"%";
-    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
-    TDEqualObjects(@"[%]%^", [res description]);
 
     s = @"foo %";
     res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
     TDNil(res);
-    
+}
+
+- (void)testOrVsAndPrecendence3 {
+    g = @"@start = Word | Number Symbol;";
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+
+    TDNotNil(lp);
+}
+
+- (void)testOrVsAndPrecendence7 {
     g = @"@start = Word (Number | Symbol);";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
-    
+}
+
+- (void)testOrVsAndPrecendence8 {
+    g = @"@start = Word (Number | Symbol);";
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+
     s = @"foo 3";
     res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
     TDEqualObjects(@"[foo, 3]foo/3^", [res description]);
-    
+}
+
+- (void)testOrVsAndPrecendence9 {
+    g = @"@start = Word (Number | Symbol);";
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+
     s = @"foo";
     res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
     TDNil(res);
-    
+}
+
+- (void)testOrVsAndPrecendence10 {
+    g = @"@start = Word (Number | Symbol);";
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+
     s = @"foo %";
     res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
     TDEqualObjects(@"[foo, %]foo/%^", [res description]);

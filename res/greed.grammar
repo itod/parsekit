@@ -1,0 +1,4 @@
+@start = a Any* a | b Any+ b;
+
+a = 'a';
+b = 'b';

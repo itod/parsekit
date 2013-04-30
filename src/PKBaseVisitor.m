@@ -19,9 +19,9 @@
 #import "PKCompositeNode.h"
 #import "PKCollectionNode.h"
 #import "PKAlternationNode.h"
-#import "PKCardinalNode.h"
 #import "PKOptionalNode.h"
 #import "PKMultipleNode.h"
+#import "PKActionNode.h"
 
 @implementation PKBaseVisitor
 
@@ -75,12 +75,6 @@
 }
 
 
-- (void)visitCardinal:(PKCardinalNode *)node {
-    //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
-    
-}
-
-
 - (void)visitOptional:(PKOptionalNode *)node {
     //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
     
@@ -112,6 +106,12 @@
 
 
 - (void)visitPattern:(PKPatternNode *)node {
+    //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
+    
+}
+
+
+- (void)visitAction:(PKActionNode *)node {
     //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
     
 }

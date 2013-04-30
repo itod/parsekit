@@ -14,42 +14,7 @@
 
 #import "PKExclusion.h"
 #import <ParseKit/PKAssembly.h>
-
-@interface NSMutableSet (PKExclusionAdditions)
-- (void)exclusiveSetTestingEquality:(NSSet *)s;
-@end
-
-@implementation NSMutableSet (PKExclusionAdditions)
-
-- (void)exclusiveSetTestingEquality:(NSSet *)s {
-    for (id a1 in self) {
-        BOOL found = NO;
-        for (id a2 in s) {
-            if ([a1 isEqual:a2 ]) {
-                found = YES;
-                break;
-            }
-        }
-        if (found) {
-            [self removeObject:a1];
-        }
-    }
-    
-    for (id a2 in s) {
-        BOOL found = NO;
-        for (id a1 in self) {
-            if ([a2 isEqual:a1]) {
-                found = YES;
-                break;
-            }
-        }
-        if (!found) {
-            [self addObject:a2];
-        }
-    }
-}
-
-@end
+#import "NSMutableSet+ParseKitAdditions.h"
 
 @interface PKParser ()
 - (NSSet *)matchAndAssemble:(NSSet *)inAssemblies;

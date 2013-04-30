@@ -1,0 +1,30 @@
+{{ hello }}
+
+It's currently {% now | date_format: "dd MMM yyyy 'at' HH:mm:ss" %}
+
+Nested variable: {{ foo.bar }}
+
+{% for dude in guys %}
+	Current dude is {{ dude | uppercase }}...{% if dude equalsString "matt" %} AWESOME!{% /if %}
+	{% if currentLoop.currentIndex == 0 %}
+		(the best!) {% comment %} Should only happen for Matt {% /comment %}
+		{% for 1 to 5 %}*{% /for %}
+	{% /if %}
+{% /for %}
+
+Last of the {{ guys.@count }} guys was {{ guys.@lastObject | capitalized }}
+
+Markers look like {{ engine.delimiters.markerStart }} this {{ engine.delimiters.markerEnd }}
+Variables look like {{ engine.delimiters.expressionStart }} this {{ engine.delimiters.expressionEnd }}
+Filter delimiter is {{ engine.delimiters.filter }}
+
+We also know about {{ YES }} and {{ NO }} or {{ true }} and {{ false }}
+
+Is 1 less than 2? {% if 1 < 2 %} Yes! {% else %} No? {% /if %}
+
+{% literal %}This text won't be {% now %} interpreted.{% /literal %}
+
+{% for 1 to 5 %}{{ currentLoop.currentIndex }}{%if currentLoop.currentIndex % 2%}[ODD] {%else%}[EVEN] {%/if%}{% /for %}
+{% for 1 to 5 reversed %}{{ currentLoop.currentIndex }}{% cycle "[odd] " "[even] " %}{% /for %}
+
+And we're done.

@@ -155,16 +155,16 @@
 }
 
 
-- (void)testOrVsAndPrecendence {
-    g = @" @start ( parser:didMatchFoo: ) = foo;\n"
-    @"  foo = Word & /foo/ | Number! { 1 } ( %{ '/' , '/' } Symbol- '%' ) * /bar/ ;";
-    lp = [factory parserFromGrammar:g assembler:nil error:nil];
-    TDNotNil(lp);
-    
-    s = @"foo";
-    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
-    TDEqualObjects(@"[foo]foo^", [res description]);
-}
+//- (void)testOrVsAndPrecendence {
+//    g = @" @start = foo;\n"
+//    @"  foo = Word & /foo/ | Number! ( %{ '/' , '/' } Symbol- '%' ) * /bar/ ;";
+//    lp = [factory parserFromGrammar:g assembler:nil error:nil];
+//    TDNotNil(lp);
+//    
+//    s = @"foo";
+//    res = [lp completeMatchFor:[PKTokenAssembly assemblyWithString:s]];
+//    TDEqualObjects(@"[foo]foo^", [res description]);
+//}
 
 
 - (void)testNegation {

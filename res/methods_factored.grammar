@@ -1,0 +1,8 @@
+@start = method+;
+
+method = type Word '(' args ')' (';' | '{' '}')
+       ;
+
+type = 'void' | 'int';
+args = Empty | arg (',' arg)*;
+arg = 'int' Word;

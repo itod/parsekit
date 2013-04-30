@@ -1,0 +1,2 @@
+    [self fireAssemblerSelector:@selector(parser:willMatch{{methodName | capitalized}}:)];
+    

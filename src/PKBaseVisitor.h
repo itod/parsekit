@@ -20,9 +20,9 @@
 #import "PKCompositeNode.h"
 #import "PKCollectionNode.h"
 #import "PKAlternationNode.h"
-#import "PKCardinalNode.h"
 #import "PKOptionalNode.h"
 #import "PKMultipleNode.h"
+#import "PKActionNode.h"
 
 @interface PKBaseVisitor : NSObject <PKNodeVisitor>
 

@@ -99,8 +99,9 @@
 // [16]       PI       ::=       '<?' PITarget (S (Char* - (Char* '?>' Char*)))? '?>'
 // [17]       PITarget       ::=        Name - (('X' | 'x') ('M' | 'm') ('L' | 'l'))
     
-    pi = '<?' piTarget ~/?>/* '?>';
+    pi = piStart piTarget (~/?>/)* '?>';
     piTarget = name - /[xX][mM][lL]/;
+	piStart = '<?';
 
 
 // [18]       CDSect       ::=        CDStart CData CDEnd
@@ -169,7 +170,8 @@
 
 // [32]       SDDecl       ::=        S 'standalone' Eq (("'" ('yes' | 'no') "'") | ('"' ('yes' | 'no') '"'))
     
-    sdDecl = S 'standalone' eq /(["'])(yes|no)\1/;
+    sdDecl = S standalone eq /(["'])(yes|no)\1/;
+	standalone = 'standalone';
 
 // [39]       element       ::=        EmptyElemTag | STag content ETag
 

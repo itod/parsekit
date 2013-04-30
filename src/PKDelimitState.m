@@ -27,12 +27,17 @@
 @property (nonatomic, readwrite) NSUInteger offset;
 @end
 
+@interface PKTokenizer ()
+- (NSInteger)tokenKindForStringValue:(NSString *)str;
+@end
+
 @interface PKTokenizerState ()
 - (void)resetWithReader:(PKReader *)r;
 - (void)append:(PKUniChar)c;
 - (void)appendString:(NSString *)s;
 - (NSString *)bufferedString;
 - (PKTokenizerState *)nextTokenizerStateFor:(PKUniChar)c tokenizer:(PKTokenizer *)t;
+- (void)addStartMarker:(NSString *)start endMarker:(NSString *)end allowedCharacterSet:(NSCharacterSet *)set tokenKind:(NSInteger)kind;
 @end
 
 @interface PKDelimitState ()
@@ -97,6 +102,7 @@
     NSUInteger count = [descs count];
     BOOL hasEndMarkers = NO;
     PKUniChar endChars[count];
+    PKDelimitDescriptor *selectedDesc = nil;
 
     NSUInteger i = 0;
     for (PKDelimitDescriptor *desc in descs) {
@@ -142,8 +148,9 @@
             PKUniChar e = endChars[i];
             
             if (e == c) {
-                endMarker = [descs[i] endMarker];
-                charSet = [descs[i] characterSet];
+                selectedDesc = descs[i];
+                endMarker = [selectedDesc endMarker];
+                charSet = [selectedDesc characterSet];
                 
                 NSString *peek = [rootNode nextSymbol:r startingWith:e];
                 if (endMarker && [endMarker isEqualToString:peek]) {
@@ -193,6 +200,11 @@
     
     PKToken *tok = [PKToken tokenWithTokenType:PKTokenTypeDelimitedString stringValue:[self bufferedString] floatValue:0.0];
     tok.offset = offset;
+    
+    NSString *tokenKindKey = [NSString stringWithFormat:@"%@,%@", selectedDesc.startMarker, selectedDesc.endMarker];
+    NSInteger tokenKind = [t tokenKindForStringValue:tokenKindKey];
+    tok.tokenKind = tokenKind; //selectedDesc.tokenKind;
+
     return tok;
 }
 

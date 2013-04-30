@@ -41,6 +41,8 @@
     
     item = [_tabView tabViewItemAtIndex:2];
     [item setView:[_ASTViewController view]];
+    
+    [_tabView selectTabViewItemAtIndex:1];
 }
 
 @end

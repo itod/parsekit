@@ -1,0 +1,13 @@
+@delimitedString = '<' '>' nil;
+@delimitState = '<';
+
+
+@start 
+@before {
+    PKTokenizer *t = self.tokenizer;
+
+    [t.delimitState addStartMarker:@"<" endMarker:@">" allowedCharacterSet:nil];
+    [t setTokenizerState:t.delimitState from:'<' to:'<'];
+} = s;
+
+s = %{'<', '>'};

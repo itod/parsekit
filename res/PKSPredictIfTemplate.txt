@@ -1,0 +1,1 @@
+{%for 1 to depth %}    {%/for%}if ({%if predicate %}{{predicate}} && ({%/if%}[self predicts:{%for tokenKind in lookaheadSet%}{{tokenKind.name}}, {%if currentLoop.currentIndex == last %}0]{%/if%}{%/for%}{%if predicate %}){%/if%}) {

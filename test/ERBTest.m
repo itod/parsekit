@@ -64,7 +64,7 @@
 - (void)testFoo {
     t.string = @"oh <@= foo.bar @> !";
     res = [lp completeMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
-    TDEqualObjects([res description], @"[oh, hai, !]oh/<@=/foo/./bar/@>/!^");
+    TDEqualObjects(@"[oh, hai, !]oh/<@=/foo/./bar/@>/!^", [res description]);
     
 }
 

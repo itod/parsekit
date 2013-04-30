@@ -26,6 +26,7 @@
     NSUInteger index;
     NSString *string;
     NSString *defaultDelimiter;
+    NSString *defaultCursor;
 }
 
 /*!

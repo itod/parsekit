@@ -41,4 +41,9 @@ static NSDictionary *sClassTab = nil;
     return cls;
 }
 
+
+- (BOOL)isTerminal {
+    return NO;
+}
+
 @end

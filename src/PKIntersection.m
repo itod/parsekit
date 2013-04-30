@@ -14,29 +14,7 @@
 
 #import "PKIntersection.h"
 #import <ParseKit/PKAssembly.h>
-
-@interface NSMutableSet (PKIntersectionAdditions)
-- (void)intersectSetTestingEquality:(NSSet *)s;
-@end
-
-@implementation NSMutableSet (PKIntersectionAdditions)
-
-- (void)intersectSetTestingEquality:(NSSet *)s {
-    for (id a1 in [[self copy] autorelease]) {
-        BOOL found = NO;
-        for (id a2 in s) {
-            if ([a1 isEqual:a2]) {
-                found = YES;
-                break;
-            }
-        }
-        if (!found) {
-            [self removeObject:a1];
-        }
-    }
-}
-
-@end
+#import "NSMutableSet+ParseKitAdditions.h"
 
 @interface PKParser ()
 - (NSSet *)matchAndAssemble:(NSSet *)inAssemblies;

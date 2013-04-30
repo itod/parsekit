@@ -22,8 +22,10 @@
 @end
 
 @interface PKTokenizer ()
+- (id)initWithString:(NSString *)str stream:(NSInputStream *)stm;
 - (PKTokenizerState *)tokenizerStateFor:(PKUniChar)c;
 - (PKTokenizerState *)defaultTokenizerStateFor:(PKUniChar)c;
+- (NSInteger)tokenKindForStringValue:(NSString *)str;
 @property (nonatomic, retain) PKReader *reader;
 @property (nonatomic, retain) NSMutableArray *tokenizerStates;
 @property (nonatomic, readwrite) NSUInteger lineNumber;
@@ -41,15 +43,33 @@
 }
 
 
++ (PKTokenizer *)tokenizerWithStream:(NSInputStream *)s {
+    return [[[self alloc] initWithStream:s] autorelease];
+}
+
+
 - (id)init {
-    return [self initWithString:nil];
+    return [self initWithString:nil stream:nil];
 }
 
 
 - (id)initWithString:(NSString *)s {
+    self = [self initWithString:s stream:nil];
+    return self;
+}
+
+
+- (id)initWithStream:(NSInputStream *)s {
+    self = [self initWithString:nil stream:s];
+    return self;
+}
+
+
+- (id)initWithString:(NSString *)str stream:(NSInputStream *)stm {
     self = [super init];
     if (self) {
-        self.string = s;
+        self.string = str;
+        self.stream = stm;
         self.reader = [[[PKReader alloc] init] autorelease];
         
         self.numberState     = [[[PKNumberState alloc] init] autorelease];
@@ -115,6 +135,7 @@
 
 - (void)dealloc {
     self.string = nil;
+    self.stream = nil;
     self.reader = nil;
     self.tokenizerStates = nil;
     self.numberState = nil;
@@ -132,6 +153,7 @@
     self.twitterState = nil;
     self.hashtagState = nil;
 #endif
+    self.delegate = nil;
     [super dealloc];
 }
 
@@ -210,7 +232,12 @@
     if (reader != r) {
         [reader autorelease];
         reader = [r retain];
-        reader.string = string;
+        
+        if (string) {
+            reader.string = string;
+        } else {
+            reader.stream = stream;
+        }
     }
 }
 
@@ -221,6 +248,16 @@
         string = [s copy];
     }
     reader.string = string;
+    self.lineNumber = 1;
+}
+
+
+- (void)setStream:(NSInputStream *)s {
+    if (stream != s) {
+        [stream autorelease];
+        stream = [s retain];
+    }
+    reader.stream = stream;
     self.lineNumber = 1;
 }
 
@@ -308,6 +345,15 @@
     }
 }
 
+
+- (NSInteger)tokenKindForStringValue:(NSString *)str {
+    NSInteger x = 0;
+    if (delegate) {
+        x = [delegate tokenizer:self tokenKindForStringValue:str];
+    }
+    return x;
+}
+
 @synthesize numberState;
 @synthesize quoteState;
 @synthesize commentState;
@@ -324,7 +370,9 @@
 @synthesize hashtagState;
 #endif
 @synthesize string;
+@synthesize stream;
 @synthesize reader;
 @synthesize tokenizerStates;
 @synthesize lineNumber;
+@synthesize delegate;
 @end

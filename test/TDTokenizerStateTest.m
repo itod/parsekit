@@ -50,7 +50,7 @@
     TDEqualObjects(@"at", tok.stringValue);    
 
     tok = [t nextToken];
-    TDEqualObjects(nil, tok.stringValue);    
+    TDEqualObjects(@"«EOF»", tok.stringValue);
     TDTrue([PKToken EOFToken] == tok);
 }
 
@@ -79,7 +79,7 @@
     TDEqualObjects(@"at", tok.stringValue);    
     
     tok = [t nextToken];
-    TDEqualObjects(nil, tok.stringValue);    
+    TDEqualObjects(@"«EOF»", tok.stringValue);
     TDTrue([PKToken EOFToken] == tok);
 }
 
@@ -115,7 +115,7 @@
     TDEqualObjects(@"baz", tok.stringValue);
     
     tok = [t nextToken];
-    TDEqualObjects(nil, tok.stringValue);    
+    TDEqualObjects(@"«EOF»", tok.stringValue);
     TDTrue([PKToken EOFToken] == tok);
 }
 
@@ -135,7 +135,7 @@
     t.string = @"## ja";
     
     tok = [t nextToken];
-    TDEqualObjects(nil, tok.stringValue);    
+    TDEqualObjects(@"«EOF»", tok.stringValue);
     TDTrue([PKToken EOFToken] == tok);
 }
 
@@ -171,7 +171,7 @@
     TDEqualObjects(@"baz", tok.stringValue);
     
     tok = [t nextToken];
-    TDEqualObjects(nil, tok.stringValue);    
+    TDEqualObjects(@"«EOF»", tok.stringValue);    
     TDTrue([PKToken EOFToken] == tok);
 }
 

@@ -26,16 +26,16 @@ static PKTokenEOF *EOFToken = nil;
 
 + (PKTokenEOF *)instance {
     @synchronized(self) {
-        if (!EOFToken) {
-            EOFToken = [[self alloc] init];
+        if (!EOFToken) { 
+            EOFToken = [[self alloc] initWithTokenType:PKTokenTypeEOF stringValue:nil floatValue:0.0];
         }
     }
     return EOFToken;
 }
 
 
-- (NSString *)description {
-    return [NSString stringWithFormat:@"<PKTokenEOF %p>", self];
+- (NSString *)stringValue {
+    return @"«EOF»";
 }
 
 
@@ -231,6 +231,7 @@ static PKTokenEOF *EOFToken = nil;
 @synthesize floatValue;
 @synthesize stringValue;
 @synthesize tokenType;
+@synthesize tokenKind;
 @synthesize value;
 @synthesize offset;
 @synthesize lineNumber;

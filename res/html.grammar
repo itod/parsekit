@@ -1,5 +1,5 @@
 /*
-    An HTML grammar for use with TDParseKit
+    An HTML grammar for use with ParseKit
 
     this grammar is intentionally very forgiving (non-strict)
     the point here is to highlight, not validate, HTML.
@@ -13,25 +13,65 @@
 @delimitedString = '<!DOCTYPE' '>' nil;
 @delimitState.fallbackState = symbolState;
 
-@start          = any*;
-any             = element | text | doctype | pi | comment;
+@start          
+@before {
+    PKTokenizer *t = self.tokenizer;
 
-pi              = %{'<?', '?>'};
+    // whitespace
+//    self.silentlyConsumesWhitespace = YES;
+//    t.whitespaceState.reportsWhitespaceTokens = YES;
+//    self.assembly.preservesWhitespaceTokens = YES;
 
+    // symbols
+    [t.symbolState add:@"<!--"];
+    [t.symbolState add:@"-->"];
+    [t.symbolState add:@"<?"];
+    [t.symbolState add:@"?>"];
+
+	// comments	
+    [t setTokenizerState:t.commentState from:'<' to:'<'];
+    [t.commentState addMultiLineStartMarker:@"<!--" endMarker:@"-->"];
+    [t.commentState setFallbackState:t.delimitState from:'<' to:'<'];
+	t.commentState.reportsCommentTokens = YES;
+
+	// pi
+	[t.delimitState addStartMarker:@"<?" endMarker:@"?>" allowedCharacterSet:nil];
+	
+	// doctype
+	[t.delimitState addStartMarker:@"<!DOCTYPE" endMarker:@">" allowedCharacterSet:nil];
+	
+    [t.delimitState setFallbackState:t.symbolState from:'<' to:'<'];
+}
+				= anything*;
+anything        = scriptElement | styleElement | tag | procInstr | comment | doctype | text;
+
+scriptElement   = scriptStartTag scriptElementContent scriptEndTag;
+scriptStartTag  = lt scriptTagName attr* gt;
+scriptEndTag    = lt fwdSlash scriptTagName gt;
+scriptTagName	= 'script';
+scriptElementContent = ~scriptEndTag;
+
+styleElement    = styleStartTag styleElementContent styleEndTag;
+styleStartTag   = lt styleTagName attr* gt;
+styleEndTag     = lt fwdSlash styleTagName gt;
+styleTagName	= 'style';
+styleElementContent = ~styleEndTag;
+
+procInstr       = %{'<?', '?>'};
 doctype         = %{'<!DOCTYPE', '>'};
-element         = emptyTag | startTag elementContent* endTag;
-elementContent  = element | text | comment | pi;
-text            = /[^<]+/;
 
+text            = Any; // ~lt; // /[^<]+/
+
+tag			    = emptyTag | startTag | endTag;
 emptyTag        = lt tagName attr* fwdSlash gt;
-startTag        = lt junk? tagName attr* gt;
+startTag        = lt tagName attr* gt;
 endTag          = lt fwdSlash tagName gt;
 
 tagName         = Word;
 
-attr            = attrName (eq attrValue)?;
+attr            = attrName (eq attrValue?)?;
 attrName        = Word;
-attrValue       = QuotedString;
+attrValue       = Word | QuotedString;
 
 eq              = '=';
 lt              = '<';

@@ -21,9 +21,9 @@ typedef enum NSUInteger {
     PKNodeTypeComposite,
     PKNodeTypeCollection,
     PKNodeTypeAlternation,
-    PKNodeTypeCardinal,
     PKNodeTypeOptional,
     PKNodeTypeMultiple,
+    PKNodeTypeAction,
 } PKNodeType;
 
 @class PKParser;
@@ -36,7 +36,15 @@ typedef enum NSUInteger {
 - (void)replaceChild:(PKBaseNode *)oldChild withChild:(PKBaseNode *)newChild;
 - (void)replaceChild:(PKBaseNode *)oldChild withChildren:(NSArray *)newChildren;
 
+@property (nonatomic, assign, readonly) BOOL isTerminal;
+
 @property (nonatomic, assign) BOOL discard;
 @property (nonatomic, retain) Class parserClass;
 @property (nonatomic, retain) PKParser *parser;
+
+@property (nonatomic, retain) PKActionNode *actionNode;
+@property (nonatomic, retain) PKActionNode *semanticPredicateNode;
+@property (nonatomic, retain) PKActionNode *before;
+@property (nonatomic, retain) PKActionNode *after;
+@property (nonatomic, retain) NSString *defName;
 @end

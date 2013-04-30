@@ -10,6 +10,13 @@
 
 @implementation PKRootNode
 
+- (void)dealloc {
+    self.grammarName = nil;
+    self.tokenKinds = nil;
+    [super dealloc];
+}
+
+
 - (NSUInteger)type {
     return PKNodeTypeRoot;
 }

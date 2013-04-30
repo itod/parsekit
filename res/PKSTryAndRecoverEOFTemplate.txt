@@ -1,0 +1,4 @@
+{%for 1 to depth %}    {%/for%}[self tryAndRecover:TOKEN_KIND_BUILTIN_EOF block:^{
+{{childString}}{%for 1 to depth %}    {%/for%}} completion:^{
+{%for 1 to depth %}    {%/for%}    [self matchEOF:YES];
+{%for 1 to depth %}    {%/for%}}];

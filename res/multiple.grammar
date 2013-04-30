@@ -1,0 +1,19 @@
+@start = s;
+
+s = ab+ a;
+
+ab = a b;
+a = 'a';
+b = 'b';
+
+/*
+
+This should fully match, as a single 'a' should not be consumed by `ab`.
+Failure halfway thru `ab` should unwind and allow the failed 'a' input to be matched 
+by the following `a` rule
+
+    PKAssembly *res = [_parser parseString:@"a b a" assembler:nil error:nil];
+    TDEqualObjects(@"[a, b, a]a/b/a^", [res description]);
+
+
+*/
