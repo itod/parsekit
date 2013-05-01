@@ -1,6 +1,6 @@
 ## ParseKit
 
-ParseKit is a Mac OS X Framework written by Todd Ditchendorf in Objective-C and released under the Apache 2 Open Source License. ParseKit is suitable for use on Mac OS X Leopard and later or [iOS][4]. ParseKit is an Objective-C is heavily influced by [ANTLR](http://www.antlr.org/) by Terence Parr and ["Building Parsers with Java"](http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622) by Steven John Metsker. Also, ParseKit depends on [MGTemplateEngine](http://mattgemmell.com/2008/05/20/mgtemplateengine-templates-with-cocoa) by Matt Gemmell for its templating features.
+ParseKit is a Mac OS X Framework written by Todd Ditchendorf in Objective-C and released under the Apache 2 Open Source License. ParseKit is suitable for use on iOS or Mac OS X. ParseKit is an Objective-C is heavily influced by [ANTLR](http://www.antlr.org/) by Terence Parr and ["Building Parsers with Java"](http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622) by Steven John Metsker. Also, ParseKit depends on [MGTemplateEngine](http://mattgemmell.com/2008/05/20/mgtemplateengine-templates-with-cocoa) by Matt Gemmell for its templating features.
 
 The ParseKit Framework offers 3 basic services of general interest to Cocoa developers:
 
