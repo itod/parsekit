@@ -379,6 +379,7 @@
 		D36E98E70E58C14000496BD3 /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D36E98E40E58C14000496BD3 /* DemoAppDelegate.m */; };
 		D36E98E80E58C14000496BD3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D36E98E50E58C14000496BD3 /* main.m */; };
 		D36E98F80E58C1A000496BD3 /* DemoAppMainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D36E98F70E58C1A000496BD3 /* DemoAppMainMenu.xib */; };
+		D375DA51173C43A200A5E050 /* OCMock.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D3BD3A6E172DC43300FC6549 /* OCMock.framework */; };
 		D37A28671013942300E936B7 /* PKGrammarParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D3376D5810093A1600E4602E /* PKGrammarParser.m */; };
 		D37A28681013942A00E936B7 /* PKGrammarParser.h in Headers */ = {isa = PBXBuildFile; fileRef = D3376D5710093A1600E4602E /* PKGrammarParser.h */; };
 		D37D8DC91571A4F700CDB822 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D37D8DC81571A4F700CDB822 /* SenTestingKit.framework */; };
@@ -991,6 +992,7 @@
 			dstPath = "$(BUILT_PRODUCTS_DIR)";
 			dstSubfolderSpec = 0;
 			files = (
+				D375DA51173C43A200A5E050 /* OCMock.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
