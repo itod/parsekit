@@ -7,7 +7,6 @@
 //
 
 #import "PKReferenceNode.h"
-#import "PKScope.h"
 #import <ParseKit/PKToken.h>
 #import <ParseKit/PKSequence.h>
 

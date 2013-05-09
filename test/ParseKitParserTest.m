@@ -40,13 +40,13 @@
     self.parser = [[[ParseKitParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/ParseKitParser.h" stringByExpandingTildeInPath];
+    path = [@"~/work/parsekit/trunk/src/ParseKitParser.h" stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/ParseKitParser.m" stringByExpandingTildeInPath];
+    path = [@"~/work/parsekit/trunk/src/ParseKitParser.m" stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
