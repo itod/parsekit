@@ -469,7 +469,7 @@
     PKToken *lt = LT(1);
     
     NSUInteger lineNum = lt.lineNumber;
-    NSAssert(NSNotFound != lineNum, @"");
+    //NSAssert(NSNotFound != lineNum, @"");
 
     NSMutableString *after = [NSMutableString string];
     NSString *delim = _silentlyConsumesWhitespace ? @"" : @" ";
