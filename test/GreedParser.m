@@ -81,13 +81,13 @@
     if ([self predicts:GREED_TOKEN_KIND_A, 0]) {
         [self a]; 
         while ([self predicts:TOKEN_KIND_BUILTIN_ANY, 0]) {
-            [self matchAny:NO];
+            [self matchAny:NO]; 
         }
         [self a]; 
     } else if ([self predicts:GREED_TOKEN_KIND_B, 0]) {
         [self b]; 
         do {
-            [self matchAny:NO];
+            [self matchAny:NO]; 
         } while ([self predicts:TOKEN_KIND_BUILTIN_ANY, 0]);
         [self b]; 
     } else {

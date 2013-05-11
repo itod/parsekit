@@ -108,7 +108,7 @@
 - (void)__method {
     
     [self type]; 
-    [self matchWord:NO];
+    [self matchWord:NO]; 
     [self match:METHODSFACTORED_TOKEN_KIND_OPEN_PAREN discard:NO]; 
     [self args]; 
     [self match:METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN discard:NO]; 
@@ -169,7 +169,7 @@
 - (void)__arg {
     
     [self match:METHODSFACTORED_TOKEN_KIND_INT discard:NO]; 
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchArg:)];
 }

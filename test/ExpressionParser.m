@@ -427,7 +427,7 @@
 
 - (void)__id {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchId:)];
 }
@@ -451,9 +451,9 @@
 - (void)__literal {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-        [self matchQuotedString:NO];
+        [self matchQuotedString:NO]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_NUMBER, 0]) {
-        [self matchNumber:NO];
+        [self matchNumber:NO]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_NO, EXPRESSION_TOKEN_KIND_YES, 0]) {
         [self bool]; 
     } else {

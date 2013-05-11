@@ -136,7 +136,7 @@
 - (void)__element {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_NUMBER, 0]) {
-        [self matchNumber:NO];
+        [self matchNumber:NO]; 
     } else if ([self predicts:ELEMENT_TOKEN_KIND_LBRACKET, 0]) {
         [self list]; 
     } else {

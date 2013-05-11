@@ -74,7 +74,7 @@
     
     [self a]; 
     if ([self predicts:TOKEN_KIND_BUILTIN_ANY, 0]) {
-        [self matchAny:NO];
+        [self matchAny:NO]; 
     }
     [self a]; 
     [self matchEOF:YES]; 

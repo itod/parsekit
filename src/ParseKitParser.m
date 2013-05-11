@@ -325,13 +325,13 @@
 - (void)__tokenizerDirective {
     
     [self match:PARSEKIT_TOKEN_KIND_AT discard:YES]; 
-    [self matchWord:NO];
+    [self matchWord:NO]; 
     [self match:PARSEKIT_TOKEN_KIND_EQUALS discard:NO]; 
     do {
         if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-            [self matchWord:NO];
+            [self matchWord:NO]; 
         } else if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-            [self matchQuotedString:NO];
+            [self matchQuotedString:NO]; 
         } else {
             [self raise:@"No viable alternative found in rule 'tokenizerDirective'."];
         }
@@ -441,7 +441,7 @@
 
 - (void)__varProduction {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchVarProduction:)];
 }
@@ -815,10 +815,10 @@
 - (void)__delimitedString {
     
     [self delimOpen]; 
-    [self matchQuotedString:NO];
-    if ([self speculate:^{ [self match:PARSEKIT_TOKEN_KIND_COMMA discard:YES]; [self matchQuotedString:NO];}]) {
+    [self matchQuotedString:NO]; 
+    if ([self speculate:^{ [self match:PARSEKIT_TOKEN_KIND_COMMA discard:YES]; [self matchQuotedString:NO]; }]) {
         [self match:PARSEKIT_TOKEN_KIND_COMMA discard:YES]; 
-        [self matchQuotedString:NO];
+        [self matchQuotedString:NO]; 
     }
     [self match:PARSEKIT_TOKEN_KIND_CLOSE_CURLY discard:YES]; 
 
@@ -831,7 +831,7 @@
 
 - (void)__literal {
     
-    [self matchQuotedString:NO];
+    [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchLiteral:)];
 }
@@ -881,7 +881,7 @@
 
 - (void)__variable {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchVariable:)];
 }

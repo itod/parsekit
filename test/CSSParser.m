@@ -377,7 +377,7 @@
 
 - (void)__selectorWord {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchSelectorWord:)];
 }
@@ -388,7 +388,7 @@
 
 - (void)__selectorQuotedString {
     
-    [self matchQuotedString:NO];
+    [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchSelectorQuotedString:)];
 }
@@ -455,7 +455,7 @@
 
 - (void)__property {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchProperty:)];
 }
@@ -538,7 +538,7 @@
         [self testAndThrow:(id)^{ return NE(LS(1), @";") && NE(LS(1), @"!"); }]; 
         [self fwdSlash]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_SYMBOL, 0]) {
-        [self matchSymbol:NO];
+        [self matchSymbol:NO]; 
     } else {
         [self raise:@"No viable alternative found in rule 'nonTerminatingSymbol'."];
     }
@@ -552,7 +552,7 @@
 - (void)__important {
     
     [self bang]; 
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
 }
 
@@ -562,7 +562,7 @@
 
 - (void)__string {
     
-    [self matchQuotedString:NO];
+    [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchString:)];
 }
@@ -573,7 +573,7 @@
 
 - (void)__constant {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchConstant:)];
 }
@@ -782,7 +782,7 @@
 
 - (void)__num {
     
-    [self matchNumber:NO];
+    [self matchNumber:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNum:)];
 }

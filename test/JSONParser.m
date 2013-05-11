@@ -160,7 +160,7 @@
 
 - (void)propertyName {
     
-    [self matchQuotedString:NO];
+    [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchPropertyName:)];
 }
@@ -234,21 +234,21 @@
 
 - (void)comment {
     
-    [self matchComment:NO];
+    [self matchComment:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchComment:)];
 }
 
 - (void)string {
     
-    [self matchQuotedString:NO];
+    [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchString:)];
 }
 
 - (void)number {
     
-    [self matchNumber:NO];
+    [self matchNumber:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNumber:)];
 }

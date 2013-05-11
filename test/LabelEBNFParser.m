@@ -91,9 +91,9 @@
 
 - (void)__s {
     
-    if ([self speculate:^{ [self label]; [self matchWord:NO];[self match:LABELEBNF_TOKEN_KIND_EQUALS discard:NO]; [self expr]; }]) {
+    if ([self speculate:^{ [self label]; [self matchWord:NO]; [self match:LABELEBNF_TOKEN_KIND_EQUALS discard:NO]; [self expr]; }]) {
         [self label]; 
-        [self matchWord:NO];
+        [self matchWord:NO]; 
         [self match:LABELEBNF_TOKEN_KIND_EQUALS discard:NO]; 
         [self expr]; 
     } else if ([self speculate:^{ [self label]; [self match:LABELEBNF_TOKEN_KIND_RETURN discard:NO]; [self expr]; }]) {
@@ -114,8 +114,8 @@
 - (void)__label {
     
     while ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        if ([self speculate:^{ [self matchWord:NO];[self match:LABELEBNF_TOKEN_KIND_COLON discard:NO]; }]) {
-            [self matchWord:NO];
+        if ([self speculate:^{ [self matchWord:NO]; [self match:LABELEBNF_TOKEN_KIND_COLON discard:NO]; }]) {
+            [self matchWord:NO]; 
             [self match:LABELEBNF_TOKEN_KIND_COLON discard:NO]; 
         } else {
             break;
@@ -131,7 +131,7 @@
 
 - (void)__expr {
     
-    [self matchNumber:NO];
+    [self matchNumber:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchExpr:)];
 }

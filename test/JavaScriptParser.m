@@ -1775,21 +1775,21 @@
 
 - (void)identifier {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchIdentifier:)];
 }
 
 - (void)numLiteral {
     
-    [self matchNumber:NO];
+    [self matchNumber:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNumLiteral:)];
 }
 
 - (void)stringLiteral {
     
-    [self matchQuotedString:NO];
+    [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchStringLiteral:)];
 }

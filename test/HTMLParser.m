@@ -419,7 +419,7 @@
 
 - (void)__text {
     
-    [self matchAny:NO];
+    [self matchAny:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchText:)];
 }
@@ -500,7 +500,7 @@
 
 - (void)__tagName {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchTagName:)];
 }
@@ -527,7 +527,7 @@
 
 - (void)__attrName {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchAttrName:)];
 }
@@ -539,9 +539,9 @@
 - (void)__attrValue {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self matchWord:NO];
+        [self matchWord:NO]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-        [self matchQuotedString:NO];
+        [self matchQuotedString:NO]; 
     } else {
         [self raise:@"No viable alternative found in rule 'attrValue'."];
     }
@@ -598,7 +598,7 @@
 
 - (void)__comment {
     
-    [self matchComment:NO];
+    [self matchComment:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchComment:)];
 }

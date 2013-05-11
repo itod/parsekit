@@ -563,7 +563,7 @@
 
 - (void)__string {
     
-    [self matchQuotedString:NO];
+    [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchString:)];
 }
@@ -574,7 +574,7 @@
 
 - (void)__num {
     
-    [self matchNumber:NO];
+    [self matchNumber:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNum:)];
 }
@@ -680,7 +680,7 @@
 
 - (void)__keyPath {
     
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchKeyPath:)];
 }

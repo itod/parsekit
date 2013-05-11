@@ -107,18 +107,18 @@
 
 - (void)__method {
     
-    if ([self speculate:^{ [self testAndThrow:(id)^{ return NO; }]; [self type]; [self matchWord:NO];[self match:METHODS_TOKEN_KIND_OPEN_PAREN discard:NO]; [self args]; [self match:METHODS_TOKEN_KIND_CLOSE_PAREN discard:NO]; [self match:METHODS_TOKEN_KIND_SEMI_COLON discard:NO]; }]) {
+    if ([self speculate:^{ [self testAndThrow:(id)^{ return NO; }]; [self type]; [self matchWord:NO]; [self match:METHODS_TOKEN_KIND_OPEN_PAREN discard:NO]; [self args]; [self match:METHODS_TOKEN_KIND_CLOSE_PAREN discard:NO]; [self match:METHODS_TOKEN_KIND_SEMI_COLON discard:NO]; }]) {
         [self testAndThrow:(id)^{ return NO; }]; 
         [self type]; 
-        [self matchWord:NO];
+        [self matchWord:NO]; 
         [self match:METHODS_TOKEN_KIND_OPEN_PAREN discard:NO]; 
         [self args]; 
         [self match:METHODS_TOKEN_KIND_CLOSE_PAREN discard:NO]; 
         [self match:METHODS_TOKEN_KIND_SEMI_COLON discard:NO]; 
-    } else if ([self speculate:^{ [self testAndThrow:(id)^{ return 1; }]; [self type]; [self matchWord:NO];[self match:METHODS_TOKEN_KIND_OPEN_PAREN discard:NO]; [self args]; [self match:METHODS_TOKEN_KIND_CLOSE_PAREN discard:NO]; [self match:METHODS_TOKEN_KIND_OPEN_CURLY discard:NO]; [self match:METHODS_TOKEN_KIND_CLOSE_CURLY discard:NO]; }]) {
+    } else if ([self speculate:^{ [self testAndThrow:(id)^{ return 1; }]; [self type]; [self matchWord:NO]; [self match:METHODS_TOKEN_KIND_OPEN_PAREN discard:NO]; [self args]; [self match:METHODS_TOKEN_KIND_CLOSE_PAREN discard:NO]; [self match:METHODS_TOKEN_KIND_OPEN_CURLY discard:NO]; [self match:METHODS_TOKEN_KIND_CLOSE_CURLY discard:NO]; }]) {
         [self testAndThrow:(id)^{ return 1; }]; 
         [self type]; 
-        [self matchWord:NO];
+        [self matchWord:NO]; 
         [self match:METHODS_TOKEN_KIND_OPEN_PAREN discard:NO]; 
         [self args]; 
         [self match:METHODS_TOKEN_KIND_CLOSE_PAREN discard:NO]; 
@@ -176,7 +176,7 @@
 - (void)__arg {
     
     [self match:METHODS_TOKEN_KIND_INT discard:NO]; 
-    [self matchWord:NO];
+    [self matchWord:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchArg:)];
 }

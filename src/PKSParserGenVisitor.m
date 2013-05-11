@@ -157,6 +157,9 @@
         case PKNodeTypeReference: {
             NSString *name = node.token.stringValue;
             PKDefinitionNode *defNode = self.symbolTable[name];
+            if (!defNode) {
+                NSLog(@"missing rule named: `%@`", name);
+            }
             NSAssert1(defNode, @"missing: %@", name);
             [set unionSet:[self lookaheadSetForNode:defNode]];
         } break;
@@ -509,9 +512,18 @@
     // rep body is always wrapped in an while AND an IF. so increase depth twice
     NSInteger depth = isLL1 ? 1 : 2;
 
-    // recurse
+    // recurse first and get entire child str
     self.depth += depth;
+    
+    // visit for speculative if test
+    self.isSpeculating = YES;
     [child visit:self];
+    self.isSpeculating = NO;
+    NSString *ifTest = [self removeTabsAndNewLines:[self pop]];
+    
+    // visit for child body
+    [child visit:self];
+
     self.depth -= depth;
     
     // pop
@@ -522,7 +534,7 @@
     if (isLL1) { // ????
         templateName = @"PKSRepetitionPredictTemplate";
     } else {
-        vars[IF_TEST] = [self removeTabsAndNewLines:childStr];
+        vars[IF_TEST] = ifTest;
         templateName = @"PKSRepetitionSpeculateTemplate";
     }
     
@@ -814,11 +826,21 @@
     PKBaseNode *child = node.children[0];
     
     NSArray *set = [self sortedLookaheadSetForNode:child];
+    
+    BOOL isLL1 = _enableHybridDFA && [self isLL1:child];
 
+    // recurse for speculation
     self.depth++;
+    self.isSpeculating = YES;
+    [child visit:self];
+    self.isSpeculating = NO;
+    
+    NSMutableString *ifTest = [self removeTabsAndNewLines:[self pop]];
+
+    // recurse for realz
     [child visit:self];
     self.depth--;
-    
+
     // pop
     NSMutableString *childStr = [self pop];
 
@@ -827,14 +849,14 @@
     vars[DEPTH] = @(_depth);
     vars[LOOKAHEAD_SET] = set;
     vars[LAST] = @([set count] - 1);
-    vars[CHILD_STRING] = [[childStr mutableCopy] autorelease];
-    vars[IF_TEST] = [self removeTabsAndNewLines:childStr];
+    vars[CHILD_STRING] = childStr;
+    vars[IF_TEST] = ifTest;
     
     NSMutableString *output = [NSMutableString string];
     [output appendString:[self semanticPredicateForNode:node throws:YES]];
 
     NSString *templateName = nil;
-    if (_enableHybridDFA && [self isLL1:child]) { // ????
+    if (isLL1) { // ????
         templateName = @"PKSOptionalPredictTemplate";
     } else {
         templateName = @"PKSOptionalSpeculateTemplate";
@@ -896,7 +918,17 @@
     
     NSArray *set = [self sortedLookaheadSetForNode:child];
     
+    BOOL isLL1 = _enableHybridDFA && [self isLL1:child];
+    
+    // recurse for speculation
     self.depth++;
+    self.isSpeculating = YES;
+    [child visit:self];
+    self.isSpeculating = NO;
+    
+    NSMutableString *ifTest = [self removeTabsAndNewLines:[self pop]];
+    
+    // recurse for realz
     [child visit:self];
     self.depth--;
     
@@ -908,14 +940,14 @@
     vars[DEPTH] = @(_depth);
     vars[LOOKAHEAD_SET] = set;
     vars[LAST] = @([set count] - 1);
-    vars[CHILD_STRING] = [[childStr mutableCopy] autorelease];
-    vars[IF_TEST] = [self removeTabsAndNewLines:childStr];
+    vars[CHILD_STRING] = childStr;
+    vars[IF_TEST] = ifTest;
     
     NSMutableString *output = [NSMutableString string];
     [output appendString:[self semanticPredicateForNode:node throws:YES]];
 
     NSString *templateName = nil;
-    if (_enableHybridDFA && [self isLL1:child]) { // ????
+    if (isLL1) { // ????
         templateName = @"PKSMultiplePredictTemplate";
     } else {
         templateName = @"PKSMultipleSpeculateTemplate";
