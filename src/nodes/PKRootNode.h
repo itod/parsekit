@@ -11,5 +11,6 @@
 @interface PKRootNode : PKBaseNode
 
 @property (nonatomic, retain) NSString *grammarName;
+@property (nonatomic, retain) NSString *startMethodName;
 @property (nonatomic, retain) NSMutableArray *tokenKinds;
 @end

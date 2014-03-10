@@ -1,8 +1,8 @@
-#import <ParseKit/PKSParser.h>
+#import <ParseKit/PEGParser.h>
 
 
 
-@interface PatternParser : PKSParser
+@interface PatternParser : PEGParser
 
 @end
 

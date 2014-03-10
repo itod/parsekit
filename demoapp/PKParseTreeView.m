@@ -148,7 +148,6 @@
         CGContextBeginPath(ctx);
         CGContextMoveToPoint(ctx, PKAlign(p.x), PKAlign(p.y + 15.0));
         CGContextAddLineToPoint(ctx, PKAlign(points[i].x), PKAlign(points[i].y - 4.0));
-        CGContextClosePath(ctx);
         CGContextStrokePath(ctx);
     }
 }

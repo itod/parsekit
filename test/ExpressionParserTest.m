@@ -36,13 +36,13 @@
     [_root visit:_visitor];
     
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/ExpressionParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/ExpressionParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/ExpressionParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/ExpressionParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
@@ -65,7 +65,7 @@
 }
 
 
-- (void)parser:(PKSParser *)p didMatchArgList:(PKAssembly *)a {
+- (void)parser:(PEGParser *)p didMatchArgList:(PKAssembly *)a {
     //NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
     
 }

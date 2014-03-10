@@ -10,7 +10,7 @@ Specifically, parsers produced by ParseKit are:
 * **Recursive descent**
 * **Deterministic**
 * **[Packrat](http://bford.info/packrat/ "Packrat Parsing and
-	Parsing Expression Grammars")** (or *memoizing*), 
+    Parsing Expression Grammars")** (or *memoizing*), 
 * **Backtracking** (Infinite-lookahead)
 * **[Predicated](http://www.antlr.org/wiki/display/ANTLR4/Semantic+Predicates "Semantic Predicates - ANTLR 4 - ANTLR Project")**
 * Written in **modern Objective-C** (using blocks, ARC, properties)
@@ -28,8 +28,8 @@ First, let's define for our *"MiniMath"* language. *MiniMath* should allow expre
     1           // bare numbers
     2 + 2 + 42  // addition (including repetition)
     2 * (2 + 4) // multiplication and sub-expressions
-	(2+2)*3     // allow presence or absence of whitespace
-	3.14 *5     // optional floating point numbers
+    (2+2)*3     // allow presence or absence of whitespace
+    3.14 *5     // optional floating point numbers
 
 OK, now that we know what the expected *MiniMath* input looks like, let's design a ParseKit grammar to match it. Every ParseKit grammar must start with a rule called `@start`. Since *MiniMath* is an expression language, let's define our `@start` rule as an expression.
 
@@ -45,7 +45,7 @@ Working from the bottom, we'll start with a rule called `atom`. And since *MiniM
 
     atom = Number;
 
-Notice how the rules we define ourselves (like `expr` and `atom`) start with lowercase letters. There are also built-in terminal rules like `Number`, `Word`, `QuotedString` and more which match common token types like numbers, words, and quoted strings. The built-in rules always start with uppercase letters, while the rules we define ourselves must start with lowercase letters.
+Notice how the rules we define ourselves (like `expr` and `atom`) start with lowercase letters. There are also built-in terminal rules like `Number`, `Word`, `QuotedString` and more which match common token types like numbers, words, and quoted strings. **The built-in rules always start with uppercase letters, while the rules we define ourselves must start with lowercase letters**.
 
 The built-in `Number` rule matches a series of digits as you would expect. By default, it also matches optional floating-point and exponential parts of a number (this behavior is easily configurable).
 
@@ -57,7 +57,7 @@ A `primary` expression is either an atom or a parenthesized sub expression. The 
 
 Note that we can recursively call our own `expr` rule (although in ParseKit grammars, you must always avoid [left recursion](http://en.wikipedia.org/wiki/Left_recursion)). 
 
-Now let's move on to multiplication and addition. As usual, we want multiplication to bind more tightly than addition. Since we are working from the bottom up, we can make multiplication bind more tightly by defining it first.
+Now let's move on to multiplication and addition. As usual, we want multiplication to bind more tightly than addition. Since we're working from the bottom up, we can make multiplication bind more tightly by defining it first.
 
 Let's define multiplication as a primary expression times a primary expression.
 
@@ -95,7 +95,7 @@ OK, so we designed a grammar for our *MiniMath* language that can be fed to Pars
  
 But we don't just want to parse input, we also want to compute a result. The easiest way to do this is to use **grammar actions**. Grammar actions are small pieces of Objective-C source code embedded directly in a ParseKit grammar.
 
-We'll start by adding an Action to the `atom` rule:
+We'll start by adding an action to the `atom` rule:
  
     atom = Number 
     {
@@ -114,7 +114,7 @@ Actions are executed immediately after their preceeding rule matches. So tokens 
 
 In this case, we are popping a just-matched number token off the stack, converting it to a float value, and pushing an `NSNumber` back onto the stack for later use.
 
-But our action code is a bit verbose, and it's making our grammar harder to read and understand. No problem: ParseKit includes some handy macros that can make this code more concise. Here's the `atom` rule and action rewritten using those macros:
+Unfortunately, our action code is a bit verbose, and it's making our grammar harder to read and understand. No problem: ParseKit includes some handy macros that can make this code more concise. Here's the `atom` rule and action rewritten using those macros:
 
     atom = Number { 
         // pop a token off the stack and push it back as a float value 
@@ -132,7 +132,7 @@ Now let's add an action to perform multiplication in the `multExpr` rule:
         [self.assembly push:n];
     })*;
 
-This action executes immediately after the multiply operator (`*`) and right-hand side `primary` operand have been matched. Since the `*` operator has been discarded,  we can be assured that the top 2 objects on the stack are NSNumbers placed by our `atom` rule action.  
+This action executes immediately after the multiply operator (`*`) and right-hand side `primary` operand have been matched. Since the `*` operator has been discarded,  we can be assured that the top two objects on the stack are NSNumbers placed by our `atom` rule action.  
 
 Again, we can use ParseKit's handy built-in macros to simplify our Objective-C action code. Here's the same action simplified:
 
@@ -183,24 +183,24 @@ Back in Xcode, switch to the **MiniMath** target. This target is an example iOS 
 
 Here's the implementation of the `-calc:` Action attached to the **Calc** button, showing how to use the `MiniMathParser` we just created:
 
-	- (IBAction)calc:(id)sender {
-	    NSString *input = _inputField.text;
+    - (IBAction)calc:(id)sender {
+        NSString *input = _inputField.text;
     
-	    MiniMathParser *parser = [[MiniMathParser alloc] init];
+        MiniMathParser *parser = [[MiniMathParser alloc] init];
     
-	    NSError *err = nil;
-	    PKAssembly *result = [parser parseString:input 
-		 							   assembler:nil 
-									       error:&err];
+        NSError *err = nil;
+        PKAssembly *result = [parser parseString:input 
+                                       assembler:nil 
+                                           error:&err];
 
-	    if (!result) {
-	        if (err) NSLog(@"%@", err);
-	        return;
-	    }
+        if (!result) {
+            if (err) NSLog(@"%@", err);
+            return;
+        }
     
-	    // print the entire assembly in the result output field
-	    _outputField.text = [result description];
-	}
+        // print the entire assembly in the result output field
+        _outputField.text = [result description];
+    }
 
 Run the app (make sure you've selected the **iPhone Simulator** as your run destination), and you'll see the input field is pre-populated with an example expression. Click the **Calc** button to compute and display the result:
 
@@ -225,12 +225,12 @@ So for our result:
 This assembly display can often be useful when debugging parsers. But for now, all we want is the numerical result of parsing our *MiniMath* expression. As you can see, the result (`12`), is on the top of the stack. So we can just pop the numerical result off the stack and use it:
 
     PKAssembly *result = [parser parseString:input assembler:nil error:nil];
-	NSNumber *n = [result pop];
+    NSNumber *n = [result pop];
     NSLog(@"The numerical result is: %@", n);
 
 For our given input of `(2+2)*3`:
 
-	The numerical result is: 12	
+    The numerical result is: 12 
 
 ### Conclusion
 

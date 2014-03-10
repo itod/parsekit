@@ -71,7 +71,7 @@
     
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDTrue(tok.isComment);
     TDEquals(PKEOF, [r read]);
 }
@@ -84,7 +84,7 @@
     
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDTrue(tok.isComment);
     TDEquals(PKEOF, [r read]);
 }
@@ -141,7 +141,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -153,7 +153,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -163,7 +163,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -175,7 +175,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -185,7 +185,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -197,7 +197,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -209,7 +209,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -245,7 +245,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -257,7 +257,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -291,7 +291,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -303,7 +303,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -313,7 +313,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -323,7 +323,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -335,7 +335,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -345,7 +345,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -355,7 +355,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -367,7 +367,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -377,7 +377,7 @@
     r.string = s;
     t.string = s;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals(PKEOF, [r read]);
 }
 
@@ -389,7 +389,7 @@
     slashState.reportsCommentTokens = YES;
     PKToken *tok = [slashState nextTokenFromReader:r startingWith:[r read] tokenizer:t];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(PKEOF, [r read]);
 }
 

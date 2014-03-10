@@ -732,7 +732,7 @@
     TDEqualObjects(s, tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -747,7 +747,7 @@
     TDEqualObjects(s, tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -766,7 +766,7 @@
     TDEqualObjects(@"foo", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -785,7 +785,7 @@
     TDEqualObjects(@"foo", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -804,7 +804,7 @@
     TDEqualObjects(@"foo", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -823,7 +823,7 @@
     TDEqualObjects(@"foo", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -842,7 +842,7 @@
     TDEqualObjects(@"foo", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -905,7 +905,7 @@
     TDEqualObjects(@"020", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -920,7 +920,7 @@
     TDEqualObjects(@"020", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -934,7 +934,7 @@
     TDEqualObjects(@"-020", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -951,7 +951,7 @@
     TDEqualObjects(@"-020", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -972,7 +972,7 @@
     TDEqualObjects(@".0", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -992,7 +992,7 @@
     TDEqualObjects(@".0", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1005,7 +1005,7 @@
     TDEqualObjects(@"020.0", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1019,7 +1019,7 @@
     TDEqualObjects(@"0x20", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1034,7 +1034,7 @@
     TDEqualObjects(@"0x20", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1054,7 +1054,7 @@
     TDEqualObjects(@"x", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1069,7 +1069,7 @@
     TDEqualObjects(@"0xA", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 
     s = @"0xa";
     t.string = s;
@@ -1081,7 +1081,7 @@
     TDEqualObjects(@"0xa", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 
     s = @"0xB7";
     t.string = s;
@@ -1093,7 +1093,7 @@
     TDEqualObjects(@"0xB7", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 
     s = @"0x8EE";
     t.string = s;
@@ -1105,7 +1105,7 @@
     TDEqualObjects(@"0x8EE", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1119,7 +1119,7 @@
     TDEqualObjects(@"-0x20", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1134,7 +1134,7 @@
     TDEqualObjects(@"-0x20", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1153,7 +1153,7 @@
     TDEqualObjects(@".0", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1173,7 +1173,7 @@
     TDEqualObjects(@".0", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1196,7 +1196,7 @@
     TDEqualObjects(@".0", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 
@@ -1220,7 +1220,7 @@
     TDEqualObjects(@".0", tok.stringValue);
     
     tok = [t nextToken];
-    TDTrue([PKToken EOFToken] == tok);
+    TDTrue(tok.isEOF);
 }
 
 @end

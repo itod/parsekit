@@ -1,5 +1,5 @@
 #import "MethodsFactoredParser.h"
-#import <ParseKit/ParseKit.h>
+#import <PEGKit/PEGKit.h>
 
 #define LT(i) [self LT:(i)]
 #define LA(i) [self LA:(i)]
@@ -7,42 +7,52 @@
 #define LF(i) [self LF:(i)]
 
 #define POP()       [self.assembly pop]
-#define POP_STR()   [self _popString]
-#define POP_TOK()   [self _popToken]
-#define POP_BOOL()  [self _popBool]
-#define POP_INT()   [self _popInteger]
-#define POP_FLOAT() [self _popDouble]
+#define POP_STR()   [self popString]
+#define POP_TOK()   [self popToken]
+#define POP_BOOL()  [self popBool]
+#define POP_INT()   [self popInteger]
+#define POP_FLOAT() [self popDouble]
 
 #define PUSH(obj)     [self.assembly push:(id)(obj)]
-#define PUSH_BOOL(yn) [self _pushBool:(BOOL)(yn)]
-#define PUSH_INT(i)   [self _pushInteger:(NSInteger)(i)]
-#define PUSH_FLOAT(f) [self _pushDouble:(double)(f)]
+#define PUSH_BOOL(yn) [self pushBool:(BOOL)(yn)]
+#define PUSH_INT(i)   [self pushInteger:(NSInteger)(i)]
+#define PUSH_FLOAT(f) [self pushDouble:(double)(f)]
 
 #define EQ(a, b) [(a) isEqual:(b)]
 #define NE(a, b) (![(a) isEqual:(b)])
 #define EQ_IGNORE_CASE(a, b) (NSOrderedSame == [(a) compare:(b)])
+
+#define MATCHES(pattern, str)               ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:0                                  error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
+#define MATCHES_IGNORE_CASE(pattern, str)   ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:NSRegularExpressionCaseInsensitive error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
 
 #define ABOVE(fence) [self.assembly objectsAbove:(fence)]
 
 #define LOG(obj) do { NSLog(@"%@", (obj)); } while (0);
 #define PRINT(str) do { printf("%s\n", (str)); } while (0);
 
-@interface PKSParser ()
-@property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
-@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
+@interface PEGParser ()
+@property (nonatomic, retain) NSMutableDictionary *tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *tokenKindNameTab;
+@property (nonatomic, retain) NSString *startRuleName;
+@property (nonatomic, retain) NSString *statementTerminator;
+@property (nonatomic, retain) NSString *singleLineCommentMarker;
+@property (nonatomic, retain) NSString *blockStartMarker;
+@property (nonatomic, retain) NSString *blockEndMarker;
+@property (nonatomic, retain) NSString *braces;
 
-- (BOOL)_popBool;
-- (NSInteger)_popInteger;
-- (double)_popDouble;
-- (PKToken *)_popToken;
-- (NSString *)_popString;
+- (BOOL)popBool;
+- (NSInteger)popInteger;
+- (double)popDouble;
+- (PKToken *)popToken;
+- (NSString *)popString;
 
-- (void)_pushBool:(BOOL)yn;
-- (void)_pushInteger:(NSInteger)i;
-- (void)_pushDouble:(double)d;
+- (void)pushBool:(BOOL)yn;
+- (void)pushInteger:(NSInteger)i;
+- (void)pushDouble:(double)d;
 @end
 
 @interface MethodsFactoredParser ()
+@property (nonatomic, retain) NSMutableDictionary *start_memo;
 @property (nonatomic, retain) NSMutableDictionary *method_memo;
 @property (nonatomic, retain) NSMutableDictionary *type_memo;
 @property (nonatomic, retain) NSMutableDictionary *args_memo;
@@ -54,24 +64,26 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self._tokenKindTab[@"int"] = @(METHODSFACTORED_TOKEN_KIND_INT);
-        self._tokenKindTab[@"}"] = @(METHODSFACTORED_TOKEN_KIND_CLOSE_CURLY);
-        self._tokenKindTab[@","] = @(METHODSFACTORED_TOKEN_KIND_COMMA);
-        self._tokenKindTab[@"void"] = @(METHODSFACTORED_TOKEN_KIND_VOID);
-        self._tokenKindTab[@"("] = @(METHODSFACTORED_TOKEN_KIND_OPEN_PAREN);
-        self._tokenKindTab[@"{"] = @(METHODSFACTORED_TOKEN_KIND_OPEN_CURLY);
-        self._tokenKindTab[@")"] = @(METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN);
-        self._tokenKindTab[@";"] = @(METHODSFACTORED_TOKEN_KIND_SEMI_COLON);
+        self.startRuleName = @"start";
+        self.tokenKindTab[@"int"] = @(METHODSFACTORED_TOKEN_KIND_INT);
+        self.tokenKindTab[@"}"] = @(METHODSFACTORED_TOKEN_KIND_CLOSE_CURLY);
+        self.tokenKindTab[@","] = @(METHODSFACTORED_TOKEN_KIND_COMMA);
+        self.tokenKindTab[@"void"] = @(METHODSFACTORED_TOKEN_KIND_VOID);
+        self.tokenKindTab[@"("] = @(METHODSFACTORED_TOKEN_KIND_OPEN_PAREN);
+        self.tokenKindTab[@"{"] = @(METHODSFACTORED_TOKEN_KIND_OPEN_CURLY);
+        self.tokenKindTab[@")"] = @(METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN);
+        self.tokenKindTab[@";"] = @(METHODSFACTORED_TOKEN_KIND_SEMI_COLON);
 
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_INT] = @"int";
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_CLOSE_CURLY] = @"}";
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_COMMA] = @",";
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_VOID] = @"void";
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_OPEN_PAREN] = @"(";
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_OPEN_CURLY] = @"{";
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN] = @")";
-        self._tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_SEMI_COLON] = @";";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_INT] = @"int";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_CLOSE_CURLY] = @"}";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_COMMA] = @",";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_VOID] = @"void";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_OPEN_PAREN] = @"(";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_OPEN_CURLY] = @"{";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN] = @")";
+        self.tokenKindNameTab[METHODSFACTORED_TOKEN_KIND_SEMI_COLON] = @";";
 
+        self.start_memo = [NSMutableDictionary dictionary];
         self.method_memo = [NSMutableDictionary dictionary];
         self.type_memo = [NSMutableDictionary dictionary];
         self.args_memo = [NSMutableDictionary dictionary];
@@ -81,6 +93,7 @@
 }
 
 - (void)dealloc {
+    self.start_memo = nil;
     self.method_memo = nil;
     self.type_memo = nil;
     self.args_memo = nil;
@@ -90,27 +103,37 @@
 }
 
 - (void)_clearMemo {
+    [_start_memo removeAllObjects];
     [_method_memo removeAllObjects];
     [_type_memo removeAllObjects];
     [_args_memo removeAllObjects];
     [_arg_memo removeAllObjects];
 }
 
-- (void)_start {
+- (void)start {
+    [self start_];
+}
+
+- (void)__start {
     
     do {
-        [self method]; 
-    } while ([self speculate:^{ [self method]; }]);
+        [self method_]; 
+    } while ([self speculate:^{ [self method_]; }]);
     [self matchEOF:YES]; 
 
+    [self fireAssemblerSelector:@selector(parser:didMatchStart:)];
+}
+
+- (void)start_ {
+    [self parseRule:@selector(__start) withMemo:_start_memo];
 }
 
 - (void)__method {
     
-    [self type]; 
+    [self type_]; 
     [self matchWord:NO]; 
     [self match:METHODSFACTORED_TOKEN_KIND_OPEN_PAREN discard:NO]; 
-    [self args]; 
+    [self args_]; 
     [self match:METHODSFACTORED_TOKEN_KIND_CLOSE_PAREN discard:NO]; 
     if ([self predicts:METHODSFACTORED_TOKEN_KIND_SEMI_COLON, 0]) {
         [self match:METHODSFACTORED_TOKEN_KIND_SEMI_COLON discard:NO]; 
@@ -124,7 +147,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchMethod:)];
 }
 
-- (void)method {
+- (void)method_ {
     [self parseRule:@selector(__method) withMemo:_method_memo];
 }
 
@@ -141,28 +164,24 @@
     [self fireAssemblerSelector:@selector(parser:didMatchType:)];
 }
 
-- (void)type {
+- (void)type_ {
     [self parseRule:@selector(__type) withMemo:_type_memo];
 }
 
 - (void)__args {
     
     if ([self predicts:METHODSFACTORED_TOKEN_KIND_INT, 0]) {
-        [self arg]; 
-        while ([self predicts:METHODSFACTORED_TOKEN_KIND_COMMA, 0]) {
-            if ([self speculate:^{ [self match:METHODSFACTORED_TOKEN_KIND_COMMA discard:NO]; [self arg]; }]) {
-                [self match:METHODSFACTORED_TOKEN_KIND_COMMA discard:NO]; 
-                [self arg]; 
-            } else {
-                break;
-            }
+        [self arg_]; 
+        while ([self speculate:^{ [self match:METHODSFACTORED_TOKEN_KIND_COMMA discard:NO]; [self arg_]; }]) {
+            [self match:METHODSFACTORED_TOKEN_KIND_COMMA discard:NO]; 
+            [self arg_]; 
         }
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchArgs:)];
 }
 
-- (void)args {
+- (void)args_ {
     [self parseRule:@selector(__args) withMemo:_args_memo];
 }
 
@@ -174,7 +193,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchArg:)];
 }
 
-- (void)arg {
+- (void)arg_ {
     [self parseRule:@selector(__arg) withMemo:_arg_memo];
 }
 

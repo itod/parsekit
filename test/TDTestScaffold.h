@@ -15,6 +15,7 @@
 #import <Foundation/Foundation.h>
 #import <SenTestingKit/SenTestingKit.h>
 #import <ParseKit/ParseKit.h>
+#import <OCMock/OCMock.h>
 
 #define TDTrue(e) STAssertTrue((e), @"")
 #define TDFalse(e) STAssertFalse((e), @"")
@@ -24,3 +25,5 @@
 #define TDEqualObjects(e1, e2) STAssertEqualObjects((e1), (e2), @"")
 
 #define TD_EMIT 1
+
+#define VERIFY() @try { [_mock verify]; } @catch (NSException *ex) { STAssertTrue(0, [ex reason]); }

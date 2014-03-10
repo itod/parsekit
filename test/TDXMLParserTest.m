@@ -104,7 +104,7 @@
 
 
 - (void)testSmallSTagGrammar {
-    g = @"@delimitState='<';@reportsWhitespaceTokens=YES;@start=sTag;sTag='<' name (S attribute)* S? '>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
+    g = @"@delimitState='<';@reportsWhitespaceTokens=YES;start=sTag;sTag='<' name (S attribute)* S? '>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
     PKParser *sTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = sTag.tokenizer;
 
@@ -135,7 +135,7 @@
         @"@delimitState = '<';"
         @"@delimitedString='<!--' '-->' nil; @delimitedString='<?' '?>' nil; @delimitedString='<![CDATA[' ']]>' nil;"
         @"@reportsWhitespaceTokens = YES;"
-        @"@start = eTag;"
+        @"start = eTag;"
         @"eTag='</' name S? '>';"
         @"name=/[^-:\\.]\\w+/;";
     
@@ -191,7 +191,7 @@
 
 
 - (void)testSmallEmptyElemTagGrammar {
-    g = @"@delimitState='<';@symbols='/>';@reportsWhitespaceTokens=YES;@start=emptyElemTag;emptyElemTag='<' name (S attribute)* S? '/>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
+    g = @"@delimitState='<';@symbols='/>';@reportsWhitespaceTokens=YES;start=emptyElemTag;emptyElemTag='<' name (S attribute)* S? '/>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
     PKParser *emptyElemTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = emptyElemTag.tokenizer;
     
@@ -217,7 +217,7 @@
         @"@delimitState = '<';"
         @"@delimitedString='<!--' '-->' nil '<?' '?>' nil '<![CDATA[' ']]>' nil;"
         @"@reportsWhitespaceTokens = YES;"
-        @"@start = charData+;"
+        @"start = charData+;"
         @"charData = /[^<\\&]+/ - (/[^\\]]*\\]\\]>[^<\\&]*/);";
 
     PKParser *charData = [factory parserFromGrammar:g assembler:nil error:nil];
@@ -242,7 +242,7 @@
         @"@delimitState = '<';"
         @"@delimitedStrings = '<!--' '-->' nil  '<?' '?>' nil  '<![CDATA[' ']]>' nil;"
         @"@reportsWhitespaceTokens = YES;"
-        @"@start = element;"
+        @"start = element;"
         @"element = emptyElemTag | sTag content eTag;"
         @"eTag = '</' name S? '>';"
         @"sTag = '<' name (S attribute)* S? '>';"
@@ -374,12 +374,12 @@
         @"@reportsWhitespaceTokens=YES;"
         @"@symbols='<?' '?>';"
         @"@symbolState = '<';"
-        @"name=/[^-:\\.]\\w+/;"
-        @"piTarget = name - /[xX][mM][lL]/;"
         @"@wordState = ':' '.' '-' '_';"
         @"@wordChars = ':' '.' '-' '_';"
-        @"pi = '<?' piTarget ~/?>/* '?>';"
-        @"@start = pi;";
+        @"start = pi;"
+        @"name=/[^-:\\.]\\w+/;"
+        @"piTarget = name - /[xX][mM][lL]/;"
+        @"pi = '<?' piTarget ~/?>/* '?>';";
     PKParser *pi = [[PKParserFactory factory] parserFromGrammar:gram assembler:nil error:nil];
     pi.tokenizer.string = @"<?foo bar='baz'?>";
     res = [pi bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:pi.tokenizer]];

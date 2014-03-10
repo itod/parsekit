@@ -1,3 +1,3 @@
-@start = nonReserved+;
+start = nonReserved+;
 
 nonReserved = { ![@[@"goto", @"const"] containsObject:LS(1)] }? Word;

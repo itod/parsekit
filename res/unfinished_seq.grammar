@@ -1,4 +1,4 @@
-@start = a b a;
+start = a b a;
 
 a = 'a';
 b = 'b';

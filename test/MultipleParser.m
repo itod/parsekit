@@ -1,5 +1,5 @@
 #import "MultipleParser.h"
-#import <ParseKit/ParseKit.h>
+#import <PEGKit/PEGKit.h>
 
 #define LT(i) [self LT:(i)]
 #define LA(i) [self LA:(i)]
@@ -7,39 +7,48 @@
 #define LF(i) [self LF:(i)]
 
 #define POP()       [self.assembly pop]
-#define POP_STR()   [self _popString]
-#define POP_TOK()   [self _popToken]
-#define POP_BOOL()  [self _popBool]
-#define POP_INT()   [self _popInteger]
-#define POP_FLOAT() [self _popDouble]
+#define POP_STR()   [self popString]
+#define POP_TOK()   [self popToken]
+#define POP_BOOL()  [self popBool]
+#define POP_INT()   [self popInteger]
+#define POP_FLOAT() [self popDouble]
 
 #define PUSH(obj)     [self.assembly push:(id)(obj)]
-#define PUSH_BOOL(yn) [self _pushBool:(BOOL)(yn)]
-#define PUSH_INT(i)   [self _pushInteger:(NSInteger)(i)]
-#define PUSH_FLOAT(f) [self _pushDouble:(double)(f)]
+#define PUSH_BOOL(yn) [self pushBool:(BOOL)(yn)]
+#define PUSH_INT(i)   [self pushInteger:(NSInteger)(i)]
+#define PUSH_FLOAT(f) [self pushDouble:(double)(f)]
 
 #define EQ(a, b) [(a) isEqual:(b)]
 #define NE(a, b) (![(a) isEqual:(b)])
 #define EQ_IGNORE_CASE(a, b) (NSOrderedSame == [(a) compare:(b)])
+
+#define MATCHES(pattern, str)               ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:0                                  error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
+#define MATCHES_IGNORE_CASE(pattern, str)   ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:NSRegularExpressionCaseInsensitive error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
 
 #define ABOVE(fence) [self.assembly objectsAbove:(fence)]
 
 #define LOG(obj) do { NSLog(@"%@", (obj)); } while (0);
 #define PRINT(str) do { printf("%s\n", (str)); } while (0);
 
-@interface PKSParser ()
-@property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
-@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
+@interface PEGParser ()
+@property (nonatomic, retain) NSMutableDictionary *tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *tokenKindNameTab;
+@property (nonatomic, retain) NSString *startRuleName;
+@property (nonatomic, retain) NSString *statementTerminator;
+@property (nonatomic, retain) NSString *singleLineCommentMarker;
+@property (nonatomic, retain) NSString *blockStartMarker;
+@property (nonatomic, retain) NSString *blockEndMarker;
+@property (nonatomic, retain) NSString *braces;
 
-- (BOOL)_popBool;
-- (NSInteger)_popInteger;
-- (double)_popDouble;
-- (PKToken *)_popToken;
-- (NSString *)_popString;
+- (BOOL)popBool;
+- (NSInteger)popInteger;
+- (double)popDouble;
+- (PKToken *)popToken;
+- (NSString *)popString;
 
-- (void)_pushBool:(BOOL)yn;
-- (void)_pushInteger:(NSInteger)i;
-- (void)_pushDouble:(double)d;
+- (void)pushBool:(BOOL)yn;
+- (void)pushInteger:(NSInteger)i;
+- (void)pushDouble:(double)d;
 @end
 
 @interface MultipleParser ()
@@ -54,11 +63,12 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self._tokenKindTab[@"a"] = @(MULTIPLE_TOKEN_KIND_A);
-        self._tokenKindTab[@"b"] = @(MULTIPLE_TOKEN_KIND_B);
+        self.startRuleName = @"s";
+        self.tokenKindTab[@"a"] = @(MULTIPLE_TOKEN_KIND_A);
+        self.tokenKindTab[@"b"] = @(MULTIPLE_TOKEN_KIND_B);
 
-        self._tokenKindNameTab[MULTIPLE_TOKEN_KIND_A] = @"a";
-        self._tokenKindNameTab[MULTIPLE_TOKEN_KIND_B] = @"b";
+        self.tokenKindNameTab[MULTIPLE_TOKEN_KIND_A] = @"a";
+        self.tokenKindNameTab[MULTIPLE_TOKEN_KIND_B] = @"b";
 
         self.s_memo = [NSMutableDictionary dictionary];
         self.ab_memo = [NSMutableDictionary dictionary];
@@ -84,36 +94,34 @@
     [_b_memo removeAllObjects];
 }
 
-- (void)_start {
-    
-    [self s]; 
-    [self matchEOF:YES]; 
-
+- (void)start {
+    [self s_];
 }
 
 - (void)__s {
     
     do {
-        [self ab]; 
-    } while ([self speculate:^{ [self ab]; }]);
-    [self a]; 
+        [self ab_]; 
+    } while ([self speculate:^{ [self ab_]; }]);
+    [self a_]; 
+    [self matchEOF:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchS:)];
 }
 
-- (void)s {
+- (void)s_ {
     [self parseRule:@selector(__s) withMemo:_s_memo];
 }
 
 - (void)__ab {
     
-    [self a]; 
-    [self b]; 
+    [self a_]; 
+    [self b_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchAb:)];
 }
 
-- (void)ab {
+- (void)ab_ {
     [self parseRule:@selector(__ab) withMemo:_ab_memo];
 }
 
@@ -124,7 +132,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchA:)];
 }
 
-- (void)a {
+- (void)a_ {
     [self parseRule:@selector(__a) withMemo:_a_memo];
 }
 
@@ -135,7 +143,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchB:)];
 }
 
-- (void)b {
+- (void)b_ {
     [self parseRule:@selector(__b) withMemo:_b_memo];
 }
 

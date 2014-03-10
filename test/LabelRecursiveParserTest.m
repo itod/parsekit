@@ -40,13 +40,13 @@
     self.parser = [[[LabelRecursiveParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/LabelRecursiveParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/LabelRecursiveParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/LabelRecursiveParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/LabelRecursiveParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);

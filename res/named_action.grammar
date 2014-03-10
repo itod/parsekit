@@ -1,4 +1,4 @@
-@start = a b;
+start = a b;
 
 a 
 @before {PUSH(@"foo");}

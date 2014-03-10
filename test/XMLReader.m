@@ -344,7 +344,7 @@ static void rngWarn(XMLReader *self, const char *msg, ...) {
                             options:0
                               range:NSMakeRange(0, [str length])];
     
-    str = [NSString stringWithFormat:@"Warning while parsing RELAX NG schema: %s",msg];
+    str = [NSMutableString stringWithFormat:@"Warning while parsing RELAX NG schema: %s",msg];
     [self.errorHandler validityWarning:str lineNumber:-1];
 }
 
@@ -363,7 +363,7 @@ static void rngErr(XMLReader *self, const char *msg, ...) {
                             options:0
                               range:NSMakeRange(0, [str length])];
     
-    str = [NSString stringWithFormat:@"Error while parsing RELAX NG schema: <br/><pre>%@</pre>",str];
+    str = [NSMutableString stringWithFormat:@"Error while parsing RELAX NG schema: <br/><pre>%@</pre>",str];
     [self.errorHandler validityError:str lineNumber:-1];
     
 }

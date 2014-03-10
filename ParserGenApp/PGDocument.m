@@ -57,7 +57,7 @@
 
 
 - (void)awakeFromNib {
-    self.enableHybridDFA = YES;
+
 }
 
 
@@ -136,6 +136,7 @@
     }
     
     self.busy = YES;
+    self.error = nil;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self generateWithDestinationPath:destPath parserName:parserName grammar:grammar];
@@ -208,6 +209,10 @@
 - (void)generateWithDestinationPath:(NSString *)destPath parserName:(NSString *)parserName grammar:(NSString *)grammar {
     NSError *err = nil;
     self.root = (id)[_factory ASTFromGrammar:_grammar error:&err];
+    if (err) {
+        self.error = err;
+        goto done;
+    }
     
     NSString *className = self.parserName;
     if (![className hasSuffix:@"Parser"]) {
@@ -218,13 +223,21 @@
     
     self.visitor = [[[PKSParserGenVisitor alloc] init] autorelease];
     _visitor.enableARC = _enableARC;
-    _visitor.enableHybridDFA = _enableHybridDFA; NSAssert(_enableHybridDFA, @"");
+    _visitor.enableHybridDFA = _enableHybridDFA; //NSAssert(_enableHybridDFA, @"");
     _visitor.enableMemoization = _enableMemoization;
     _visitor.enableAutomaticErrorRecovery = _enableAutomaticErrorRecovery;
     _visitor.preassemblerSettingBehavior = _preassemblerSettingBehavior;
     _visitor.assemblerSettingBehavior = _assemblerSettingBehavior;
     
-    [_root visit:_visitor];
+    @try {
+        [_root visit:_visitor];
+    }
+    @catch (NSException *ex) {
+        id userInfo = @{NSLocalizedFailureReasonErrorKey: [ex reason]};
+        NSError *err = [NSError errorWithDomain:[ex name] code:0 userInfo:userInfo];
+        self.error = err;
+        goto done;
+    }
     
     NSString *path = [[NSString stringWithFormat:@"%@/%@.h", destPath, className] stringByExpandingTildeInPath];
     err = nil;
@@ -238,6 +251,7 @@
         NSLog(@"%@", err);
     }
     
+done:
     dispatch_async(dispatch_get_main_queue(), ^(void){
         [self done];
     });
@@ -245,9 +259,22 @@
 
 
 - (void)done {
-    [[NSSound soundNamed:@"Hero"] play];
+    if (_error) {
+        [[NSSound soundNamed:@"Basso"] play];
+        [self displayError:_error];
+    } else {
+        [[NSSound soundNamed:@"Hero"] play];
+    }
     
     self.busy = NO;
+}
+
+
+- (void)displayError:(NSError *)error {
+    NSString *title = NSLocalizedString(@"Error parsing grammar", @"");
+    NSString *msg = [error localizedFailureReason];
+    NSString *defaultButton = NSLocalizedString(@"OK", @"");
+    NSRunAlertPanel(title, msg, defaultButton, nil, nil);
 }
 
 @end

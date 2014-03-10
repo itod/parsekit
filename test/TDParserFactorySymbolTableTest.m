@@ -40,8 +40,8 @@
 
 
 - (void)testDelimitState {
-    //NSString *g = @"@delimitState='[';@delimitedString='[' ']' nil; @start=%{'[', ']'};";
-    NSString *g = @"@symbols='<?=';@delimitState='<';@delimitedString='<?=' '>' nil;@start=%{'<?=', '>'};";
+    //NSString *g = @"@delimitState='[';@delimitedString='[' ']' nil; start=%{'[', ']'};";
+    NSString *g = @"@symbols='<?=';@delimitState='<';@delimitedString='<?=' '>' nil;start=%{'<?=', '>'};";
     
     PKCollectionParser *start = (id)[_factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(start);
@@ -58,13 +58,13 @@
 
     
 - (void)testWordAST {
-    NSString *g = @"@start=foo;foo=Word;";
+    NSString *g = @"start=foo;foo=Word;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     TDTrue(1 == [start.subparsers count]);
@@ -91,13 +91,13 @@
 
 
 - (void)testLiteralStringAST {
-    NSString *g = @"@start=foo;foo='bar';";
+    NSString *g = @"start=foo;foo='bar';";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     TDTrue(1 == [start.subparsers count]);
@@ -124,13 +124,13 @@
 
 
 - (void)testEmptyAST {
-    NSString *g = @"@start=foo;foo=Empty;";
+    NSString *g = @"start=foo;foo=Empty;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -150,13 +150,13 @@
 
 
 - (void)testAlternationAST {
-    NSString *g = @"@start=foo;foo=Word|Number;";
+    NSString *g = @"start=foo;foo=Word|Number;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -171,13 +171,13 @@
 
 
 - (void)testSequenceAST {
-    NSString *g = @"@start=foo;foo=(Word|Number) Symbol;";
+    NSString *g = @"start=foo;foo=(Word|Number) Symbol;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -192,13 +192,13 @@
 
 
 - (void)testTrackAST {
-    NSString *g = @"@start=foo;foo=[Word Number] Symbol;";
+    NSString *g = @"start=foo;foo=[Word Number] Symbol;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -217,13 +217,13 @@
 
 
 - (void)testRepetitionAST {
-    NSString *g = @"@start=foo;foo=Word* Symbol;";
+    NSString *g = @"start=foo;foo=Word* Symbol;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -238,18 +238,18 @@
 
 
 - (void)testNegationAST {
-    NSString *g = @"@start=foo;foo=~Word;";
+    NSString *g = @"start=foo;foo=~Word;";
     
     NSError *err = nil;
     PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (~ Word)))", [rootNode treeDescription]);
+    TDEqualObjects(@"(ROOT ($start #foo) ($foo (~ Word)))", [rootNode treeDescription]);
     
     err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -263,18 +263,18 @@
 
 
 - (void)testDifferenceAST {
-    NSString *g = @"@start=foo;foo=Word - 'foo';";
+    NSString *g = @"start=foo;foo=Word - 'foo';";
     
     NSError *err = nil;
     PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (- Word 'foo')))", [rootNode treeDescription]);
+    TDEqualObjects(@"(ROOT ($start #foo) ($foo (- Word 'foo')))", [rootNode treeDescription]);
     
     err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -289,18 +289,18 @@
 
 
 - (void)testIntersectionAST {
-    NSString *g = @"@start=foo;foo=Word & 'foo';";
+    NSString *g = @"start=foo;foo=Word & 'foo';";
     
     NSError *err = nil;
     PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (& Word 'foo')))", [rootNode treeDescription]);
+    TDEqualObjects(@"(ROOT ($start #foo) ($foo (& Word 'foo')))", [rootNode treeDescription]);
     
     err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -315,18 +315,18 @@
 
 
 - (void)testOptionalAST {
-    NSString *g = @"@start=foo;foo=Word?;";
+    NSString *g = @"start=foo;foo=Word?;";
     
     NSError *err = nil;
     PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (? Word)))", [rootNode treeDescription]);
+    TDEqualObjects(@"(ROOT ($start #foo) ($foo (? Word)))", [rootNode treeDescription]);
     
     err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -341,18 +341,18 @@
 
 
 - (void)testOptionalAST2 {
-    NSString *g = @"@start=foo;foo=Symbol Word?;";
+    NSString *g = @"start=foo;foo=Symbol Word?;";
     
     NSError *err = nil;
     PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (. Symbol (? Word))))", [rootNode treeDescription]);
+    TDEqualObjects(@"(ROOT ($start #foo) ($foo (. Symbol (? Word))))", [rootNode treeDescription]);
     
     err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -371,18 +371,18 @@
 
 
 - (void)testMultiAST1 {
-    NSString *g = @"@start=foo;foo=Word+;";
+    NSString *g = @"start=foo;foo=Word+;";
     
     NSError *err = nil;
     PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (+ Word)))", [rootNode treeDescription]);
+    TDEqualObjects(@"(ROOT ($start #foo) ($foo (+ Word)))", [rootNode treeDescription]);
     
     err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -400,18 +400,18 @@
 
 
 - (void)testMultiAST2 {
-    NSString *g = @"@start=foo;foo=Symbol Word+;";
+    NSString *g = @"start=foo;foo=Symbol Word+;";
     
     NSError *err = nil;
     PKAST *rootNode = [_factory ASTFromGrammar:g error:&err];
     TDNotNil(rootNode);
-    TDEqualObjects(@"(ROOT (@start #foo) ($foo (. Symbol (+ Word))))", [rootNode treeDescription]);
+    TDEqualObjects(@"(ROOT ($start #foo) ($foo (. Symbol (+ Word))))", [rootNode treeDescription]);
     
     err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -433,13 +433,13 @@
 
 
 - (void)testLiteralAST1 {
-    NSString *g = @"@start='bar';";
+    NSString *g = @"start='bar';";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKLiteral *start = symTab[@"@start"];
+    PKLiteral *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKLiteral class]]);
     
@@ -448,13 +448,13 @@
 
 
 - (void)testLiteralAST2 {
-    NSString *g = @"@start=foo;foo='bar' Symbol;";
+    NSString *g = @"start=foo;foo='bar' Symbol;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -472,13 +472,13 @@
 
 
 - (void)testDelimitedAST1 {
-    NSString *g = @"@start=foo;foo=%{'<', '>'};";
+    NSString *g = @"start=foo;foo=%{'<', '>'};";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -493,13 +493,13 @@
 
 
 - (void)testPatternAST1 {
-    NSString *g = @"@start=foo;foo=/\\w+/i;";
+    NSString *g = @"start=foo;foo=/\\w+/i;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -514,13 +514,13 @@
 
 
 - (void)testWhitespaceAST1 {
-    NSString *g = @"@start=foo;foo=S;";
+    NSString *g = @"start=foo;foo=S;";
     
     NSError *err = nil;
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:&err];
     TDNotNil(symTab);
     
-    PKCollectionParser *start = symTab[@"@start"];
+    PKCollectionParser *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKSequence class]]);
     
@@ -532,7 +532,7 @@
 
 - (void)parser:(PKParser *)p didMatchFoo:(PKAssembly *)a {}
 - (void)testDefaultAssemblerSetting {
-    NSString *g = @"@start=foo;foo=Word;";
+    NSString *g = @"start=foo;foo=Word;";
     
     NSError *err = nil;
     PKCollectionParser *start = (id)[_factory parserFromGrammar:g assembler:self error:&err];
@@ -555,7 +555,7 @@
 
 - (void)parser:(PKParser *)p willMatchFoo:(PKAssembly *)a {}
 - (void)testDefaultPreassemblerSetting {
-    NSString *g = @"@start=foo;foo=Word;";
+    NSString *g = @"start=foo;foo=Word;";
     
     NSError *err = nil;
     PKCollectionParser *start = (id)[_factory parserFromGrammar:g assembler:self preassembler:self error:&err];

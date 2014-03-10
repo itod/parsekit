@@ -12,10 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#if PEGKIT
+#import <PEGKit/PKQuoteState.h>
+#import <PEGKit/PKReader.h>
+#import <PEGKit/PKToken.h>
+#import <PEGKit/PKTypes.h>
+#else
 #import <ParseKit/PKQuoteState.h>
 #import <ParseKit/PKReader.h>
 #import <ParseKit/PKToken.h>
 #import <ParseKit/PKTypes.h>
+#endif
 
 @interface PKToken ()
 @property (nonatomic, readwrite) NSUInteger offset;
@@ -53,20 +60,22 @@
     do {
         c = [r read];
         if (PKEOF == c) {
-            if (allowsEOFTerminatedQuotes) {
+            if (_allowsEOFTerminatedQuotes) {
                 c = cin;
-                if (balancesEOFTerminatedQuotes) {
+                if (_balancesEOFTerminatedQuotes) {
                     [self append:c];
                 }
             } else {
-                [r unread:[[self bufferedString] length]];
+                [r unread:[[self bufferedString] length] - 1];
                 return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
             }
-        } else if ((!usesCSVStyleEscaping && c == '\\') || (usesCSVStyleEscaping && c == cin)) {
+        } else if ((!_usesCSVStyleEscaping && c == '\\') || (_usesCSVStyleEscaping && c == cin)) {
             PKUniChar peek = [r read];
             if (peek == '\\') { // escaped backslash found
                 // discard `c`
+                [self append:c];
                 [self append:peek];
+                c = PKEOF;	// Just to get past the while() condition
             } else if (peek == cin) {
                 [self append:c];
                 [self append:peek];
@@ -87,7 +96,4 @@
     return tok;
 }
 
-@synthesize allowsEOFTerminatedQuotes;
-@synthesize balancesEOFTerminatedQuotes;
-@synthesize usesCSVStyleEscaping;
 @end

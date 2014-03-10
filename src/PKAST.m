@@ -63,7 +63,7 @@
         return NO;
     }
     
-    if (![_children isEqualToArray:that->_children]) {
+    if (_children && that->_children && ![_children isEqualToArray:that->_children]) {
         return NO;
     }
     
@@ -108,6 +108,7 @@
 
 
 - (void)addChild:(PKAST *)a {
+    NSParameterAssert(a);
     if (!_children) {
         self.children = [NSMutableArray array];
     }

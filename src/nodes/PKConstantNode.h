@@ -8,10 +8,10 @@
 
 #import "PKBaseNode.h"
 
-@class PKSTokenKindDescriptor;
+@class PEGTokenKindDescriptor;
 
 @interface PKConstantNode : PKBaseNode
 
 @property (nonatomic, copy) NSString *literal;
-@property (nonatomic, retain) PKSTokenKindDescriptor *tokenKind;
+@property (nonatomic, retain) PEGTokenKindDescriptor *tokenKind;
 @end

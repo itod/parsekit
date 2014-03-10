@@ -11,7 +11,7 @@
 @multiLineComments = '#<' '>';
 @symbols = '=>';
 
-@start        = Empty | object;
+start         = Empty | object;
 
 object        = openCurly objectContent closeCurly;
 objectContent = Empty | actualObject;

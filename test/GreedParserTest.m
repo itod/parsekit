@@ -40,13 +40,13 @@
     self.parser = [[[GreedParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/GreedParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/GreedParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/GreedParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/GreedParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);

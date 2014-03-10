@@ -34,7 +34,7 @@
     r.string = s;
     t.string = s;
     tok = [commentState nextTokenFromReader:r startingWith:'/' tokenizer:t];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals([r read], PKEOF);
 }
 
@@ -46,7 +46,7 @@
     commentState.reportsCommentTokens = YES;
     tok = [t nextToken];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.offset, (NSUInteger)0);
     TDEqualObjects([t nextToken], [PKToken EOFToken]);
 }
@@ -124,7 +124,7 @@
     [t setTokenizerState:commentState from:'#' to:'#'];
     tok = [t nextToken];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.offset, (NSUInteger)0);
 }
 
@@ -133,7 +133,7 @@
     s = @"/* foo */";
     t.string = s;
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals([r read], PKEOF);
 }
 
@@ -142,7 +142,7 @@
     s = @"/* foo */ ";
     t.string = s;
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
     TDEquals([r read], PKEOF);
 }
 
@@ -169,7 +169,7 @@
     TDEqualObjects(tok.stringValue, @"/* foo */");
     TDEquals(tok.offset, (NSUInteger)0);
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 
     t.string = s;
     commentState.reportsCommentTokens = YES;
@@ -309,7 +309,7 @@
     commentState.reportsCommentTokens = YES;
     tok = [t nextToken];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.offset, (NSUInteger)0);
 }
 
@@ -438,7 +438,7 @@
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"a");
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -458,7 +458,7 @@
     
     tok = [t nextToken];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     
     tok = [t nextToken];
     TDEquals(eof, tok);
@@ -481,7 +481,7 @@
     
     tok = [t nextToken];
     TDTrue(tok.isComment);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     
     tok = [t nextToken];
     TDEquals(eof, tok);

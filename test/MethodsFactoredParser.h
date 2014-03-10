@@ -1,4 +1,4 @@
-#import <ParseKit/PKSParser.h>
+#import <PEGKit/PEGParser.h>
 
 enum {
     METHODSFACTORED_TOKEN_KIND_INT = 14,
@@ -11,7 +11,7 @@ enum {
     METHODSFACTORED_TOKEN_KIND_SEMI_COLON,
 };
 
-@interface MethodsFactoredParser : PKSParser
+@interface MethodsFactoredParser : PEGParser
 
 @end
 

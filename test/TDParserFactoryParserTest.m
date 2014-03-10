@@ -36,8 +36,8 @@
 
 
 - (void)testDifferenceAST {
-    NSString *g = @"@start=Number - '1';";
-    //    NSString *g = @"@start=foo foo foo? foo?;foo=Number;";
+    NSString *g = @"start=Number - '1';";
+    //    NSString *g = @"start=foo foo foo? foo?;foo=Number;";
     
     NSError *err = nil;
     PKCollectionParser *p = (PKCollectionParser *)[_factory parserFromGrammar:g assembler:nil error:&err];
@@ -60,8 +60,8 @@
 
 
 - (void)testNegationAST {
-    NSString *g = @"@start=~Word;";
-    //    NSString *g = @"@start=foo foo foo? foo?;foo=Number;";
+    NSString *g = @"start=~Word;";
+    //    NSString *g = @"start=foo foo foo? foo?;foo=Number;";
     
     NSError *err = nil;
     PKCollectionParser *p = (PKCollectionParser *)[_factory parserFromGrammar:g assembler:nil error:&err];
@@ -84,14 +84,14 @@
 
 
 - (void)testDelimitAST {
-    NSString *g = @"@symbols='<?=';@delimitState='<';@delimitedString='<?=' '>' nil;@start=%{'<?=', '>'};";
+    NSString *g = @"@symbols='<?=';@delimitState='<';@delimitedString='<?=' '>' nil;start=%{'<?=', '>'};";
     
     NSError *err = nil;
     PKAST *root = [_factory ASTFromGrammar:g error:nil];
-    TDEqualObjects(@"(ROOT (@start %{'<?=', '>'}))", [root treeDescription]);
+    TDEqualObjects(@"(ROOT ($start %{'<?=', '>'}))", [root treeDescription]);
     
     NSDictionary *symTab = [_factory symbolTableFromGrammar:g error:nil];
-    PKDelimitedString *start = symTab[@"@start"];
+    PKDelimitedString *start = symTab[symTab[@"$$"]];
     TDNotNil(start);
     TDTrue([start isKindOfClass:[PKDelimitedString class]]);
     
@@ -123,7 +123,7 @@
 
 
 - (void)testTokDirectiveAST {
-    NSString *g = @"@symbols='!==';@start=foo;foo=Symbol;";
+    NSString *g = @"@symbols='!==';start=foo;foo=Symbol;";
     
     NSError *err = nil;
     PKCollectionParser *p = (PKCollectionParser *)[_factory parserFromGrammar:g assembler:nil error:&err];

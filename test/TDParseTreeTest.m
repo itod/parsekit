@@ -27,13 +27,12 @@
 
 
 - (void)testAddExpr {
-    g = @"@start = expr;"
-        @"expr = addExpr;"
+    g = @"expr = addExpr;"
         @"addExpr = atom (('+'|'-') atom)*;"
         @"atom = Number;";
     
     PKAST *root = [factory ASTFromGrammar:g error:nil];
-    TDEqualObjects(@"(ROOT (@start #expr) ($expr #addExpr) ($addExpr (. #atom (* (. (| '+' '-') #atom)))) ($atom Number))", [root treeDescription]);
+    TDEqualObjects(@"(ROOT ($expr #addExpr) ($addExpr (. #atom (* (. (| '+' '-') #atom)))) ($atom Number))", [root treeDescription]);
     
     NSDictionary *symTab = [factory symbolTableFromGrammar:g error:nil];
     TDNotNil(symTab);
@@ -93,19 +92,14 @@
 
 
 - (void)testFoo {
-    g = @"@start = expr;"
-    @"expr = Word+;";
+    g = @"expr = Word+;";
 
     PKAST *root = [factory ASTFromGrammar:g error:nil];
-    TDEqualObjects(@"(ROOT (@start #expr) ($expr (+ Word)))", [root treeDescription]);
+    TDEqualObjects(@"(ROOT ($expr (+ Word)))", [root treeDescription]);
 
     NSDictionary *symTab = [factory symbolTableFromGrammar:g error:nil];
     TDNotNil(symTab);
     TDEquals((NSUInteger)2, [symTab count]);
-
-    PKSequence *start = symTab[@"@start"];
-    TDTrue([start isKindOfClass:[PKSequence class]]);
-    TDTrue(1 == [start.subparsers count]);
 
     PKSequence *exprParser = symTab[@"expr"];
     TDTrue([exprParser isKindOfClass:[PKSequence class]]);
@@ -143,8 +137,7 @@
 
 
 - (void)testFooBar {
-    g = @"@start = expr;"
-    @"expr = Word+;";
+    g = @"expr = Word+;";
     lp = [factory parserFromGrammar:g assembler:as preassembler:as error:nil];
     
     lp.tokenizer.string = @"foo bar";
@@ -173,7 +166,7 @@
 
 
 - (void)testArray {
-    g = @"@start = array;"
+    g =
     @"array = '[' Number (commaNumber)* ']';"
     @"commaNumber = ',' Number;";
     

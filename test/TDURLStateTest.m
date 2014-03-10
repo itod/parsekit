@@ -21,6 +21,21 @@
 }
 
 
+- (void)testSingleW {
+    s = @"w";
+    t.string = s;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWord);
+    TDEqualObjects(s, tok.stringValue);
+    TDEquals(tok.floatValue, (PKFloat)0.0);
+    
+    tok = [t nextToken];
+    TDEqualObjects([PKToken EOFToken], tok);
+}
+
+
 - (void)testFooComBlahBlah {
     s = @"http://foo.com/blah_blah";
     t.string = s;
@@ -28,11 +43,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -43,11 +58,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -58,11 +73,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -96,7 +111,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -107,11 +122,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -122,11 +137,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -137,11 +152,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -175,7 +190,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -195,7 +210,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -215,7 +230,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -235,7 +250,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -259,7 +274,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -283,7 +298,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -303,7 +318,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -314,11 +329,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -329,11 +344,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -344,11 +359,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -359,11 +374,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -374,11 +389,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -389,11 +404,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -404,11 +419,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -419,11 +434,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -434,11 +449,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -449,11 +464,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -464,11 +479,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -479,11 +494,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -494,11 +509,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -509,11 +524,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -524,11 +539,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -577,7 +592,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -611,7 +626,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -621,11 +636,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -644,7 +659,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -654,11 +669,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -677,7 +692,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -687,11 +702,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -710,7 +725,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -720,11 +735,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isURL);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -743,7 +758,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 @end

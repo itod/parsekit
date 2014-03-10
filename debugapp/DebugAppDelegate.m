@@ -37,7 +37,6 @@
 - (void)parser:(PKParser *)p didMatchBaz:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchStart:(PKAssembly *)a;
 - (void)parser:(PKParser *)p didMatchStart:(PKAssembly *)a;
-- (void)parser:(PKParser *)p didMatch_Start:(PKAssembly *)a;
 @end
 
 @interface PKParserFactory ()
@@ -163,8 +162,6 @@
 - (void)doGrammarParser {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"json" ofType:@"grammar"];
     NSString *s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-//    s = @"@start = openCurly closeCurly; openCurly = '{'; closeCurly = '}';";
-//    s = @"@start = start*; start = 'bar';";
     
     PKParserFactory *factory = [PKParserFactory factory];
     
@@ -388,7 +385,7 @@
 //    id mock = [OCMockObject mockForProtocol:@protocol(TDMockAssember)];
 //    PKParserFactory *factory = [PKParserFactory factory];
 //    NSString *s = nil;
-//    s = @"@start = foo|baz; foo (parser:didMatchFooAssembly:) = 'bar'; baz (parser:didMatchBazAssembly:) = 'bat'";
+//    s = @"start = foo|baz; foo (parser:didMatchFooAssembly:) = 'bar'; baz (parser:didMatchBazAssembly:) = 'bat'";
 //    factory.assemblerSettingBehavior = PKParserFactoryAssemblerSettingBehaviorExplicit;
 //    PKParser *lp = [factory parserFromGrammar:s assembler:mock];
 //    
@@ -399,7 +396,7 @@
 ////    TDEqualObjects(@"[bar, bat]bar/bat^", [res description]);
 ////    [mock verify];
     
-//    NSString *g = @"@delimitState = '$'; @delimitedString = '$' '%' nil; @start = %{'$', '%'};";
+//    NSString *g = @"@delimitState = '$'; @delimitedString = '$' '%' nil; start = %{'$', '%'};";
 //    PKParser *lp = [[PKParserFactory factory] parserFromGrammar:g assembler:nil];
 //
 //    NSString *s = @"$foo%";
@@ -587,7 +584,7 @@
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     
-//    [self doTestGrammar];
+    [self doTestGrammar];
     //[self doTestSqliteGrammar];
     
 //    [self doPlistParser];
@@ -597,7 +594,7 @@
 
 //    [self doJSParser];
     
-    [self doProf];
+//    [self doProf];
 
     //[self doJavaScriptGrammarParser];
     

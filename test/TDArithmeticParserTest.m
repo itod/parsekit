@@ -21,6 +21,13 @@
 }
 
 
+- (void)testMath {
+    s = @"10+(2*3)- 15";
+    result = [p parse:s];
+    TDEquals((double)1.0, result);
+}
+
+
 - (void)testOne {
     s = @"1";
     result = [p parse:s];

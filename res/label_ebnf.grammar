@@ -1,5 +1,3 @@
-@start = s;
-
 s = label Word '=' expr
   | label 'return' expr
   ;

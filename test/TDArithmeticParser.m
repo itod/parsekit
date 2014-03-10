@@ -26,12 +26,18 @@
  phrase         = '(' expr ')' | Number
 */
 
+@interface PKParser (PKParserFactoryAdditionsFriend)
+- (void)setTokenizer:(PKTokenizer *)t;
+@end
+
 @implementation TDArithmeticParser
 
 - (id)init {
     self = [super init];
     if (self) {
         [self add:self.exprParser];
+        self.tokenizer = [PKTokenizer tokenizer];
+//        [self.tokenizer setTokenizerState:tokenizer.symbolState from:'-' to:'-'];
     }
     return self;
 }
@@ -47,12 +53,15 @@
     self.divFactorParser = nil;
     self.exponentFactorParser = nil;
     self.phraseParser = nil;
+    self.tokenizer = nil;
     [super dealloc];
 }
 
 
 - (double)parse:(NSString *)s {
-    PKAssembly *a = [PKTokenAssembly assemblyWithString:s];
+    NSAssert(self.tokenizer, @"");
+    self.tokenizer.string = s;
+    PKAssembly *a = [PKTokenAssembly assemblyWithTokenizer:self.tokenizer];
     a = [self completeMatchFor:a];
 //    NSLog(@"\n\na: %@\n\n", a);
     NSNumber *n = [a pop];

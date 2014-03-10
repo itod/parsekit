@@ -1,4 +1,4 @@
-#import <ParseKit/PKSParser.h>
+#import <PEGKit/PEGParser.h>
 
 enum {
     LABELRECURSIVE_TOKEN_KIND_EQUALS = 14,
@@ -6,7 +6,7 @@ enum {
     LABELRECURSIVE_TOKEN_KIND_COLON,
 };
 
-@interface LabelRecursiveParser : PKSParser
+@interface LabelRecursiveParser : PEGParser
 
 @end
 

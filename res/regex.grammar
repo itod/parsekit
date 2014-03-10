@@ -1,6 +1,5 @@
 @wantsCharacters  = YES;
 
-@start = expression;
 expression        = term orTerm*;
 term              = factor nextFactor*;
 orTerm            = '|'! term;

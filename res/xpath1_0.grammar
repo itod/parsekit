@@ -20,8 +20,6 @@
 
 */
 
-@start = expr;
-
 @symbols =  '//' '..' '!=' '::' '<=' '>=';
             
 @wordState = '_';

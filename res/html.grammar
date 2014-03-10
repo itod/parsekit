@@ -13,7 +13,7 @@
 @delimitedString = '<!DOCTYPE' '>' nil;
 @delimitState.fallbackState = symbolState;
 
-@start          
+start          
 @before {
     PKTokenizer *t = self.tokenizer;
 

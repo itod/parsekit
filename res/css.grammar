@@ -11,7 +11,7 @@
 @multiLineComments = '/*' '*/';
 @wordState = '-' '@';
 
-@start                  
+stylesheet                  
 @before {
     PKTokenizer *t = self.tokenizer;
 
@@ -57,7 +57,7 @@
                         = ruleset*;
 ruleset                 = selectors openCurly decls closeCurly;
 selectors               = selector commaSelector*;
-selector                = (selectorWord | hashSym | dot | colon | gt | openBracket | closeBracket | eq | selectorQuotedString | tilde | pipe)+;
+selector                = (selectorWord | hash | dot | colon | gt | openBracket | closeBracket | eq | selectorQuotedString | tilde | pipe)+;
 selectorWord            = Word;
 selectorQuotedString    = QuotedString;
 commaSelector           = comma selector;
@@ -88,7 +88,7 @@ gt              = '>';
 tilde           = '~';
 pipe            = '|';
 fwdSlash        = '/';
-hashSym         = '#';
+hash         = '#';
 dot             = '.';
 at              = '@';
 bang            = '!';

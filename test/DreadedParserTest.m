@@ -40,13 +40,13 @@
     self.parser = [[[DreadedParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/DreadedParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/DreadedParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/DreadedParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/DreadedParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);

@@ -22,7 +22,7 @@
 
 
 - (void)test1 {
-    g = @"@start = /foo/;";
+    g = @"start = /foo/;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -31,7 +31,7 @@
     TDEqualObjects(@"[foo]foo^", [res description]);
     
     
-    g = @"@start = /fo+/;";
+    g = @"start = /fo+/;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -40,7 +40,7 @@
     TDEqualObjects(@"[foo]foo^", [res description]);
     
     
-    g = @"@start = /fo+/;";
+    g = @"start = /fo+/;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -49,7 +49,7 @@
     TDEqualObjects(@"[foo]foo^", [res description]);
     
     
-    g = @"@start = /[fo]+/;";
+    g = @"start = /[fo]+/;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -58,7 +58,7 @@
     TDEqualObjects(@"[foo]foo^", [res description]);
     
         
-    g = @"@start = /\\w+/;";
+    g = @"start = /\\w+/;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -69,7 +69,7 @@
 
 
 //- (void)testOptions {
-//    g = @"@start = /foo/i;";
+//    g = @"start = /foo/i;";
 //    lp = [factory parserFromGrammar:g assembler:nil error:nil];
 //    TDNotNil(lp);
 //    
@@ -78,7 +78,7 @@
 //    TDEqualObjects(@"[FOO]FOO^", [res description]);
 //    
 //    
-//    g = @"@start = /foo/i;";
+//    g = @"start = /foo/i;";
 //    lp = [factory parserFromGrammar:g assembler:nil error:nil];
 //    TDNotNil(lp);
 //    

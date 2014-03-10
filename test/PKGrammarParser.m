@@ -15,7 +15,7 @@
 #import "PKGrammarParser.h"
 #import <ParseKit/ParseKit.h>
 
-// @start               = statement*;
+// start                = statement*;
 // statement            = tokenizerDirective | decl;
 // tokenizerDirective   = '@'! ~'start' '=' (~';')+ ';'!;
 // decl                 = production '=' action? expr ';'!;

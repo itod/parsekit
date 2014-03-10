@@ -1,5 +1,5 @@
 #import "JSONParser.h"
-#import <ParseKit/ParseKit.h>
+#import <PEGKit/PEGKit.h>
 
 #define LT(i) [self LT:(i)]
 #define LA(i) [self LA:(i)]
@@ -7,39 +7,48 @@
 #define LF(i) [self LF:(i)]
 
 #define POP()       [self.assembly pop]
-#define POP_STR()   [self _popString]
-#define POP_TOK()   [self _popToken]
-#define POP_BOOL()  [self _popBool]
-#define POP_INT()   [self _popInteger]
-#define POP_FLOAT() [self _popDouble]
+#define POP_STR()   [self popString]
+#define POP_TOK()   [self popToken]
+#define POP_BOOL()  [self popBool]
+#define POP_INT()   [self popInteger]
+#define POP_FLOAT() [self popDouble]
 
 #define PUSH(obj)     [self.assembly push:(id)(obj)]
-#define PUSH_BOOL(yn) [self _pushBool:(BOOL)(yn)]
-#define PUSH_INT(i)   [self _pushInteger:(NSInteger)(i)]
-#define PUSH_FLOAT(f) [self _pushDouble:(double)(f)]
+#define PUSH_BOOL(yn) [self pushBool:(BOOL)(yn)]
+#define PUSH_INT(i)   [self pushInteger:(NSInteger)(i)]
+#define PUSH_FLOAT(f) [self pushDouble:(double)(f)]
 
 #define EQ(a, b) [(a) isEqual:(b)]
 #define NE(a, b) (![(a) isEqual:(b)])
 #define EQ_IGNORE_CASE(a, b) (NSOrderedSame == [(a) compare:(b)])
+
+#define MATCHES(pattern, str)               ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:0                                  error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
+#define MATCHES_IGNORE_CASE(pattern, str)   ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:NSRegularExpressionCaseInsensitive error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
 
 #define ABOVE(fence) [self.assembly objectsAbove:(fence)]
 
 #define LOG(obj) do { NSLog(@"%@", (obj)); } while (0);
 #define PRINT(str) do { printf("%s\n", (str)); } while (0);
 
-@interface PKSParser ()
-@property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
-@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
+@interface PEGParser ()
+@property (nonatomic, retain) NSMutableDictionary *tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *tokenKindNameTab;
+@property (nonatomic, retain) NSString *startRuleName;
+@property (nonatomic, retain) NSString *statementTerminator;
+@property (nonatomic, retain) NSString *singleLineCommentMarker;
+@property (nonatomic, retain) NSString *blockStartMarker;
+@property (nonatomic, retain) NSString *blockEndMarker;
+@property (nonatomic, retain) NSString *braces;
 
-- (BOOL)_popBool;
-- (NSInteger)_popInteger;
-- (double)_popDouble;
-- (PKToken *)_popToken;
-- (NSString *)_popString;
+- (BOOL)popBool;
+- (NSInteger)popInteger;
+- (double)popDouble;
+- (PKToken *)popToken;
+- (NSString *)popString;
 
-- (void)_pushBool:(BOOL)yn;
-- (void)_pushInteger:(NSInteger)i;
-- (void)_pushDouble:(double)d;
+- (void)pushBool:(BOOL)yn;
+- (void)pushInteger:(NSInteger)i;
+- (void)pushDouble:(double)d;
 @end
 
 @interface JSONParser ()
@@ -50,32 +59,36 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self._tokenKindTab[@"false"] = @(JSON_TOKEN_KIND_FALSELITERAL);
-        self._tokenKindTab[@"}"] = @(JSON_TOKEN_KIND_CLOSECURLY);
-        self._tokenKindTab[@"["] = @(JSON_TOKEN_KIND_OPENBRACKET);
-        self._tokenKindTab[@"null"] = @(JSON_TOKEN_KIND_NULLLITERAL);
-        self._tokenKindTab[@","] = @(JSON_TOKEN_KIND_COMMA);
-        self._tokenKindTab[@"true"] = @(JSON_TOKEN_KIND_TRUELITERAL);
-        self._tokenKindTab[@"]"] = @(JSON_TOKEN_KIND_CLOSEBRACKET);
-        self._tokenKindTab[@"{"] = @(JSON_TOKEN_KIND_OPENCURLY);
-        self._tokenKindTab[@":"] = @(JSON_TOKEN_KIND_COLON);
+        self.startRuleName = @"start";
+        self.tokenKindTab[@"false"] = @(JSON_TOKEN_KIND_FALSE);
+        self.tokenKindTab[@"}"] = @(JSON_TOKEN_KIND_CLOSECURLY);
+        self.tokenKindTab[@"["] = @(JSON_TOKEN_KIND_OPENBRACKET);
+        self.tokenKindTab[@"null"] = @(JSON_TOKEN_KIND_NULLLITERAL);
+        self.tokenKindTab[@","] = @(JSON_TOKEN_KIND_COMMA);
+        self.tokenKindTab[@"true"] = @(JSON_TOKEN_KIND_TRUE);
+        self.tokenKindTab[@"]"] = @(JSON_TOKEN_KIND_CLOSEBRACKET);
+        self.tokenKindTab[@"{"] = @(JSON_TOKEN_KIND_OPENCURLY);
+        self.tokenKindTab[@":"] = @(JSON_TOKEN_KIND_COLON);
 
-        self._tokenKindNameTab[JSON_TOKEN_KIND_FALSELITERAL] = @"false";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_CLOSECURLY] = @"}";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_OPENBRACKET] = @"[";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_NULLLITERAL] = @"null";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_COMMA] = @",";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_TRUELITERAL] = @"true";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_CLOSEBRACKET] = @"]";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_OPENCURLY] = @"{";
-        self._tokenKindNameTab[JSON_TOKEN_KIND_COLON] = @":";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_FALSE] = @"false";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_CLOSECURLY] = @"}";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_OPENBRACKET] = @"[";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_NULLLITERAL] = @"null";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_COMMA] = @",";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_TRUE] = @"true";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_CLOSEBRACKET] = @"]";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_OPENCURLY] = @"{";
+        self.tokenKindNameTab[JSON_TOKEN_KIND_COLON] = @":";
 
     }
     return self;
 }
 
+- (void)start {
+    [self start_];
+}
 
-- (void)_start {
+- (void)start_ {
     
     [self execute:(id)^{
     
@@ -94,222 +107,214 @@
 
     }];
     if ([self predicts:JSON_TOKEN_KIND_OPENBRACKET, 0]) {
-        [self array]; 
+        [self array_]; 
     } else if ([self predicts:JSON_TOKEN_KIND_OPENCURLY, 0]) {
-        [self object]; 
+        [self object_]; 
     }
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        [self comment]; 
+        [self comment_]; 
     }
     [self matchEOF:YES]; 
 
 }
 
-- (void)object {
+- (void)object_ {
     
-    [self openCurly]; 
+    [self openCurly_]; 
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        [self comment]; 
+        [self comment_]; 
     }
-    [self objectContent]; 
-    [self closeCurly]; 
+    [self objectContent_]; 
+    [self closeCurly_]; 
 
 }
 
-- (void)objectContent {
+- (void)objectContent_ {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-        [self actualObject]; 
+        [self actualObject_]; 
     }
 
 }
 
-- (void)actualObject {
+- (void)actualObject_ {
     
-    [self property]; 
-    while ([self predicts:JSON_TOKEN_KIND_COMMA, 0]) {
-        if ([self speculate:^{ [self commaProperty]; }]) {
-            [self commaProperty]; 
-        } else {
-            break;
-        }
+    [self property_]; 
+    while ([self speculate:^{ [self commaProperty_]; }]) {
+        [self commaProperty_]; 
     }
 
 }
 
-- (void)property {
+- (void)property_ {
     
-    [self propertyName]; 
-    [self colon]; 
+    [self propertyName_]; 
+    [self colon_]; 
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        [self comment]; 
+        [self comment_]; 
     }
-    [self value]; 
+    [self value_]; 
 
 }
 
-- (void)commaProperty {
+- (void)commaProperty_ {
     
-    [self comma]; 
+    [self comma_]; 
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        [self comment]; 
+        [self comment_]; 
     }
-    [self property]; 
+    [self property_]; 
 
 }
 
-- (void)propertyName {
+- (void)propertyName_ {
     
     [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchPropertyName:)];
 }
 
-- (void)array {
+- (void)array_ {
     
-    [self openBracket]; 
+    [self openBracket_]; 
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        [self comment]; 
+        [self comment_]; 
     }
-    [self arrayContent]; 
-    [self closeBracket]; 
+    [self arrayContent_]; 
+    [self closeBracket_]; 
 
 }
 
-- (void)arrayContent {
+- (void)arrayContent_ {
     
-    if ([self predicts:JSON_TOKEN_KIND_FALSELITERAL, JSON_TOKEN_KIND_NULLLITERAL, JSON_TOKEN_KIND_OPENBRACKET, JSON_TOKEN_KIND_OPENCURLY, JSON_TOKEN_KIND_TRUELITERAL, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-        [self actualArray]; 
-    }
-
-}
-
-- (void)actualArray {
-    
-    [self value]; 
-    while ([self predicts:JSON_TOKEN_KIND_COMMA, 0]) {
-        if ([self speculate:^{ [self commaValue]; }]) {
-            [self commaValue]; 
-        } else {
-            break;
-        }
+    if ([self predicts:JSON_TOKEN_KIND_FALSE, JSON_TOKEN_KIND_NULLLITERAL, JSON_TOKEN_KIND_OPENBRACKET, JSON_TOKEN_KIND_OPENCURLY, JSON_TOKEN_KIND_TRUE, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
+        [self actualArray_]; 
     }
 
 }
 
-- (void)commaValue {
+- (void)actualArray_ {
     
-    [self comma]; 
+    [self value_]; 
+    while ([self speculate:^{ [self commaValue_]; }]) {
+        [self commaValue_]; 
+    }
+
+}
+
+- (void)commaValue_ {
+    
+    [self comma_]; 
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        [self comment]; 
+        [self comment_]; 
     }
-    [self value]; 
+    [self value_]; 
 
 }
 
-- (void)value {
+- (void)value_ {
     
     if ([self predicts:JSON_TOKEN_KIND_NULLLITERAL, 0]) {
-        [self nullLiteral]; 
-    } else if ([self predicts:JSON_TOKEN_KIND_TRUELITERAL, 0]) {
-        [self trueLiteral]; 
-    } else if ([self predicts:JSON_TOKEN_KIND_FALSELITERAL, 0]) {
-        [self falseLiteral]; 
+        [self nullLiteral_]; 
+    } else if ([self predicts:JSON_TOKEN_KIND_TRUE, 0]) {
+        [self true_]; 
+    } else if ([self predicts:JSON_TOKEN_KIND_FALSE, 0]) {
+        [self false_]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_NUMBER, 0]) {
-        [self number]; 
+        [self number_]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-        [self string]; 
+        [self string_]; 
     } else if ([self predicts:JSON_TOKEN_KIND_OPENBRACKET, 0]) {
-        [self array]; 
+        [self array_]; 
     } else if ([self predicts:JSON_TOKEN_KIND_OPENCURLY, 0]) {
-        [self object]; 
+        [self object_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'value'."];
     }
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        [self comment]; 
+        [self comment_]; 
     }
 
 }
 
-- (void)comment {
+- (void)comment_ {
     
     [self matchComment:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchComment:)];
 }
 
-- (void)string {
+- (void)string_ {
     
     [self matchQuotedString:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchString:)];
 }
 
-- (void)number {
+- (void)number_ {
     
     [self matchNumber:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNumber:)];
 }
 
-- (void)nullLiteral {
+- (void)nullLiteral_ {
     
     [self match:JSON_TOKEN_KIND_NULLLITERAL discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNullLiteral:)];
 }
 
-- (void)trueLiteral {
+- (void)true_ {
     
-    [self match:JSON_TOKEN_KIND_TRUELITERAL discard:NO]; 
+    [self match:JSON_TOKEN_KIND_TRUE discard:NO]; 
 
-    [self fireAssemblerSelector:@selector(parser:didMatchTrueLiteral:)];
+    [self fireAssemblerSelector:@selector(parser:didMatchTrue:)];
 }
 
-- (void)falseLiteral {
+- (void)false_ {
     
-    [self match:JSON_TOKEN_KIND_FALSELITERAL discard:NO]; 
+    [self match:JSON_TOKEN_KIND_FALSE discard:NO]; 
 
-    [self fireAssemblerSelector:@selector(parser:didMatchFalseLiteral:)];
+    [self fireAssemblerSelector:@selector(parser:didMatchFalse:)];
 }
 
-- (void)openCurly {
+- (void)openCurly_ {
     
     [self match:JSON_TOKEN_KIND_OPENCURLY discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchOpenCurly:)];
 }
 
-- (void)closeCurly {
+- (void)closeCurly_ {
     
     [self match:JSON_TOKEN_KIND_CLOSECURLY discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCloseCurly:)];
 }
 
-- (void)openBracket {
+- (void)openBracket_ {
     
     [self match:JSON_TOKEN_KIND_OPENBRACKET discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchOpenBracket:)];
 }
 
-- (void)closeBracket {
+- (void)closeBracket_ {
     
     [self match:JSON_TOKEN_KIND_CLOSEBRACKET discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCloseBracket:)];
 }
 
-- (void)comma {
+- (void)comma_ {
     
     [self match:JSON_TOKEN_KIND_COMMA discard:NO]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchComma:)];
 }
 
-- (void)colon {
+- (void)colon_ {
     
     [self match:JSON_TOKEN_KIND_COLON discard:NO]; 
 

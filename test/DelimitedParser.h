@@ -1,10 +1,10 @@
-#import <ParseKit/PKSParser.h>
+#import <PEGKit/PEGParser.h>
 
 enum {
     DELIMITED_TOKEN_KIND_S = 14,
 };
 
-@interface DelimitedParser : PKSParser
+@interface DelimitedParser : PEGParser
 
 @end
 

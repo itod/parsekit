@@ -38,10 +38,10 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-//    self.grammarString = @"@allowsScientificNotation=YES;\n@start = expr;\nexpr = addExpr;\naddExpr = multExpr (('+'|'-') multExpr)*;\nmultExpr = atom (('*'|'/') atom)*;\natom = Number;";
-//    self.grammarString = @"@start = array;array = '[' Number (commaNumber)* ']';commaNumber = ',' Number;";
-//    self.grammarString = @"@start = array;array = foo | Word; foo = 'foo';";
-//    self.grammarString = @"@allowsScientificNotation = YES;     @start        = Empty | array | object;          object        = '{' (Empty | property (',' property)*) '}';     property      = name ':' value;     name  = QuotedString;          array         = '[' (Empty | value (',' value)*) ']';          value         = 'null' | boolean | array | object | number | string;          string        = QuotedString;     number        = Number;     boolean       = 'true' | 'false';";
+//    self.grammarString = @"@allowsScientificNotation=YES;\nstart = expr;\nexpr = addExpr;\naddExpr = multExpr (('+'|'-') multExpr)*;\nmultExpr = atom (('*'|'/') atom)*;\natom = Number;";
+//    self.grammarString = @"start = array;array = '[' Number (commaNumber)* ']';commaNumber = ',' Number;";
+//    self.grammarString = @"start = array;array = foo | Word; foo = 'foo';";
+//    self.grammarString = @"allowsScientificNotation = YES;     start        = Empty | array | object;          object        = '{' (Empty | property (',' property)*) '}';     property      = name ':' value;     name  = QuotedString;          array         = '[' (Empty | value (',' value)*) ']';          value         = 'null' | boolean | array | object | number | string;          string        = QuotedString;     number        = Number;     boolean       = 'true' | 'false';";
     
     NSString *path = [[NSBundle mainBundle] pathForResource:@"expression" ofType:@"grammar"];
     self.grammarString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];

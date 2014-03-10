@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-// a UTF-16 character. signed so that it may include -1 (EOF) as well
+// a UTF-16 code unit. signed so that it may include -1 (EOF) as well
 typedef int32_t PKUniChar;
 
 #define PKEOF (PKUniChar)-1

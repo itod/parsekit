@@ -1,4 +1,4 @@
-#import <ParseKit/PKSParser.h>
+#import <ParseKit/PEGParser.h>
 
 enum {
     EXPRESSIONSYNTAXPARSER_TOKEN_KIND_GE = 14,
@@ -17,7 +17,7 @@ enum {
     EXPRESSIONSYNTAXPARSER_TOKEN_KIND_AND,
 };
 
-@interface ExpressionSyntaxParser : PKSParser
+@interface ExpressionSyntaxParser : PEGParser
 
 @end
 

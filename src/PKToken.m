@@ -12,8 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#if PEGKIT
+#import <PEGKit/PKToken.h>
+#import <PEGKit/PKTypes.h>
+#else
 #import <ParseKit/PKToken.h>
 #import <ParseKit/PKTypes.h>
+#endif
 #import "NSString+ParseKitAdditions.h"
 
 @interface PKTokenEOF : PKToken {}
@@ -27,15 +32,20 @@ static PKTokenEOF *EOFToken = nil;
 + (PKTokenEOF *)instance {
     @synchronized(self) {
         if (!EOFToken) { 
-            EOFToken = [[self alloc] initWithTokenType:PKTokenTypeEOF stringValue:nil floatValue:0.0];
+            EOFToken = [[self alloc] initWithTokenType:PKTokenTypeEOF stringValue:@"«EOF»" floatValue:0.0];
         }
     }
     return EOFToken;
 }
 
 
-- (NSString *)stringValue {
-    return @"«EOF»";
+- (BOOL)isEOF {
+    return YES;
+}
+
+
+- (NSString *)description {
+    return [self stringValue];
 }
 
 
@@ -48,18 +58,18 @@ static PKTokenEOF *EOFToken = nil;
 @interface PKToken ()
 - (BOOL)isEqual:(id)obj ignoringCase:(BOOL)ignoringCase;
 
-@property (nonatomic, readwrite, getter=isNumber) BOOL number;
-@property (nonatomic, readwrite, getter=isQuotedString) BOOL quotedString;
-@property (nonatomic, readwrite, getter=isSymbol) BOOL symbol;
-@property (nonatomic, readwrite, getter=isWord) BOOL word;
-@property (nonatomic, readwrite, getter=isWhitespace) BOOL whitespace;
-@property (nonatomic, readwrite, getter=isComment) BOOL comment;
-@property (nonatomic, readwrite, getter=isDelimitedString) BOOL delimitedString;
-@property (nonatomic, readwrite, getter=isURL) BOOL URL;
-@property (nonatomic, readwrite, getter=isEmail) BOOL email;
+@property (nonatomic, readwrite) BOOL isNumber;
+@property (nonatomic, readwrite) BOOL isQuotedString;
+@property (nonatomic, readwrite) BOOL isSymbol;
+@property (nonatomic, readwrite) BOOL isWord;
+@property (nonatomic, readwrite) BOOL isWhitespace;
+@property (nonatomic, readwrite) BOOL isComment;
+@property (nonatomic, readwrite) BOOL isDelimitedString;
+@property (nonatomic, readwrite) BOOL isURL;
+@property (nonatomic, readwrite) BOOL isEmail;
 #if PK_PLATFORM_TWITTER_STATE
-@property (nonatomic, readwrite, getter=isTwitter) BOOL twitter;
-@property (nonatomic, readwrite, getter=isHashtag) BOOL hashtag;
+@property (nonatomic, readwrite) BOOL isTwitter;
+@property (nonatomic, readwrite) BOOL isHashtag;
 #endif
 
 @property (nonatomic, readwrite) PKFloat floatValue;
@@ -94,18 +104,18 @@ static PKTokenEOF *EOFToken = nil;
         self.offset = NSNotFound;
         self.lineNumber = NSNotFound;
         
-        self.number = (PKTokenTypeNumber == t);
-        self.quotedString = (PKTokenTypeQuotedString == t);
-        self.symbol = (PKTokenTypeSymbol == t);
-        self.word = (PKTokenTypeWord == t);
-        self.whitespace = (PKTokenTypeWhitespace == t);
-        self.comment = (PKTokenTypeComment == t);
-        self.delimitedString = (PKTokenTypeDelimitedString == t);
-        self.URL = (PKTokenTypeURL == t);
-        self.email = (PKTokenTypeEmail == t);
+        self.isNumber = (PKTokenTypeNumber == t);
+        self.isQuotedString = (PKTokenTypeQuotedString == t);
+        self.isSymbol = (PKTokenTypeSymbol == t);
+        self.isWord = (PKTokenTypeWord == t);
+        self.isWhitespace = (PKTokenTypeWhitespace == t);
+        self.isComment = (PKTokenTypeComment == t);
+        self.isDelimitedString = (PKTokenTypeDelimitedString == t);
+        self.isURL = (PKTokenTypeURL == t);
+        self.isEmail = (PKTokenTypeEmail == t);
 #if PK_PLATFORM_TWITTER_STATE
-        self.twitter = (PKTokenTypeTwitter == t);
-        self.hashtag = (PKTokenTypeHashtag == t);
+        self.isTwitter = (PKTokenTypeTwitter == t);
+        self.isHashtag = (PKTokenTypeHashtag == t);
 #endif
     }
     return self;
@@ -149,7 +159,7 @@ static PKTokenEOF *EOFToken = nil;
         return NO;
     }
     
-    if (number) {
+    if (isNumber) {
         return floatValue == tok->floatValue;
     } else {
         if (ignoringCase) {
@@ -161,10 +171,15 @@ static PKTokenEOF *EOFToken = nil;
 }
 
 
+- (BOOL)isEOF {
+    return NO;
+}
+
+
 - (id)value {
     if (!value) {
         id v = nil;
-        if (number) {
+        if (isNumber) {
             v = [NSNumber numberWithDouble:floatValue];
         } else {
             v = stringValue;
@@ -215,18 +230,18 @@ static PKTokenEOF *EOFToken = nil;
     return stringValue;
 }
 
-@synthesize number;
-@synthesize quotedString;
-@synthesize symbol;
-@synthesize word;
-@synthesize whitespace;
-@synthesize comment;
-@synthesize delimitedString;
-@synthesize URL;
-@synthesize email;
+@synthesize isNumber;
+@synthesize isQuotedString;
+@synthesize isSymbol;
+@synthesize isWord;
+@synthesize isWhitespace;
+@synthesize isComment;
+@synthesize isDelimitedString;
+@synthesize isURL;
+@synthesize isEmail;
 #if PK_PLATFORM_TWITTER_STATE
-@synthesize twitter;
-@synthesize hashtag;
+@synthesize isTwitter;
+@synthesize isHashtag;
 #endif
 @synthesize floatValue;
 @synthesize stringValue;

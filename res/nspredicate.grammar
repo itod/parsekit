@@ -10,8 +10,6 @@ See: http://developer.apple.com/documentation/Cocoa/Conceptual/Predicates/Articl
 
 @symbols = '==' '>=' '=>' '<=' '=<' '!=' '<>' '&&' '||';
 
-@start = expr;
-
 // Expressions
     expr                 = orTerm orOrTerm*;
     orOrTerm             = or orTerm;

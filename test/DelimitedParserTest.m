@@ -40,13 +40,13 @@
     self.parser = [[[DelimitedParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/DelimitedParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/DelimitedParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/DelimitedParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/DelimitedParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);

@@ -8,7 +8,7 @@
     2009-06-21
 
 
-@start  = date;                             // the 'date' production is the outermost production in this grammar
+// the 'date' production is the outermost production in this grammar
 
 date    = /\d{4}/ '-' /\d{2}/ '-' /\d{2}/;  // will match any sequence of tokens whose `stringValue` property matches these regexes
 */
@@ -27,8 +27,6 @@ An equivalent grammar could be expressed in many ways. Here's an equivalent gram
 
 @symbolState = '-';
 
-@start  = date;
-
 date    = year dash month dash day;
 
 year    = /\d{4}/;
@@ -40,8 +38,6 @@ dash    = '-';
 */
 
 @symbolState = '-';
-
-@start  = date;
 
 date    = year dash month dash day;
 

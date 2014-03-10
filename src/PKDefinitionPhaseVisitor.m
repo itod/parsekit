@@ -9,7 +9,7 @@
 #import "PKDefinitionPhaseVisitor.h"
 #import <ParseKit/PKCompositeParser.h>
 #import "NSString+ParseKitAdditions.h"
-#import "PKSTokenKindDescriptor.h"
+#import "PEGTokenKindDescriptor.h"
 
 @interface PKDefinitionPhaseVisitor ()
 @end
@@ -25,14 +25,36 @@
 }
 
 
+- (NSString *)defaultDefNameForStringValue:(NSString *)strVal {
+    NSString *defName = _defaultDefNameTab[strVal];
+    // not sure if we want this
+    if (!defName) {
+        NSArray *comps = [strVal componentsSeparatedByCharactersInSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]];
+        defName = [comps componentsJoinedByString:@"_"];
+        if ([defName length]) {
+            _defaultDefNameTab[strVal] = strVal;
+        } else {
+            defName = nil;
+        }
+    }
+    // end
+    if (!defName) {
+        defName = [@(_fallbackDefNameCounter++) stringValue];
+        _defaultDefNameTab[strVal] = defName;
+    }
+    return defName;
+}
+
+
 - (void)visitRoot:(PKRootNode *)node {
     NSParameterAssert(node);
     NSAssert(self.symbolTable, @"");
     
     if (_collectTokenKinds) {
-        [PKSTokenKindDescriptor clearCache];
+        [PEGTokenKindDescriptor clearCache];
         self.tokenKinds = [NSMutableDictionary dictionary];
-        self.defaultDefNameTab = @{
+        self.fallbackDefNameCounter = 1;
+        self.defaultDefNameTab = [[@{
             @"~": @"TILDE",
             @"`": @"BACKTICK",
             @"!": @"BANG",
@@ -61,6 +83,7 @@
             @"===": @"TRIPLE_EQUALS",
             @":=": @"ASSIGN",
             @"!=": @"NE",
+            @"!==": @"DOUBLE_NE",
             @"<>": @"NOT_EQUAL",
             @"{": @"OPEN_CURLY",
             @"}": @"CLOSE_CURLY",
@@ -88,6 +111,7 @@
             @"<-": @"LEFT_ARROW",
             @",": @"COMMA",
             @".": @"DOT",
+            @"..": @"DOT_DOT",
             @"?": @"QUESTION",
             @"true": @"TRUE",
             @"false": @"FALSE",
@@ -110,18 +134,23 @@
             @"Nil": @"NIL_TITLE",
             @"nil": @"NIL",
             @"id": @"ID",
+            @"new": @"NEW",
+            @"delete": @"DELETE",
             @"undefined": @"UNDEFINED",
             @"var": @"VAR",
             @"function": @"FUNCTION",
             @"instanceof": @"INSTANCEOF",
+            @"typeof": @"TYPEOF",
             @"def": @"DEF",
             @"if": @"IF",
             @"else": @"ELSE",
             @"elif": @"ELIF",
             @"elseif": @"ELSEIF",
             @"return": @"RETURN",
+            @"case": @"CASE",
             @"break": @"BREAK",
             @"switch": @"SWITCH",
+            @"default": @"DEFAULT",
             @"while": @"WHILE",
             @"do": @"DO",
             @"for": @"FOR",
@@ -146,9 +175,9 @@
             @"float": @"FLOAT",
             @"double": @"DOUBLE",
             @"goto": @"GOTO",
-            @"try": @"GOTO",
-            @"catch": @"GOTO",
-            @"finally": @"GOTO",
+            @"try": @"TRY",
+            @"catch": @"CATCH",
+            @"finally": @"FINALLY",
             @"throw": @"THROW",
             @"throws": @"THROWS",
             @"assert": @"ASSERT",
@@ -165,11 +194,13 @@
             @"Empty" : @"EMPTY_TITLE",
             @"Any" : @"ANY_TITLE",
             @"S" : @"S_TITLE",
+            @"URL" : @"URL_TITLE",
+            @"Email" : @"EMAIL_TITLE",
             @"Digit" : @"DIGIT_TITLE",
             @"Letter" : @"LETTER_TITLE",
             @"Char" : @"CHAR_TITLE",
             @"SpecificChar": @"SPECIFICCHAR_TITLE",
-        };
+        } mutableCopy] autorelease];
     }
     
     [self recurse:node];
@@ -205,6 +236,9 @@
     }
 
     // define in symbol table
+    if (![self.symbolTable count]) {
+        self.symbolTable[@"$$"] = name;
+    }
     self.symbolTable[name] = cp;
         
     for (PKBaseNode *child in node.children) {
@@ -283,7 +317,7 @@
         name = [NSString stringWithFormat:@"TOKEN_KIND_BUILTIN_%@", [name uppercaseString]];
         NSAssert([name length], @"");
 
-        PKSTokenKindDescriptor *kind = [PKSTokenKindDescriptor descriptorWithStringValue:name name:name]; // yes, use name for both
+        PEGTokenKindDescriptor *kind = [PEGTokenKindDescriptor descriptorWithStringValue:name name:name]; // yes, use name for both
         
         //_tokenKinds[name] = kind; do not add constants here.
         node.tokenKind = kind;
@@ -302,22 +336,20 @@
 
         NSString *name = nil;
         
-        PKSTokenKindDescriptor *desc = _tokenKinds[strVal];
+        PEGTokenKindDescriptor *desc = _tokenKinds[strVal];
         if (desc) {
             name = desc.name;
         }
         if (!name) {
             NSString *defName = node.defName;
             if (!defName) {
-                if (!defName) {
-                    defName = _defaultDefNameTab[strVal];
-                }
+                defName = [self defaultDefNameForStringValue:strVal];
             }
             name = [NSString stringWithFormat:@"TOKEN_KIND_%@", [defName uppercaseString]];
         }
         
         NSAssert([name length], @"");
-        PKSTokenKindDescriptor *kind = [PKSTokenKindDescriptor descriptorWithStringValue:strVal name:name];
+        PEGTokenKindDescriptor *kind = [PEGTokenKindDescriptor descriptorWithStringValue:strVal name:name];
         
         _tokenKinds[strVal] = kind;
         node.tokenKind = kind;
@@ -335,22 +367,20 @@
         
         NSString *name = nil;
         
-        PKSTokenKindDescriptor *desc = _tokenKinds[strVal];
+        PEGTokenKindDescriptor *desc = _tokenKinds[strVal];
         if (desc) {
             name = desc.name;
         }
         if (!name) {
             NSString *defName = node.defName;
             if (!defName) {
-                if (!defName) {
-                    defName = _defaultDefNameTab[strVal];
-                }
+                defName = [self defaultDefNameForStringValue:strVal];
             }
             name = [NSString stringWithFormat:@"TOKEN_KIND_%@", [defName uppercaseString]];
         }
         
         NSAssert([name length], @"");
-        PKSTokenKindDescriptor *kind = [PKSTokenKindDescriptor descriptorWithStringValue:strVal name:name];
+        PEGTokenKindDescriptor *kind = [PEGTokenKindDescriptor descriptorWithStringValue:strVal name:name];
         
         _tokenKinds[strVal] = kind;
         node.tokenKind = kind;

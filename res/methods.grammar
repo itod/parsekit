@@ -1,4 +1,4 @@
-@start = method+;
+start = method+;
 
 method = {NO}? type Word '(' args ')' ';'
 	   | {1}? type Word '(' args ')' '{' '}';

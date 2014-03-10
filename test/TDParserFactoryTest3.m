@@ -23,7 +23,7 @@
 
 
 //- (void)testSpecificSymbol {
-//    g = @"@start = Symbol('-');";
+//    g = @"start = Symbol('-');";
 //    
 //    lp = [factory parserFromGrammar:g assembler:nil error:nil];
 //    
@@ -36,7 +36,7 @@
 //
 //
 //- (void)testSpecificSymbol2 {
-//    g = @"@start = Symbol('<=');";
+//    g = @"start = Symbol('<=');";
 //    
 //    lp = [factory parserFromGrammar:g assembler:nil error:nil];
 //    
@@ -49,10 +49,10 @@
 
 
 - (void)testTrack {
-    g = @"@start = [Number Word];";
+    g = @"start = [Number Word];";
     
     PKAST *root = [factory ASTFromGrammar:g error:nil];
-    TDEqualObjects(@"(ROOT (@start ([ Number Word)))", [root treeDescription]);
+    TDEqualObjects(@"(ROOT ($start ([ Number Word)))", [root treeDescription]);
 
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     
@@ -65,10 +65,10 @@
 
 
 - (void)testSubTrack {
-    g = @"@start = Word [Number Word];";
+    g = @"start = Word [Number Word];";
     
     PKAST *root = [factory ASTFromGrammar:g error:nil];
-    TDEqualObjects(@"(ROOT (@start (. Word ([ Number Word))))", [root treeDescription]);
+    TDEqualObjects(@"(ROOT ($start (. Word ([ Number Word))))", [root treeDescription]);
     
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     
@@ -81,7 +81,7 @@
 
 
 - (void)testTrackFailure {
-    g = @"@start = [Number Word];";
+    g = @"start = [Number Word];";
     
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     
@@ -106,7 +106,7 @@
 
 
 - (void)testTrackFailure2 {
-    g = @"@start = [Number Symbol];";
+    g = @"start = [Number Symbol];";
     
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     
@@ -131,7 +131,7 @@
 
 
 - (void)testSubTrackFailure {
-    g = @"@start = Word [Number Word];";
+    g = @"start = Word [Number Word];";
     
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     
@@ -156,7 +156,7 @@
 
 
 //- (void)testOrVsAndPrecendence {
-//    g = @" @start = foo;\n"
+//    g = @" start = foo;\n"
 //    @"  foo = Word & /foo/ | Number! ( %{ '/' , '/' } Symbol- '%' ) * /bar/ ;";
 //    lp = [factory parserFromGrammar:g assembler:nil error:nil];
 //    TDNotNil(lp);
@@ -168,7 +168,7 @@
 
 
 - (void)testNegation {
-    g = @"@start = ~'foo';";
+    g = @"start = ~'foo';";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -187,7 +187,7 @@
 
 
 - (void)testNegateSymbol {
-    g = @"@start = ~Symbol;";
+    g = @"start = ~Symbol;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -211,7 +211,7 @@
 
 
 - (void)testNegateMore {
-    g = @"@start = ~Symbol & ~Number;";
+    g = @"start = ~Symbol & ~Number;";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -226,7 +226,7 @@
 
 
 - (void)testNegateMore2 {
-    g = @"@start = ~(Symbol|Number);";
+    g = @"start = ~(Symbol|Number);";
     lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
@@ -242,7 +242,7 @@
 
 - (void)testNcName {
     g = @"@wordChars=':' '_'; @wordState='_';"
-    @"@start = name;"
+    @"start = name;"
     @"ncName = name & /[^:]+/;"
     @"name = Word;";
     //        @"nameTest = '*' | ncName ':' '*' | qName;"
@@ -265,7 +265,7 @@
     g = 
     @"@wordState = '_';"
     @"@wordChars = '_' '.' '-';"
-    @"@start = functionName;"
+    @"start = functionName;"
     @"functionName = qName - nodeType;"
     @"nodeType = 'comment' | 'text' | 'processing-instruction' | 'node';"
     @"qName = prefixedName | unprefixedName;"

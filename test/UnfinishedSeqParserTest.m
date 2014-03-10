@@ -40,13 +40,13 @@
     self.parser = [[[UnfinishedSeqParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/UnfinishedSeqParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/UnfinishedSeqParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/UnfinishedSeqParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/UnfinishedSeqParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);

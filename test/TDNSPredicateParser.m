@@ -1,5 +1,5 @@
 #import "TDNSPredicateParser.h"
-#import <ParseKit/ParseKit.h>
+#import <PEGKit/PEGKit.h>
 
 #define LT(i) [self LT:(i)]
 #define LA(i) [self LA:(i)]
@@ -7,42 +7,52 @@
 #define LF(i) [self LF:(i)]
 
 #define POP()       [self.assembly pop]
-#define POP_STR()   [self _popString]
-#define POP_TOK()   [self _popToken]
-#define POP_BOOL()  [self _popBool]
-#define POP_INT()   [self _popInteger]
-#define POP_FLOAT() [self _popDouble]
+#define POP_STR()   [self popString]
+#define POP_TOK()   [self popToken]
+#define POP_BOOL()  [self popBool]
+#define POP_INT()   [self popInteger]
+#define POP_FLOAT() [self popDouble]
 
 #define PUSH(obj)     [self.assembly push:(id)(obj)]
-#define PUSH_BOOL(yn) [self _pushBool:(BOOL)(yn)]
-#define PUSH_INT(i)   [self _pushInteger:(NSInteger)(i)]
-#define PUSH_FLOAT(f) [self _pushDouble:(double)(f)]
+#define PUSH_BOOL(yn) [self pushBool:(BOOL)(yn)]
+#define PUSH_INT(i)   [self pushInteger:(NSInteger)(i)]
+#define PUSH_FLOAT(f) [self pushDouble:(double)(f)]
 
 #define EQ(a, b) [(a) isEqual:(b)]
 #define NE(a, b) (![(a) isEqual:(b)])
 #define EQ_IGNORE_CASE(a, b) (NSOrderedSame == [(a) compare:(b)])
+
+#define MATCHES(pattern, str)               ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:0                                  error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
+#define MATCHES_IGNORE_CASE(pattern, str)   ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:NSRegularExpressionCaseInsensitive error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
 
 #define ABOVE(fence) [self.assembly objectsAbove:(fence)]
 
 #define LOG(obj) do { NSLog(@"%@", (obj)); } while (0);
 #define PRINT(str) do { printf("%s\n", (str)); } while (0);
 
-@interface PKSParser ()
-@property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
-@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
+@interface PEGParser ()
+@property (nonatomic, retain) NSMutableDictionary *tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *tokenKindNameTab;
+@property (nonatomic, retain) NSString *startRuleName;
+@property (nonatomic, retain) NSString *statementTerminator;
+@property (nonatomic, retain) NSString *singleLineCommentMarker;
+@property (nonatomic, retain) NSString *blockStartMarker;
+@property (nonatomic, retain) NSString *blockEndMarker;
+@property (nonatomic, retain) NSString *braces;
 
-- (BOOL)_popBool;
-- (NSInteger)_popInteger;
-- (double)_popDouble;
-- (PKToken *)_popToken;
-- (NSString *)_popString;
+- (BOOL)popBool;
+- (NSInteger)popInteger;
+- (double)popDouble;
+- (PKToken *)popToken;
+- (NSString *)popString;
 
-- (void)_pushBool:(BOOL)yn;
-- (void)_pushInteger:(NSInteger)i;
-- (void)_pushDouble:(double)d;
+- (void)pushBool:(BOOL)yn;
+- (void)pushInteger:(NSInteger)i;
+- (void)pushDouble:(double)d;
 @end
 
 @interface TDNSPredicateParser ()
+@property (nonatomic, retain) NSMutableDictionary *start_memo;
 @property (nonatomic, retain) NSMutableDictionary *expr_memo;
 @property (nonatomic, retain) NSMutableDictionary *orOrTerm_memo;
 @property (nonatomic, retain) NSMutableDictionary *orTerm_memo;
@@ -56,8 +66,8 @@
 @property (nonatomic, retain) NSMutableDictionary *string_memo;
 @property (nonatomic, retain) NSMutableDictionary *num_memo;
 @property (nonatomic, retain) NSMutableDictionary *bool_memo;
-@property (nonatomic, retain) NSMutableDictionary *trueLiteral_memo;
-@property (nonatomic, retain) NSMutableDictionary *falseLiteral_memo;
+@property (nonatomic, retain) NSMutableDictionary *true_memo;
+@property (nonatomic, retain) NSMutableDictionary *false_memo;
 @property (nonatomic, retain) NSMutableDictionary *array_memo;
 @property (nonatomic, retain) NSMutableDictionary *arrayContentsOpt_memo;
 @property (nonatomic, retain) NSMutableDictionary *arrayContents_memo;
@@ -109,80 +119,82 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self._tokenKindTab[@"ALL"] = @(TDNSPREDICATE_TOKEN_KIND_ALL);
-        self._tokenKindTab[@"FALSEPREDICATE"] = @(TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE);
-        self._tokenKindTab[@"NOT"] = @(TDNSPREDICATE_TOKEN_KIND_NOT_UPPER);
-        self._tokenKindTab[@"{"] = @(TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY);
-        self._tokenKindTab[@"=>"] = @(TDNSPREDICATE_TOKEN_KIND_HASH_ROCKET);
-        self._tokenKindTab[@">="] = @(TDNSPREDICATE_TOKEN_KIND_GE);
-        self._tokenKindTab[@"&&"] = @(TDNSPREDICATE_TOKEN_KIND_DOUBLE_AMPERSAND);
-        self._tokenKindTab[@"TRUEPREDICATE"] = @(TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE);
-        self._tokenKindTab[@"AND"] = @(TDNSPREDICATE_TOKEN_KIND_AND_UPPER);
-        self._tokenKindTab[@"}"] = @(TDNSPREDICATE_TOKEN_KIND_CLOSE_CURLY);
-        self._tokenKindTab[@"true"] = @(TDNSPREDICATE_TOKEN_KIND_TRUELITERAL);
-        self._tokenKindTab[@"!="] = @(TDNSPREDICATE_TOKEN_KIND_NE);
-        self._tokenKindTab[@"OR"] = @(TDNSPREDICATE_TOKEN_KIND_OR_UPPER);
-        self._tokenKindTab[@"!"] = @(TDNSPREDICATE_TOKEN_KIND_BANG);
-        self._tokenKindTab[@"SOME"] = @(TDNSPREDICATE_TOKEN_KIND_SOME);
-        self._tokenKindTab[@"IN"] = @(TDNSPREDICATE_TOKEN_KIND_INKEYWORD);
-        self._tokenKindTab[@"BEGINSWITH"] = @(TDNSPREDICATE_TOKEN_KIND_BEGINSWITH);
-        self._tokenKindTab[@"<"] = @(TDNSPREDICATE_TOKEN_KIND_LT);
-        self._tokenKindTab[@"="] = @(TDNSPREDICATE_TOKEN_KIND_EQUALS);
-        self._tokenKindTab[@"CONTAINS"] = @(TDNSPREDICATE_TOKEN_KIND_CONTAINS);
-        self._tokenKindTab[@">"] = @(TDNSPREDICATE_TOKEN_KIND_GT);
-        self._tokenKindTab[@"("] = @(TDNSPREDICATE_TOKEN_KIND_OPEN_PAREN);
-        self._tokenKindTab[@")"] = @(TDNSPREDICATE_TOKEN_KIND_CLOSE_PAREN);
-        self._tokenKindTab[@"||"] = @(TDNSPREDICATE_TOKEN_KIND_DOUBLE_PIPE);
-        self._tokenKindTab[@"MATCHES"] = @(TDNSPREDICATE_TOKEN_KIND_MATCHES);
-        self._tokenKindTab[@","] = @(TDNSPREDICATE_TOKEN_KIND_COMMA);
-        self._tokenKindTab[@"LIKE"] = @(TDNSPREDICATE_TOKEN_KIND_LIKE);
-        self._tokenKindTab[@"ANY"] = @(TDNSPREDICATE_TOKEN_KIND_ANY);
-        self._tokenKindTab[@"ENDSWITH"] = @(TDNSPREDICATE_TOKEN_KIND_ENDSWITH);
-        self._tokenKindTab[@"false"] = @(TDNSPREDICATE_TOKEN_KIND_FALSELITERAL);
-        self._tokenKindTab[@"<="] = @(TDNSPREDICATE_TOKEN_KIND_LE);
-        self._tokenKindTab[@"BETWEEN"] = @(TDNSPREDICATE_TOKEN_KIND_BETWEEN);
-        self._tokenKindTab[@"=<"] = @(TDNSPREDICATE_TOKEN_KIND_EL);
-        self._tokenKindTab[@"<>"] = @(TDNSPREDICATE_TOKEN_KIND_NOT_EQUAL);
-        self._tokenKindTab[@"NONE"] = @(TDNSPREDICATE_TOKEN_KIND_NONE);
-        self._tokenKindTab[@"=="] = @(TDNSPREDICATE_TOKEN_KIND_DOUBLE_EQUALS);
+        self.startRuleName = @"start";
+        self.tokenKindTab[@"ALL"] = @(TDNSPREDICATE_TOKEN_KIND_ALL);
+        self.tokenKindTab[@"FALSEPREDICATE"] = @(TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE);
+        self.tokenKindTab[@"NOT"] = @(TDNSPREDICATE_TOKEN_KIND_NOT_UPPER);
+        self.tokenKindTab[@"{"] = @(TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY);
+        self.tokenKindTab[@"=>"] = @(TDNSPREDICATE_TOKEN_KIND_HASH_ROCKET);
+        self.tokenKindTab[@">="] = @(TDNSPREDICATE_TOKEN_KIND_GE);
+        self.tokenKindTab[@"&&"] = @(TDNSPREDICATE_TOKEN_KIND_DOUBLE_AMPERSAND);
+        self.tokenKindTab[@"TRUEPREDICATE"] = @(TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE);
+        self.tokenKindTab[@"AND"] = @(TDNSPREDICATE_TOKEN_KIND_AND_UPPER);
+        self.tokenKindTab[@"}"] = @(TDNSPREDICATE_TOKEN_KIND_CLOSE_CURLY);
+        self.tokenKindTab[@"true"] = @(TDNSPREDICATE_TOKEN_KIND_TRUE);
+        self.tokenKindTab[@"!="] = @(TDNSPREDICATE_TOKEN_KIND_NE);
+        self.tokenKindTab[@"OR"] = @(TDNSPREDICATE_TOKEN_KIND_OR_UPPER);
+        self.tokenKindTab[@"!"] = @(TDNSPREDICATE_TOKEN_KIND_BANG);
+        self.tokenKindTab[@"SOME"] = @(TDNSPREDICATE_TOKEN_KIND_SOME);
+        self.tokenKindTab[@"IN"] = @(TDNSPREDICATE_TOKEN_KIND_INKEYWORD);
+        self.tokenKindTab[@"BEGINSWITH"] = @(TDNSPREDICATE_TOKEN_KIND_BEGINSWITH);
+        self.tokenKindTab[@"<"] = @(TDNSPREDICATE_TOKEN_KIND_LT);
+        self.tokenKindTab[@"="] = @(TDNSPREDICATE_TOKEN_KIND_EQUALS);
+        self.tokenKindTab[@"CONTAINS"] = @(TDNSPREDICATE_TOKEN_KIND_CONTAINS);
+        self.tokenKindTab[@">"] = @(TDNSPREDICATE_TOKEN_KIND_GT);
+        self.tokenKindTab[@"("] = @(TDNSPREDICATE_TOKEN_KIND_OPEN_PAREN);
+        self.tokenKindTab[@")"] = @(TDNSPREDICATE_TOKEN_KIND_CLOSE_PAREN);
+        self.tokenKindTab[@"||"] = @(TDNSPREDICATE_TOKEN_KIND_DOUBLE_PIPE);
+        self.tokenKindTab[@"MATCHES"] = @(TDNSPREDICATE_TOKEN_KIND_MATCHES);
+        self.tokenKindTab[@","] = @(TDNSPREDICATE_TOKEN_KIND_COMMA);
+        self.tokenKindTab[@"LIKE"] = @(TDNSPREDICATE_TOKEN_KIND_LIKE);
+        self.tokenKindTab[@"ANY"] = @(TDNSPREDICATE_TOKEN_KIND_ANY);
+        self.tokenKindTab[@"ENDSWITH"] = @(TDNSPREDICATE_TOKEN_KIND_ENDSWITH);
+        self.tokenKindTab[@"false"] = @(TDNSPREDICATE_TOKEN_KIND_FALSE);
+        self.tokenKindTab[@"<="] = @(TDNSPREDICATE_TOKEN_KIND_LE);
+        self.tokenKindTab[@"BETWEEN"] = @(TDNSPREDICATE_TOKEN_KIND_BETWEEN);
+        self.tokenKindTab[@"=<"] = @(TDNSPREDICATE_TOKEN_KIND_EL);
+        self.tokenKindTab[@"<>"] = @(TDNSPREDICATE_TOKEN_KIND_NOT_EQUAL);
+        self.tokenKindTab[@"NONE"] = @(TDNSPREDICATE_TOKEN_KIND_NONE);
+        self.tokenKindTab[@"=="] = @(TDNSPREDICATE_TOKEN_KIND_DOUBLE_EQUALS);
 
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_ALL] = @"ALL";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE] = @"FALSEPREDICATE";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NOT_UPPER] = @"NOT";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY] = @"{";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_HASH_ROCKET] = @"=>";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_GE] = @">=";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_DOUBLE_AMPERSAND] = @"&&";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE] = @"TRUEPREDICATE";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_AND_UPPER] = @"AND";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_CLOSE_CURLY] = @"}";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_TRUELITERAL] = @"true";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NE] = @"!=";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_OR_UPPER] = @"OR";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_BANG] = @"!";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_SOME] = @"SOME";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_INKEYWORD] = @"IN";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_BEGINSWITH] = @"BEGINSWITH";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_LT] = @"<";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_EQUALS] = @"=";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_CONTAINS] = @"CONTAINS";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_GT] = @">";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_OPEN_PAREN] = @"(";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_CLOSE_PAREN] = @")";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_DOUBLE_PIPE] = @"||";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_MATCHES] = @"MATCHES";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_COMMA] = @",";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_LIKE] = @"LIKE";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_ANY] = @"ANY";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_ENDSWITH] = @"ENDSWITH";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_FALSELITERAL] = @"false";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_LE] = @"<=";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_BETWEEN] = @"BETWEEN";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_EL] = @"=<";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NOT_EQUAL] = @"<>";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NONE] = @"NONE";
-        self._tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_DOUBLE_EQUALS] = @"==";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_ALL] = @"ALL";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE] = @"FALSEPREDICATE";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NOT_UPPER] = @"NOT";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY] = @"{";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_HASH_ROCKET] = @"=>";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_GE] = @">=";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_DOUBLE_AMPERSAND] = @"&&";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE] = @"TRUEPREDICATE";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_AND_UPPER] = @"AND";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_CLOSE_CURLY] = @"}";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_TRUE] = @"true";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NE] = @"!=";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_OR_UPPER] = @"OR";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_BANG] = @"!";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_SOME] = @"SOME";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_INKEYWORD] = @"IN";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_BEGINSWITH] = @"BEGINSWITH";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_LT] = @"<";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_EQUALS] = @"=";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_CONTAINS] = @"CONTAINS";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_GT] = @">";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_OPEN_PAREN] = @"(";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_CLOSE_PAREN] = @")";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_DOUBLE_PIPE] = @"||";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_MATCHES] = @"MATCHES";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_COMMA] = @",";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_LIKE] = @"LIKE";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_ANY] = @"ANY";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_ENDSWITH] = @"ENDSWITH";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_FALSE] = @"false";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_LE] = @"<=";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_BETWEEN] = @"BETWEEN";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_EL] = @"=<";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NOT_EQUAL] = @"<>";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_NONE] = @"NONE";
+        self.tokenKindNameTab[TDNSPREDICATE_TOKEN_KIND_DOUBLE_EQUALS] = @"==";
 
+        self.start_memo = [NSMutableDictionary dictionary];
         self.expr_memo = [NSMutableDictionary dictionary];
         self.orOrTerm_memo = [NSMutableDictionary dictionary];
         self.orTerm_memo = [NSMutableDictionary dictionary];
@@ -196,8 +208,8 @@
         self.string_memo = [NSMutableDictionary dictionary];
         self.num_memo = [NSMutableDictionary dictionary];
         self.bool_memo = [NSMutableDictionary dictionary];
-        self.trueLiteral_memo = [NSMutableDictionary dictionary];
-        self.falseLiteral_memo = [NSMutableDictionary dictionary];
+        self.true_memo = [NSMutableDictionary dictionary];
+        self.false_memo = [NSMutableDictionary dictionary];
         self.array_memo = [NSMutableDictionary dictionary];
         self.arrayContentsOpt_memo = [NSMutableDictionary dictionary];
         self.arrayContents_memo = [NSMutableDictionary dictionary];
@@ -247,6 +259,7 @@
 }
 
 - (void)dealloc {
+    self.start_memo = nil;
     self.expr_memo = nil;
     self.orOrTerm_memo = nil;
     self.orTerm_memo = nil;
@@ -260,8 +273,8 @@
     self.string_memo = nil;
     self.num_memo = nil;
     self.bool_memo = nil;
-    self.trueLiteral_memo = nil;
-    self.falseLiteral_memo = nil;
+    self.true_memo = nil;
+    self.false_memo = nil;
     self.array_memo = nil;
     self.arrayContentsOpt_memo = nil;
     self.arrayContents_memo = nil;
@@ -311,6 +324,7 @@
 }
 
 - (void)_clearMemo {
+    [_start_memo removeAllObjects];
     [_expr_memo removeAllObjects];
     [_orOrTerm_memo removeAllObjects];
     [_orTerm_memo removeAllObjects];
@@ -324,8 +338,8 @@
     [_string_memo removeAllObjects];
     [_num_memo removeAllObjects];
     [_bool_memo removeAllObjects];
-    [_trueLiteral_memo removeAllObjects];
-    [_falseLiteral_memo removeAllObjects];
+    [_true_memo removeAllObjects];
+    [_false_memo removeAllObjects];
     [_array_memo removeAllObjects];
     [_arrayContentsOpt_memo removeAllObjects];
     [_arrayContents_memo removeAllObjects];
@@ -372,7 +386,11 @@
     [_none_memo removeAllObjects];
 }
 
-- (void)_start {
+- (void)start {
+    [self start_];
+}
+
+- (void)__start {
     
     [self execute:(id)^{
     
@@ -393,77 +411,76 @@
 	[t.symbolState add:@"||"];
  
     }];
-    [self expr]; 
+    do {
+        [self expr_]; 
+    } while ([self speculate:^{ [self expr_]; }]);
     [self matchEOF:YES]; 
 
+    [self fireAssemblerSelector:@selector(parser:didMatchStart:)];
+}
+
+- (void)start_ {
+    [self parseRule:@selector(__start) withMemo:_start_memo];
 }
 
 - (void)__expr {
     
-    [self orTerm]; 
-    while ([self predicts:TDNSPREDICATE_TOKEN_KIND_DOUBLE_PIPE, TDNSPREDICATE_TOKEN_KIND_OR_UPPER, 0]) {
-        if ([self speculate:^{ [self orOrTerm]; }]) {
-            [self orOrTerm]; 
-        } else {
-            break;
-        }
+    [self orTerm_]; 
+    while ([self speculate:^{ [self orOrTerm_]; }]) {
+        [self orOrTerm_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchExpr:)];
 }
 
-- (void)expr {
+- (void)expr_ {
     [self parseRule:@selector(__expr) withMemo:_expr_memo];
 }
 
 - (void)__orOrTerm {
     
-    [self orKeyword]; 
-    [self orTerm]; 
+    [self orKeyword_]; 
+    [self orTerm_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchOrOrTerm:)];
 }
 
-- (void)orOrTerm {
+- (void)orOrTerm_ {
     [self parseRule:@selector(__orOrTerm) withMemo:_orOrTerm_memo];
 }
 
 - (void)__orTerm {
     
-    [self andTerm]; 
-    while ([self predicts:TDNSPREDICATE_TOKEN_KIND_AND_UPPER, TDNSPREDICATE_TOKEN_KIND_DOUBLE_AMPERSAND, 0]) {
-        if ([self speculate:^{ [self andAndTerm]; }]) {
-            [self andAndTerm]; 
-        } else {
-            break;
-        }
+    [self andTerm_]; 
+    while ([self speculate:^{ [self andAndTerm_]; }]) {
+        [self andAndTerm_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchOrTerm:)];
 }
 
-- (void)orTerm {
+- (void)orTerm_ {
     [self parseRule:@selector(__orTerm) withMemo:_orTerm_memo];
 }
 
 - (void)__andAndTerm {
     
-    [self andKeyword]; 
-    [self andTerm]; 
+    [self andKeyword_]; 
+    [self andTerm_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchAndAndTerm:)];
 }
 
-- (void)andAndTerm {
+- (void)andAndTerm_ {
     [self parseRule:@selector(__andAndTerm) withMemo:_andAndTerm_memo];
 }
 
 - (void)__andTerm {
     
-    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ALL, TDNSPREDICATE_TOKEN_KIND_ANY, TDNSPREDICATE_TOKEN_KIND_BANG, TDNSPREDICATE_TOKEN_KIND_FALSELITERAL, TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE, TDNSPREDICATE_TOKEN_KIND_NONE, TDNSPREDICATE_TOKEN_KIND_NOT_UPPER, TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, TDNSPREDICATE_TOKEN_KIND_SOME, TDNSPREDICATE_TOKEN_KIND_TRUELITERAL, TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self primaryExpr]; 
+    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ALL, TDNSPREDICATE_TOKEN_KIND_ANY, TDNSPREDICATE_TOKEN_KIND_BANG, TDNSPREDICATE_TOKEN_KIND_FALSE, TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE, TDNSPREDICATE_TOKEN_KIND_NONE, TDNSPREDICATE_TOKEN_KIND_NOT_UPPER, TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, TDNSPREDICATE_TOKEN_KIND_SOME, TDNSPREDICATE_TOKEN_KIND_TRUE, TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
+        [self primaryExpr_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_OPEN_PAREN, 0]) {
-        [self compoundExpr]; 
+        [self compoundExpr_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'andTerm'."];
     }
@@ -471,29 +488,29 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAndTerm:)];
 }
 
-- (void)andTerm {
+- (void)andTerm_ {
     [self parseRule:@selector(__andTerm) withMemo:_andTerm_memo];
 }
 
 - (void)__compoundExpr {
     
     [self match:TDNSPREDICATE_TOKEN_KIND_OPEN_PAREN discard:YES]; 
-    [self expr]; 
+    [self expr_]; 
     [self match:TDNSPREDICATE_TOKEN_KIND_CLOSE_PAREN discard:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCompoundExpr:)];
 }
 
-- (void)compoundExpr {
+- (void)compoundExpr_ {
     [self parseRule:@selector(__compoundExpr) withMemo:_compoundExpr_memo];
 }
 
 - (void)__primaryExpr {
     
-    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ALL, TDNSPREDICATE_TOKEN_KIND_ANY, TDNSPREDICATE_TOKEN_KIND_FALSELITERAL, TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE, TDNSPREDICATE_TOKEN_KIND_NONE, TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, TDNSPREDICATE_TOKEN_KIND_SOME, TDNSPREDICATE_TOKEN_KIND_TRUELITERAL, TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self predicate]; 
+    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ALL, TDNSPREDICATE_TOKEN_KIND_ANY, TDNSPREDICATE_TOKEN_KIND_FALSE, TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE, TDNSPREDICATE_TOKEN_KIND_NONE, TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, TDNSPREDICATE_TOKEN_KIND_SOME, TDNSPREDICATE_TOKEN_KIND_TRUE, TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
+        [self predicate_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_BANG, TDNSPREDICATE_TOKEN_KIND_NOT_UPPER, 0]) {
-        [self negatedPredicate]; 
+        [self negatedPredicate_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'primaryExpr'."];
     }
@@ -501,32 +518,32 @@
     [self fireAssemblerSelector:@selector(parser:didMatchPrimaryExpr:)];
 }
 
-- (void)primaryExpr {
+- (void)primaryExpr_ {
     [self parseRule:@selector(__primaryExpr) withMemo:_primaryExpr_memo];
 }
 
 - (void)__negatedPredicate {
     
-    [self notKeyword]; 
-    [self predicate]; 
+    [self notKeyword_]; 
+    [self predicate_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNegatedPredicate:)];
 }
 
-- (void)negatedPredicate {
+- (void)negatedPredicate_ {
     [self parseRule:@selector(__negatedPredicate) withMemo:_negatedPredicate_memo];
 }
 
 - (void)__predicate {
     
-    if ([self speculate:^{ [self collectionTestPredicate]; }]) {
-        [self collectionTestPredicate]; 
-    } else if ([self speculate:^{ [self boolPredicate]; }]) {
-        [self boolPredicate]; 
-    } else if ([self speculate:^{ [self comparisonPredicate]; }]) {
-        [self comparisonPredicate]; 
-    } else if ([self speculate:^{ [self stringTestPredicate]; }]) {
-        [self stringTestPredicate]; 
+    if ([self speculate:^{ [self collectionTestPredicate_]; }]) {
+        [self collectionTestPredicate_]; 
+    } else if ([self speculate:^{ [self boolPredicate_]; }]) {
+        [self boolPredicate_]; 
+    } else if ([self speculate:^{ [self comparisonPredicate_]; }]) {
+        [self comparisonPredicate_]; 
+    } else if ([self speculate:^{ [self stringTestPredicate_]; }]) {
+        [self stringTestPredicate_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'predicate'."];
     }
@@ -534,22 +551,22 @@
     [self fireAssemblerSelector:@selector(parser:didMatchPredicate:)];
 }
 
-- (void)predicate {
+- (void)predicate_ {
     [self parseRule:@selector(__predicate) withMemo:_predicate_memo];
 }
 
 - (void)__value {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self keyPath]; 
+        [self keyPath_]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-        [self string]; 
+        [self string_]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_NUMBER, 0]) {
-        [self num]; 
-    } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_FALSELITERAL, TDNSPREDICATE_TOKEN_KIND_TRUELITERAL, 0]) {
-        [self bool]; 
+        [self num_]; 
+    } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_FALSE, TDNSPREDICATE_TOKEN_KIND_TRUE, 0]) {
+        [self bool_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, 0]) {
-        [self array]; 
+        [self array_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'value'."];
     }
@@ -557,7 +574,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchValue:)];
 }
 
-- (void)value {
+- (void)value_ {
     [self parseRule:@selector(__value) withMemo:_value_memo];
 }
 
@@ -568,7 +585,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchString:)];
 }
 
-- (void)string {
+- (void)string_ {
     [self parseRule:@selector(__string) withMemo:_string_memo];
 }
 
@@ -579,16 +596,16 @@
     [self fireAssemblerSelector:@selector(parser:didMatchNum:)];
 }
 
-- (void)num {
+- (void)num_ {
     [self parseRule:@selector(__num) withMemo:_num_memo];
 }
 
 - (void)__bool {
     
-    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_TRUELITERAL, 0]) {
-        [self trueLiteral]; 
-    } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_FALSELITERAL, 0]) {
-        [self falseLiteral]; 
+    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_TRUE, 0]) {
+        [self true_]; 
+    } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_FALSE, 0]) {
+        [self false_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'bool'."];
     }
@@ -596,85 +613,81 @@
     [self fireAssemblerSelector:@selector(parser:didMatchBool:)];
 }
 
-- (void)bool {
+- (void)bool_ {
     [self parseRule:@selector(__bool) withMemo:_bool_memo];
 }
 
-- (void)__trueLiteral {
+- (void)__true {
     
-    [self match:TDNSPREDICATE_TOKEN_KIND_TRUELITERAL discard:YES]; 
+    [self match:TDNSPREDICATE_TOKEN_KIND_TRUE discard:YES]; 
 
-    [self fireAssemblerSelector:@selector(parser:didMatchTrueLiteral:)];
+    [self fireAssemblerSelector:@selector(parser:didMatchTrue:)];
 }
 
-- (void)trueLiteral {
-    [self parseRule:@selector(__trueLiteral) withMemo:_trueLiteral_memo];
+- (void)true_ {
+    [self parseRule:@selector(__true) withMemo:_true_memo];
 }
 
-- (void)__falseLiteral {
+- (void)__false {
     
-    [self match:TDNSPREDICATE_TOKEN_KIND_FALSELITERAL discard:YES]; 
+    [self match:TDNSPREDICATE_TOKEN_KIND_FALSE discard:YES]; 
 
-    [self fireAssemblerSelector:@selector(parser:didMatchFalseLiteral:)];
+    [self fireAssemblerSelector:@selector(parser:didMatchFalse:)];
 }
 
-- (void)falseLiteral {
-    [self parseRule:@selector(__falseLiteral) withMemo:_falseLiteral_memo];
+- (void)false_ {
+    [self parseRule:@selector(__false) withMemo:_false_memo];
 }
 
 - (void)__array {
     
     [self match:TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY discard:NO]; 
-    [self arrayContentsOpt]; 
+    [self arrayContentsOpt_]; 
     [self match:TDNSPREDICATE_TOKEN_KIND_CLOSE_CURLY discard:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchArray:)];
 }
 
-- (void)array {
+- (void)array_ {
     [self parseRule:@selector(__array) withMemo:_array_memo];
 }
 
 - (void)__arrayContentsOpt {
     
-    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_FALSELITERAL, TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, TDNSPREDICATE_TOKEN_KIND_TRUELITERAL, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self arrayContents]; 
+    if ([self predicts:TDNSPREDICATE_TOKEN_KIND_FALSE, TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, TDNSPREDICATE_TOKEN_KIND_TRUE, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
+        [self arrayContents_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchArrayContentsOpt:)];
 }
 
-- (void)arrayContentsOpt {
+- (void)arrayContentsOpt_ {
     [self parseRule:@selector(__arrayContentsOpt) withMemo:_arrayContentsOpt_memo];
 }
 
 - (void)__arrayContents {
     
-    [self value]; 
-    while ([self predicts:TDNSPREDICATE_TOKEN_KIND_COMMA, 0]) {
-        if ([self speculate:^{ [self commaValue]; }]) {
-            [self commaValue]; 
-        } else {
-            break;
-        }
+    [self value_]; 
+    while ([self speculate:^{ [self commaValue_]; }]) {
+        [self commaValue_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchArrayContents:)];
 }
 
-- (void)arrayContents {
+- (void)arrayContents_ {
     [self parseRule:@selector(__arrayContents) withMemo:_arrayContents_memo];
 }
 
 - (void)__commaValue {
     
     [self match:TDNSPREDICATE_TOKEN_KIND_COMMA discard:YES]; 
-    [self value]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCommaValue:)];
 }
 
-- (void)commaValue {
+- (void)commaValue_ {
     [self parseRule:@selector(__commaValue) withMemo:_commaValue_memo];
 }
 
@@ -685,16 +698,16 @@
     [self fireAssemblerSelector:@selector(parser:didMatchKeyPath:)];
 }
 
-- (void)keyPath {
+- (void)keyPath_ {
     [self parseRule:@selector(__keyPath) withMemo:_keyPath_memo];
 }
 
 - (void)__comparisonPredicate {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self numComparisonPredicate]; 
+        [self numComparisonPredicate_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ALL, TDNSPREDICATE_TOKEN_KIND_ANY, TDNSPREDICATE_TOKEN_KIND_NONE, TDNSPREDICATE_TOKEN_KIND_SOME, 0]) {
-        [self collectionComparisonPredicate]; 
+        [self collectionComparisonPredicate_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'comparisonPredicate'."];
     }
@@ -702,29 +715,29 @@
     [self fireAssemblerSelector:@selector(parser:didMatchComparisonPredicate:)];
 }
 
-- (void)comparisonPredicate {
+- (void)comparisonPredicate_ {
     [self parseRule:@selector(__comparisonPredicate) withMemo:_comparisonPredicate_memo];
 }
 
 - (void)__numComparisonPredicate {
     
-    [self numComparisonValue]; 
-    [self comparisonOp]; 
-    [self numComparisonValue]; 
+    [self numComparisonValue_]; 
+    [self comparisonOp_]; 
+    [self numComparisonValue_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchNumComparisonPredicate:)];
 }
 
-- (void)numComparisonPredicate {
+- (void)numComparisonPredicate_ {
     [self parseRule:@selector(__numComparisonPredicate) withMemo:_numComparisonPredicate_memo];
 }
 
 - (void)__numComparisonValue {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self keyPath]; 
+        [self keyPath_]; 
     } else if ([self predicts:TOKEN_KIND_BUILTIN_NUMBER, 0]) {
-        [self num]; 
+        [self num_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'numComparisonValue'."];
     }
@@ -732,26 +745,26 @@
     [self fireAssemblerSelector:@selector(parser:didMatchNumComparisonValue:)];
 }
 
-- (void)numComparisonValue {
+- (void)numComparisonValue_ {
     [self parseRule:@selector(__numComparisonValue) withMemo:_numComparisonValue_memo];
 }
 
 - (void)__comparisonOp {
     
     if ([self predicts:TDNSPREDICATE_TOKEN_KIND_DOUBLE_EQUALS, TDNSPREDICATE_TOKEN_KIND_EQUALS, 0]) {
-        [self eq]; 
+        [self eq_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_GT, 0]) {
-        [self gt]; 
+        [self gt_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_LT, 0]) {
-        [self lt]; 
+        [self lt_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_GE, TDNSPREDICATE_TOKEN_KIND_HASH_ROCKET, 0]) {
-        [self gtEq]; 
+        [self gtEq_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_EL, TDNSPREDICATE_TOKEN_KIND_LE, 0]) {
-        [self ltEq]; 
+        [self ltEq_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_NE, TDNSPREDICATE_TOKEN_KIND_NOT_EQUAL, 0]) {
-        [self notEq]; 
+        [self notEq_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_BETWEEN, 0]) {
-        [self between]; 
+        [self between_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'comparisonOp'."];
     }
@@ -759,7 +772,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchComparisonOp:)];
 }
 
-- (void)comparisonOp {
+- (void)comparisonOp_ {
     [self parseRule:@selector(__comparisonOp) withMemo:_comparisonOp_memo];
 }
 
@@ -776,7 +789,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchEq:)];
 }
 
-- (void)eq {
+- (void)eq_ {
     [self parseRule:@selector(__eq) withMemo:_eq_memo];
 }
 
@@ -787,7 +800,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchGt:)];
 }
 
-- (void)gt {
+- (void)gt_ {
     [self parseRule:@selector(__gt) withMemo:_gt_memo];
 }
 
@@ -798,7 +811,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchLt:)];
 }
 
-- (void)lt {
+- (void)lt_ {
     [self parseRule:@selector(__lt) withMemo:_lt_memo];
 }
 
@@ -815,7 +828,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchGtEq:)];
 }
 
-- (void)gtEq {
+- (void)gtEq_ {
     [self parseRule:@selector(__gtEq) withMemo:_gtEq_memo];
 }
 
@@ -832,7 +845,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchLtEq:)];
 }
 
-- (void)ltEq {
+- (void)ltEq_ {
     [self parseRule:@selector(__ltEq) withMemo:_ltEq_memo];
 }
 
@@ -849,7 +862,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchNotEq:)];
 }
 
-- (void)notEq {
+- (void)notEq_ {
     [self parseRule:@selector(__notEq) withMemo:_notEq_memo];
 }
 
@@ -860,24 +873,24 @@
     [self fireAssemblerSelector:@selector(parser:didMatchBetween:)];
 }
 
-- (void)between {
+- (void)between_ {
     [self parseRule:@selector(__between) withMemo:_between_memo];
 }
 
 - (void)__collectionComparisonPredicate {
     
-    if ([self speculate:^{ [self collectionLtPredicate]; }]) {
-        [self collectionLtPredicate]; 
-    } else if ([self speculate:^{ [self collectionGtPredicate]; }]) {
-        [self collectionGtPredicate]; 
-    } else if ([self speculate:^{ [self collectionLtEqPredicate]; }]) {
-        [self collectionLtEqPredicate]; 
-    } else if ([self speculate:^{ [self collectionGtEqPredicate]; }]) {
-        [self collectionGtEqPredicate]; 
-    } else if ([self speculate:^{ [self collectionEqPredicate]; }]) {
-        [self collectionEqPredicate]; 
-    } else if ([self speculate:^{ [self collectionNotEqPredicate]; }]) {
-        [self collectionNotEqPredicate]; 
+    if ([self speculate:^{ [self collectionLtPredicate_]; }]) {
+        [self collectionLtPredicate_]; 
+    } else if ([self speculate:^{ [self collectionGtPredicate_]; }]) {
+        [self collectionGtPredicate_]; 
+    } else if ([self speculate:^{ [self collectionLtEqPredicate_]; }]) {
+        [self collectionLtEqPredicate_]; 
+    } else if ([self speculate:^{ [self collectionGtEqPredicate_]; }]) {
+        [self collectionGtEqPredicate_]; 
+    } else if ([self speculate:^{ [self collectionEqPredicate_]; }]) {
+        [self collectionEqPredicate_]; 
+    } else if ([self speculate:^{ [self collectionNotEqPredicate_]; }]) {
+        [self collectionNotEqPredicate_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'collectionComparisonPredicate'."];
     }
@@ -885,100 +898,100 @@
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionComparisonPredicate:)];
 }
 
-- (void)collectionComparisonPredicate {
+- (void)collectionComparisonPredicate_ {
     [self parseRule:@selector(__collectionComparisonPredicate) withMemo:_collectionComparisonPredicate_memo];
 }
 
 - (void)__collectionLtPredicate {
     
-    [self aggregateOp]; 
-    [self collection]; 
-    [self lt]; 
-    [self value]; 
+    [self aggregateOp_]; 
+    [self collection_]; 
+    [self lt_]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionLtPredicate:)];
 }
 
-- (void)collectionLtPredicate {
+- (void)collectionLtPredicate_ {
     [self parseRule:@selector(__collectionLtPredicate) withMemo:_collectionLtPredicate_memo];
 }
 
 - (void)__collectionGtPredicate {
     
-    [self aggregateOp]; 
-    [self collection]; 
-    [self gt]; 
-    [self value]; 
+    [self aggregateOp_]; 
+    [self collection_]; 
+    [self gt_]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionGtPredicate:)];
 }
 
-- (void)collectionGtPredicate {
+- (void)collectionGtPredicate_ {
     [self parseRule:@selector(__collectionGtPredicate) withMemo:_collectionGtPredicate_memo];
 }
 
 - (void)__collectionLtEqPredicate {
     
-    [self aggregateOp]; 
-    [self collection]; 
-    [self ltEq]; 
-    [self value]; 
+    [self aggregateOp_]; 
+    [self collection_]; 
+    [self ltEq_]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionLtEqPredicate:)];
 }
 
-- (void)collectionLtEqPredicate {
+- (void)collectionLtEqPredicate_ {
     [self parseRule:@selector(__collectionLtEqPredicate) withMemo:_collectionLtEqPredicate_memo];
 }
 
 - (void)__collectionGtEqPredicate {
     
-    [self aggregateOp]; 
-    [self collection]; 
-    [self gtEq]; 
-    [self value]; 
+    [self aggregateOp_]; 
+    [self collection_]; 
+    [self gtEq_]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionGtEqPredicate:)];
 }
 
-- (void)collectionGtEqPredicate {
+- (void)collectionGtEqPredicate_ {
     [self parseRule:@selector(__collectionGtEqPredicate) withMemo:_collectionGtEqPredicate_memo];
 }
 
 - (void)__collectionEqPredicate {
     
-    [self aggregateOp]; 
-    [self collection]; 
-    [self eq]; 
-    [self value]; 
+    [self aggregateOp_]; 
+    [self collection_]; 
+    [self eq_]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionEqPredicate:)];
 }
 
-- (void)collectionEqPredicate {
+- (void)collectionEqPredicate_ {
     [self parseRule:@selector(__collectionEqPredicate) withMemo:_collectionEqPredicate_memo];
 }
 
 - (void)__collectionNotEqPredicate {
     
-    [self aggregateOp]; 
-    [self collection]; 
-    [self notEq]; 
-    [self value]; 
+    [self aggregateOp_]; 
+    [self collection_]; 
+    [self notEq_]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionNotEqPredicate:)];
 }
 
-- (void)collectionNotEqPredicate {
+- (void)collectionNotEqPredicate_ {
     [self parseRule:@selector(__collectionNotEqPredicate) withMemo:_collectionNotEqPredicate_memo];
 }
 
 - (void)__boolPredicate {
     
     if ([self predicts:TDNSPREDICATE_TOKEN_KIND_TRUEPREDICATE, 0]) {
-        [self truePredicate]; 
+        [self truePredicate_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_FALSEPREDICATE, 0]) {
-        [self falsePredicate]; 
+        [self falsePredicate_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'boolPredicate'."];
     }
@@ -986,7 +999,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchBoolPredicate:)];
 }
 
-- (void)boolPredicate {
+- (void)boolPredicate_ {
     [self parseRule:@selector(__boolPredicate) withMemo:_boolPredicate_memo];
 }
 
@@ -997,7 +1010,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchTruePredicate:)];
 }
 
-- (void)truePredicate {
+- (void)truePredicate_ {
     [self parseRule:@selector(__truePredicate) withMemo:_truePredicate_memo];
 }
 
@@ -1008,7 +1021,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchFalsePredicate:)];
 }
 
-- (void)falsePredicate {
+- (void)falsePredicate_ {
     [self parseRule:@selector(__falsePredicate) withMemo:_falsePredicate_memo];
 }
 
@@ -1025,7 +1038,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAndKeyword:)];
 }
 
-- (void)andKeyword {
+- (void)andKeyword_ {
     [self parseRule:@selector(__andKeyword) withMemo:_andKeyword_memo];
 }
 
@@ -1042,7 +1055,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchOrKeyword:)];
 }
 
-- (void)orKeyword {
+- (void)orKeyword_ {
     [self parseRule:@selector(__orKeyword) withMemo:_orKeyword_memo];
 }
 
@@ -1059,35 +1072,35 @@
     [self fireAssemblerSelector:@selector(parser:didMatchNotKeyword:)];
 }
 
-- (void)notKeyword {
+- (void)notKeyword_ {
     [self parseRule:@selector(__notKeyword) withMemo:_notKeyword_memo];
 }
 
 - (void)__stringTestPredicate {
     
-    [self string]; 
-    [self stringTestOp]; 
-    [self value]; 
+    [self string_]; 
+    [self stringTestOp_]; 
+    [self value_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchStringTestPredicate:)];
 }
 
-- (void)stringTestPredicate {
+- (void)stringTestPredicate_ {
     [self parseRule:@selector(__stringTestPredicate) withMemo:_stringTestPredicate_memo];
 }
 
 - (void)__stringTestOp {
     
     if ([self predicts:TDNSPREDICATE_TOKEN_KIND_BEGINSWITH, 0]) {
-        [self beginswith]; 
+        [self beginswith_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_CONTAINS, 0]) {
-        [self contains]; 
+        [self contains_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ENDSWITH, 0]) {
-        [self endswith]; 
+        [self endswith_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_LIKE, 0]) {
-        [self like]; 
+        [self like_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_MATCHES, 0]) {
-        [self matches]; 
+        [self matches_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'stringTestOp'."];
     }
@@ -1095,7 +1108,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchStringTestOp:)];
 }
 
-- (void)stringTestOp {
+- (void)stringTestOp_ {
     [self parseRule:@selector(__stringTestOp) withMemo:_stringTestOp_memo];
 }
 
@@ -1106,7 +1119,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchBeginswith:)];
 }
 
-- (void)beginswith {
+- (void)beginswith_ {
     [self parseRule:@selector(__beginswith) withMemo:_beginswith_memo];
 }
 
@@ -1117,7 +1130,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchContains:)];
 }
 
-- (void)contains {
+- (void)contains_ {
     [self parseRule:@selector(__contains) withMemo:_contains_memo];
 }
 
@@ -1128,7 +1141,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchEndswith:)];
 }
 
-- (void)endswith {
+- (void)endswith_ {
     [self parseRule:@selector(__endswith) withMemo:_endswith_memo];
 }
 
@@ -1139,7 +1152,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchLike:)];
 }
 
-- (void)like {
+- (void)like_ {
     [self parseRule:@selector(__like) withMemo:_like_memo];
 }
 
@@ -1150,29 +1163,29 @@
     [self fireAssemblerSelector:@selector(parser:didMatchMatches:)];
 }
 
-- (void)matches {
+- (void)matches_ {
     [self parseRule:@selector(__matches) withMemo:_matches_memo];
 }
 
 - (void)__collectionTestPredicate {
     
-    [self value]; 
-    [self inKeyword]; 
-    [self collection]; 
+    [self value_]; 
+    [self inKeyword_]; 
+    [self collection_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionTestPredicate:)];
 }
 
-- (void)collectionTestPredicate {
+- (void)collectionTestPredicate_ {
     [self parseRule:@selector(__collectionTestPredicate) withMemo:_collectionTestPredicate_memo];
 }
 
 - (void)__collection {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self keyPath]; 
+        [self keyPath_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, 0]) {
-        [self array]; 
+        [self array_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'collection'."];
     }
@@ -1180,7 +1193,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchCollection:)];
 }
 
-- (void)collection {
+- (void)collection_ {
     [self parseRule:@selector(__collection) withMemo:_collection_memo];
 }
 
@@ -1191,20 +1204,20 @@
     [self fireAssemblerSelector:@selector(parser:didMatchInKeyword:)];
 }
 
-- (void)inKeyword {
+- (void)inKeyword_ {
     [self parseRule:@selector(__inKeyword) withMemo:_inKeyword_memo];
 }
 
 - (void)__aggregateOp {
     
     if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ANY, 0]) {
-        [self any]; 
+        [self any_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_SOME, 0]) {
-        [self some]; 
+        [self some_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_ALL, 0]) {
-        [self all]; 
+        [self all_]; 
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_NONE, 0]) {
-        [self none]; 
+        [self none_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'aggregateOp'."];
     }
@@ -1212,7 +1225,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAggregateOp:)];
 }
 
-- (void)aggregateOp {
+- (void)aggregateOp_ {
     [self parseRule:@selector(__aggregateOp) withMemo:_aggregateOp_memo];
 }
 
@@ -1223,7 +1236,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAny:)];
 }
 
-- (void)any {
+- (void)any_ {
     [self parseRule:@selector(__any) withMemo:_any_memo];
 }
 
@@ -1234,7 +1247,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchSome:)];
 }
 
-- (void)some {
+- (void)some_ {
     [self parseRule:@selector(__some) withMemo:_some_memo];
 }
 
@@ -1245,7 +1258,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAll:)];
 }
 
-- (void)all {
+- (void)all_ {
     [self parseRule:@selector(__all) withMemo:_all_memo];
 }
 
@@ -1256,7 +1269,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchNone:)];
 }
 
-- (void)none {
+- (void)none_ {
     [self parseRule:@selector(__none) withMemo:_none_memo];
 }
 

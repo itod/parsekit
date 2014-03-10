@@ -1,6 +1,6 @@
 @symbols = '<@' '<@=' '@>';
 
-@start = (ignored | importantStuff)*;
+start = (ignored | importantStuff)*;
 ignored = ~startMarker;
 
 importantStuff = print | eval;

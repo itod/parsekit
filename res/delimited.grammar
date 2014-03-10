@@ -2,7 +2,7 @@
 @delimitState = '<';
 
 
-@start 
+start 
 @before {
     PKTokenizer *t = self.tokenizer;
 

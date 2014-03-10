@@ -3,16 +3,14 @@
 */
 
 
-@start          = stylesheet;
-
 //  stylesheet
 //      : [ CHARSET_SYM S* STRING S* ';' ]?
 //        [S|CDO|CDC]* [ import [S|CDO|CDC]* ]*
 //        [ [ ruleset | media | page | font_face ] [S|CDO|CDC]* ]*
 //      ;
+stylesheet      = charset? import* contents;
 charsetSymbol   = '@' 'charset';
 charset         = (charsetSymbol Word ';');
-stylesheet      = charset? import* contents;
 contents        = (ruleset | media | page | fontFace)*;
 stuff           = (cdo|cdc)*;
 

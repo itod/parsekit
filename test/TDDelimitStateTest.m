@@ -27,6 +27,339 @@
 }
 
 
+- (NSString *)stringInFile:(NSString *)filename {
+    NSString *file = [filename stringByDeletingPathExtension];
+    NSString *ext = [filename pathExtension];
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:file ofType:ext];
+    NSString *str = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    return str;
+}
+
+
+- (void)testUnreadDivEightComment {
+    s = @"foo/8\n//bar";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    t.whitespaceState.reportsWhitespaceTokens = YES;
+    
+    // setup comments
+    t.commentState.reportsCommentTokens = YES;
+    [t setTokenizerState:t.commentState from:'/' to:'/'];
+    [t.commentState addSingleLineStartMarker:@"//"];
+    [t.commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
+    
+    // comment state should fallback to delimit state to match regex delimited strings
+    t.commentState.fallbackState = t.delimitState;
+    
+    // regex delimited strings
+    cs = [[NSCharacterSet newlineCharacterSet] invertedSet];
+    [t.delimitState addStartMarker:@"/" endMarker:@"/" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWord);
+    TDEqualObjects(@"foo", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@"/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isNumber);
+    TDEqualObjects(@"8", tok.stringValue);
+    TDEquals((double)8.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWhitespace);
+    TDEqualObjects(@"\n", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isComment);
+    TDEqualObjects(@"//bar", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects([PKToken EOFToken], tok);
+}
+
+
+- (void)testUnreadDivEightComment2 {
+    s = @"foo/8\n//";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    t.whitespaceState.reportsWhitespaceTokens = YES;
+    
+    // setup comments
+    t.commentState.reportsCommentTokens = YES;
+    [t setTokenizerState:t.commentState from:'/' to:'/'];
+    [t.commentState addSingleLineStartMarker:@"//"];
+    [t.commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
+    
+    // comment state should fallback to delimit state to match regex delimited strings
+    t.commentState.fallbackState = t.delimitState;
+    
+    // regex delimited strings
+    cs = [[NSCharacterSet newlineCharacterSet] invertedSet];
+    [t.delimitState addStartMarker:@"/" endMarker:@"/" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWord);
+    TDEqualObjects(@"foo", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@"/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isNumber);
+    TDEqualObjects(@"8", tok.stringValue);
+    TDEquals((double)8.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWhitespace);
+    TDEqualObjects(@"\n", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isComment);
+    TDEqualObjects(@"//", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects([PKToken EOFToken], tok);
+}
+
+
+- (void)testUnreadDivEight {
+    s = @"{unread= unread/8";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    t.whitespaceState.reportsWhitespaceTokens = YES;
+    
+    // setup comments
+    t.commentState.reportsCommentTokens = YES;
+    [t setTokenizerState:t.commentState from:'/' to:'/'];
+    [t.commentState addSingleLineStartMarker:@"//"];
+    [t.commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
+    
+    // comment state should fallback to delimit state to match regex delimited strings
+    t.commentState.fallbackState = t.delimitState;
+    
+    // regex delimited strings
+    cs = [[NSCharacterSet newlineCharacterSet] invertedSet];
+    [t.delimitState addStartMarker:@"/" endMarker:@"/" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@"{", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWord);
+    TDEqualObjects(@"unread", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@"=", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWhitespace);
+    TDEqualObjects(@" ", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWord);
+    TDEqualObjects(@"unread", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@"/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isNumber);
+    TDEqualObjects(@"8", tok.stringValue);
+    TDEquals((double)8.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects([PKToken EOFToken], tok);
+}
+
+
+- (void)testSlashSlashEscapeSemi {
+    s = @"/foo\\/bar/;";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    [t setTokenizerState:delimitState from:'/' to:'/'];
+    [delimitState addStartMarker:@"/" endMarker:@"/" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isDelimitedString);
+    TDEqualObjects(@"/foo\\/bar/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@";", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects([PKToken EOFToken], tok);
+}
+
+
+- (void)testSlashSlashEscape {
+    s = @"/foo\\/bar/";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    [t setTokenizerState:delimitState from:'/' to:'/'];
+    [delimitState addStartMarker:@"/" endMarker:@"/" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isDelimitedString);
+    TDEqualObjects(@"/foo\\/bar/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isEOF);
+}
+
+
+- (void)testSlashSlashEscapeBackslash {
+    s = @"/foo\\\\/bar/";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    [t setTokenizerState:delimitState from:'/' to:'/'];
+    [delimitState addStartMarker:@"/" endMarker:@"/" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isDelimitedString);
+    TDEqualObjects(@"/foo\\\\/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWord);
+    TDEqualObjects(@"bar", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@"/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isEOF);
+}
+
+
+- (void)testSlashSlashEscapeBackslashFile {
+    s = [self stringInFile:[NSString stringWithFormat:@"%@.txt", NSStringFromSelector(_cmd)]];
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    [t setTokenizerState:delimitState from:'/' to:'/'];
+    [delimitState addStartMarker:@"/" endMarker:@"/" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isDelimitedString);
+    TDEqualObjects(@"/foo\\\\/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isWord);
+    TDEqualObjects(@"bar", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isSymbol);
+    TDEqualObjects(@"/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isEOF);
+}
+
+
+- (void)testNestedParens2 {
+    s = @"(foo(bar))";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    [t setTokenizerState:delimitState from:'(' to:'('];
+    [delimitState addStartMarker:@"(" endMarker:@")" allowedCharacterSet:cs];
+    delimitState.allowsNestedMarkers = YES;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isDelimitedString);
+    TDEqualObjects(s, tok.stringValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects([PKToken EOFToken], tok);
+}
+
+
+- (void)testNestedParens1 {
+    s = @"(foo(bar))";
+    t.string = s;
+    NSCharacterSet *cs = nil;
+    
+    [t setTokenizerState:delimitState from:'(' to:'('];
+    [delimitState addStartMarker:@"(" endMarker:@")" allowedCharacterSet:cs];
+    delimitState.allowsNestedMarkers = NO;
+    
+    tok = [t nextToken];
+    
+    TDTrue(tok.isDelimitedString);
+    TDEqualObjects(@"(foo(bar)", tok.stringValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects(@")", tok.stringValue);
+}
+
+
 - (void)testLtFooGt {
     s = @"<foo>";
     t.string = s;
@@ -38,11 +371,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -57,11 +390,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -76,17 +409,17 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, @"/foo/");
-    TDEquals(tok.floatValue, (double)0.0);
+    TDEqualObjects(@"/foo/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
     
     tok = [t nextToken];
     
     TDTrue(tok.isWord);
-    TDEqualObjects(tok.stringValue, @"bar");
-    TDEquals(tok.floatValue, (double)0.0);
+    TDEqualObjects(@"bar", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -101,17 +434,17 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, @"/foo/");
-    TDEquals(tok.floatValue, (double)0.0);
+    TDEqualObjects(@"/foo/", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
     
     tok = [t nextToken];
     
     TDTrue(tok.isSymbol);
-    TDEqualObjects(tok.stringValue, @";");
-    TDEquals(tok.floatValue, (double)0.0);
+    TDEqualObjects(@";", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -126,11 +459,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -159,7 +492,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -189,7 +522,7 @@
 //    TDEquals(tok.floatValue, (double)0.0);
 //    
 //    tok = [t nextToken];
-//    TDEqualObjects(tok, [PKToken EOFToken]);
+//    TDEqualObjects([PKToken EOFToken], tok);
 //}
 
 
@@ -204,11 +537,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -223,11 +556,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -267,7 +600,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -298,7 +631,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -313,11 +646,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -332,11 +665,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -380,7 +713,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -395,11 +728,11 @@
     tok = [t nextToken];
 
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -414,11 +747,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -433,11 +766,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -452,11 +785,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -471,11 +804,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -492,11 +825,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -534,7 +867,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -548,11 +881,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -580,7 +913,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -599,7 +932,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -613,11 +946,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
 
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -631,11 +964,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -662,7 +995,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -680,7 +1013,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -698,7 +1031,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -716,11 +1049,29 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
 - (void)testAlphaMarkerXXFails {
+    s = @"XXfooXX ";
+    t.string = s;
+    NSCharacterSet *cs = [NSCharacterSet whitespaceCharacterSet];
+    
+    [t setTokenizerState:delimitState from:'X' to:'X'];
+    [delimitState addStartMarker:@"XX" endMarker:@"XX" allowedCharacterSet:cs];
+    
+    tok = [t nextToken];
+    TDTrue(tok.isWord);
+    TDEqualObjects(@"XXfooXX", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
+    
+    tok = [t nextToken];
+    TDEqualObjects([PKToken EOFToken], tok);
+}
+
+
+- (void)testAlphaMarkerXXFails2 {
     s = @"XXfooXX";
     t.string = s;
     NSCharacterSet *cs = [NSCharacterSet whitespaceCharacterSet];
@@ -730,11 +1081,11 @@
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
-    TDEqualObjects(tok.stringValue,  s);
-    TDEquals(tok.floatValue, (double)0.0);
+    TDEqualObjects(@"XXfooXX", tok.stringValue);
+    TDEquals((double)0.0, tok.floatValue);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -752,7 +1103,7 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -770,43 +1121,43 @@
     TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
-- (void)testAtStartMarkerNilEndMarker2 {
-    s = @"@foo bar @ @baz ";
-    t.string = s;
-    NSCharacterSet *cs = [NSCharacterSet alphanumericCharacterSet];
-    
-    [t setTokenizerState:delimitState from:'@' to:'@'];
-    [delimitState addStartMarker:@"@" endMarker:nil allowedCharacterSet:cs];
-    
-    tok = [t nextToken];
-    TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue,  @"@foo");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    tok = [t nextToken];
-    TDTrue(tok.isWord);
-    TDEqualObjects(tok.stringValue,  @"bar");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    tok = [t nextToken];
-    TDTrue(tok.isSymbol);
-    TDEqualObjects(tok.stringValue,  @"@");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    tok = [t nextToken];
-    TDTrue(tok.isDelimitedString);
-    TDEqualObjects(tok.stringValue,  @"@baz");
-    TDEquals(tok.floatValue, (double)0.0);
-    
-    tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
-}
-
-
+//- (void)testAtStartMarkerNilEndMarker2 {
+//    s = @"@foo bar @ @baz ";
+//    t.string = s;
+//    NSCharacterSet *cs = [NSCharacterSet alphanumericCharacterSet];
+//    
+//    [t setTokenizerState:delimitState from:'@' to:'@'];
+//    [delimitState addStartMarker:@"@" endMarker:nil allowedCharacterSet:cs];
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isDelimitedString);
+//    TDEqualObjects(tok.stringValue,  @"@foo");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isWord);
+//    TDEqualObjects(tok.stringValue,  @"bar");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isSymbol);
+//    TDEqualObjects(tok.stringValue,  @"@");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    tok = [t nextToken];
+//    TDTrue(tok.isDelimitedString);
+//    TDEqualObjects(tok.stringValue,  @"@baz");
+//    TDEquals(tok.floatValue, (double)0.0);
+//    
+//    tok = [t nextToken];
+//    TDEqualObjects([PKToken EOFToken], tok);
+//}
+//
+//
 //- (void)testUnbalancedElementStartTag {
 //    s = @"<foo bar=\"baz\" <bat ";
 //    NSCharacterSet *cs = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];

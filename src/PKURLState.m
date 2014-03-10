@@ -6,11 +6,19 @@
 //  Copyright 2010 Todd Ditchendorf. All rights reserved.
 //
 
+#if PEGKIT
+#import <PEGKit/PKURLState.h>
+#import <PEGKit/PKReader.h>
+#import <PEGKit/PKTokenizer.h>
+#import <PEGKit/PKToken.h>
+#import <PEGKit/PKTypes.h>
+#else
 #import <ParseKit/PKURLState.h>
 #import <ParseKit/PKReader.h>
 #import <ParseKit/PKTokenizer.h>
 #import <ParseKit/PKToken.h>
 #import <ParseKit/PKTypes.h>
+#endif
 
 // Gruber original
 //  \b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))
@@ -66,7 +74,10 @@
         matched = [self parseWWWFromReader:r];
 
         if (!matched) {
-            [r unread:[[self bufferedString] length]];
+            if (PKEOF != c) {
+                NSUInteger buffLen = [[self bufferedString] length];
+                [r unread:buffLen];
+            }
             [self resetWithReader:r];
             c = cin;
         }

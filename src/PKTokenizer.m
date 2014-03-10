@@ -12,13 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#import <ParseKit/PKTokenizer.h>
+#if PEGKIT
+#import <PEGKit/PEGKit.h>
+#else
 #import <ParseKit/ParseKit.h>
+#endif
 
 #define STATE_COUNT 256
 
 @interface PKToken ()
 @property (nonatomic, readwrite) NSUInteger lineNumber;
+@end
+
+@interface PKTokenizerState ()
+- (PKTokenizerState *)nextTokenizerStateFor:(PKUniChar)c tokenizer:(PKTokenizer *)t;
 @end
 
 @interface PKTokenizer ()
@@ -159,8 +166,7 @@
 
 
 - (PKToken *)nextToken {
-    PKUniChar c = [reader read];
-    
+    PKUniChar c = [reader read]; //NSLog(@"`%C`", (unichar)c);
     PKToken *result = nil;
     
     if (PKEOF == c) {
@@ -265,13 +271,23 @@
 #pragma mark -
 
 - (PKTokenizerState *)tokenizerStateFor:(PKUniChar)c {
+    PKTokenizerState *state = nil;
+    
     if (c < 0 || c >= STATE_COUNT) {
         // customization above 255 is not supported, so fetch default.
-        return [self defaultTokenizerStateFor:c];
+        state = [self defaultTokenizerStateFor:c];
     } else {
         // customization below 255 is supported, so be sure to get the (possibly) customized state from `tokenizerStates`
-        return [tokenizerStates objectAtIndex:c];
+        state = [tokenizerStates objectAtIndex:c];
     }
+    
+    while (state.disabled) {
+        state = [state nextTokenizerStateFor:c tokenizer:self];
+    }
+    
+    NSAssert(state, @"");
+    
+    return state;
 }
 
 

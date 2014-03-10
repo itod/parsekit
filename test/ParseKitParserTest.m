@@ -35,18 +35,23 @@
     _root.grammarName = @"ParseKit";
     
     self.visitor = [[[PKSParserGenVisitor alloc] init] autorelease];
+    _visitor.enableMemoization = NO;
+    _visitor.enableHybridDFA = YES;
+    _visitor.enableAutomaticErrorRecovery = NO;
+    _visitor.enableARC = NO;
     [_root visit:_visitor];
     
     self.parser = [[[ParseKitParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/src/ParseKitParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/src/ParseKitParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/src/ParseKitParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/src/ParseKitParser.m", getenv("PWD")] stringByExpandingTildeInPath];
+
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
@@ -60,9 +65,9 @@
 
 - (void)testFoo1 {
     NSError *err = nil;
-    PKAssembly *res = [_parser parseString:@"@start=foo;foo='bar';" assembler:nil error:&err];
+    PKAssembly *res = [_parser parseString:@"start=foo;foo='bar';" assembler:nil error:&err];
     
-    TDEqualObjects(@"[=, foo, foo, =, 'bar']@/start/=/foo/;/foo/=/'bar'/;^", [res description]);
+    TDEqualObjects(@"[start, =, foo, foo, =, 'bar']start/=/foo/;/foo/=/'bar'/;^", [res description]);
 }
 
 @end

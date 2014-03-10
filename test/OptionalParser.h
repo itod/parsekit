@@ -1,11 +1,11 @@
-#import <ParseKit/PKSParser.h>
+#import <PEGKit/PEGParser.h>
 
 enum {
     OPTIONAL_TOKEN_KIND_FOO = 14,
     OPTIONAL_TOKEN_KIND_BAR,
 };
 
-@interface OptionalParser : PKSParser
+@interface OptionalParser : PEGParser
 
 @end
 

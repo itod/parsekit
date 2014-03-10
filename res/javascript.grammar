@@ -5,7 +5,11 @@
 @singleLineComments = '//';
 @multiLineComments  = '/*' '*/';
 
-@start              
+// Program:
+//           empty
+//           Element Program
+
+program
 @before {
         PKTokenizer *t = self.tokenizer;
         
@@ -45,25 +49,23 @@
         [t.commentState addSingleLineStartMarker:@"//"];
         [t.commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
 }
+                    = element+;
 
-
-					= program;
-
-ifSym                  = 'if';
-elseSym                = 'else';
-whileSym               = 'while';
-forSym                 = 'for';
-inSym               = 'in';
-breakSym            = 'break';
-continueSym            = 'continue';
+if                  = 'if';
+else                = 'else';
+while               = 'while';
+for                 = 'for';
+in                  = 'in';
+break               = 'break';
+continue            = 'continue';
 with                = 'with';
-returnSym              = 'return';
+return              = 'return';
 var                 = 'var';
 delete              = 'delete';
 keywordNew          = 'new';
 this                = 'this';
-falseLiteral        = 'false';
-trueLiteral         = 'true';
+false               = 'false';
+true                = 'true';
 null                = 'null';
 undefined           = 'undefined';
 void                = 'void';
@@ -133,15 +135,6 @@ unaryOperator       = tilde | delete | typeof | void;
 multiplicativeOperator = times | div | mod;
 
 
-
-// Program:
-//           empty
-//           Element Program
-
-program             = element+;
-
-
-
 //  Element:
 //           function Identifier ( ParameterListOpt ) CompoundStatement
 //           Statement
@@ -199,16 +192,16 @@ stmts               = stmt*;
 //           VariablesOrExpression ;
 
 stmt                = semi | ifStmt | ifElseStmt | whileStmt | forParenStmt | forBeginStmt | forInStmt | breakStmt | continueStmt | withStmt | returnStmt | compoundStmt | variablesOrExprStmt;
-ifStmt              = ifSym condition stmt;
-ifElseStmt          = ifSym condition stmt elseSym stmt;
-whileStmt           = whileSym condition stmt;
+ifStmt              = if condition stmt;
+ifElseStmt          = if condition stmt else stmt;
+whileStmt           = while condition stmt;
 forParenStmt        = forParen semi exprOpt semi exprOpt closeParen stmt;
 forBeginStmt        = forBegin semi exprOpt semi exprOpt closeParen stmt;
-forInStmt           = forBegin inSym expr closeParen stmt;
-breakStmt           = breakSym semi;
-continueStmt        = continueSym semi;
+forInStmt           = forBegin in expr closeParen stmt;
+breakStmt           = break semi;
+continueStmt        = continue semi;
 withStmt            = with openParen expr closeParen stmt;
-returnStmt          = returnSym exprOpt semi;
+returnStmt          = return exprOpt semi;
 variablesOrExprStmt = variablesOrExpr semi;
 
 
@@ -223,7 +216,7 @@ condition           = openParen expr closeParen;
 //  ForParen:
 //           for (
 
-forParen            = forSym openParen;
+forParen            = for openParen;
 
 
 
@@ -466,7 +459,7 @@ commaAssignmentExpr = comma assignmentExpr;
 //           null
 //           this
 
-primaryExpr         = callNewExpr | parenExprParen | identifier | numLiteral | stringLiteral | falseLiteral | trueLiteral | null | undefined | this;
+primaryExpr         = callNewExpr | parenExprParen | identifier | numLiteral | stringLiteral | false | true | null | undefined | this;
 parenExprParen      = openParen expr closeParen;
 identifier          = Word;
 numLiteral          = Number;

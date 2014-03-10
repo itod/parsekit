@@ -20,7 +20,7 @@
     Also the assembly's stack will contain the tokens parsed so far in the current statement.
 */
 
-@start        = Empty | array | object;
+start         = Empty | array | object;
 
 object        = '{' objectContent '}'!;
 objectContent = Empty | actualObject;

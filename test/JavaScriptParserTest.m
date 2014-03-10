@@ -46,13 +46,13 @@
     self.parser = [[[JavaScriptParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/JavaScriptParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/JavaScriptParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/JavaScriptParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/JavaScriptParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
@@ -65,8 +65,8 @@
 }
 
 
-- (void)parser:(PKSParser *)p didMatchVarVariables:(PKAssembly *)a {
-    NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
+- (void)parser:(PEGParser *)p didMatchVarVariables:(PKAssembly *)a {
+    //NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
     flag = YES;
 }
 - (void)testVarFooEqBar {

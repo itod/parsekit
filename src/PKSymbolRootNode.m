@@ -12,8 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#import <ParseKit/PKSymbolRootNode.h>
+#if PEGKIT
+#import <PEGKit/PKReader.h>
+#import <PEGKit/PKSymbolRootNode.h>
+#else
 #import <ParseKit/PKReader.h>
+#import <ParseKit/PKSymbolRootNode.h>
+#endif
 
 @interface PKSymbolNode ()
 @property (nonatomic, retain) NSMutableDictionary *children;

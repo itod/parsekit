@@ -7,8 +7,8 @@
 //
 
 #import "PKSParseTreeAssembler.h"
-#import <ParseKit/PKSParser.h>
-#import <ParseKit/PKSTokenAssembly.h>
+#import <ParseKit/PEGParser.h>
+#import <ParseKit/PEGTokenAssembly.h>
 #import <ParseKit/PKToken.h>
 
 #import "PKParseTree.h"
@@ -34,7 +34,7 @@
 }
 
 
-- (void)parser:(PKSParser *)p willMatchInterior:(NSString *)ruleName {
+- (void)parser:(PEGParser *)p willMatchInterior:(NSString *)ruleName {
     PKRuleNode *r = [PKRuleNode ruleNodeWithName:ruleName];
     if (!_root) {
         self.root = r;
@@ -50,20 +50,20 @@
 }
 
 
-- (void)parser:(PKSParser *)p didMatchInterior:(NSString *)ruleName {
+- (void)parser:(PEGParser *)p didMatchInterior:(NSString *)ruleName {
     self.currentNode = [_stack lastObject];
     [_stack removeLastObject];
 }
 
 
-- (void)parser:(PKSParser *)p willMatchLeaf:(NSString *)ruleName {
+- (void)parser:(PEGParser *)p willMatchLeaf:(NSString *)ruleName {
     NSAssert(_currentNode, @"");
     
     [_currentNode addChildToken:[p LT:1]];
 }
 
 
-- (void)parser:(PKSParser *)p didMatchLeaf:(NSString *)ruleName {
+- (void)parser:(PEGParser *)p didMatchLeaf:(NSString *)ruleName {
     
 }
 

@@ -1,6 +1,5 @@
 @symbols = '!=' '<=' '>=';
  
-@start = expr;
 expr = orExpr;
  
 orExpr = andExpr orTerm*;

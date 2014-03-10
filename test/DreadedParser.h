@@ -1,11 +1,11 @@
-#import <ParseKit/PKSParser.h>
+#import <PEGKit/PEGParser.h>
 
 enum {
     DREADED_TOKEN_KIND_A = 14,
     DREADED_TOKEN_KIND_B,
 };
 
-@interface DreadedParser : PKSParser
+@interface DreadedParser : PEGParser
 
 @end
 

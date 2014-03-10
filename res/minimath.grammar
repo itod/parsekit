@@ -1,5 +1,3 @@
-@start = expr;
-
 expr = mult ('+'! mult { PUSH_FLOAT(POP_FLOAT()+POP_FLOAT()); })*;
 mult = pow ('*'! pow { PUSH_FLOAT(POP_FLOAT()*POP_FLOAT()); })*;
 pow = atom ('^'! pow { 

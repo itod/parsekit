@@ -33,16 +33,17 @@
     _root.grammarName = @"Element";
     
     self.visitor = [[[PKSParserGenVisitor alloc] init] autorelease];
+    _visitor.enableMemoization = YES;
     [_root visit:_visitor];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/ElementParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/ElementParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/ElementParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/ElementParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
@@ -59,13 +60,15 @@
 - (void)testFoo {    
     ElementParser *p = [[[ElementParser alloc] init] autorelease];
     
-    PKAssembly *res = [p parseString:@"[1, [2,3],4]" assembler:self error:nil];
+    NSError *err = nil;
+    PKAssembly *res = [p parseString:@"[1, [2,3],4]" assembler:self error:&err];
+    if (err) NSLog(@"%@", [err localizedDescription]);
     
     TDEqualObjects(@"[[, 1, [, 2, 3, 4][/1/,/[/2/,/3/]/,/4/]^", [res description]);
 }
 
 
-- (void)parser:(PKSParser *)p didMatchList:(PKAssembly *)a {
+- (void)parser:(PEGParser *)p didMatchList:(PKAssembly *)a {
     //NSLog(@"%s %@", __PRETTY_FUNCTION__, a);
     
 }

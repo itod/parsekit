@@ -1,4 +1,4 @@
-@start = stat+;
+start = stat+;
 
 stat = assign dot | list semi;
 

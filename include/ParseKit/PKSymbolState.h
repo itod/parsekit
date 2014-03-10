@@ -13,7 +13,11 @@
 //  limitations under the License.
 
 #import <Foundation/Foundation.h>
+#if PEGKIT
+#import <PEGKit/PKTokenizerState.h>
+#else
 #import <ParseKit/PKTokenizerState.h>
+#endif
 
 @class PKSymbolRootNode;
 
@@ -24,10 +28,7 @@
                 <p>Multi-character symbols are an exception to the rule that a symbol is a standalone character. For example, a tokenizer may want less-than-or-equals to tokenize as a single token. This class provides a method for establishing which multi-character symbols an object of this class should treat as single symbols. This allows, for example, "cat <= dog" to tokenize as three tokens, rather than splitting the less-than and equals symbols into separate tokens.</p>
                 <p>By default, this state recognizes the following multi- character symbols: <tt>!=</tt>, <tt>:-</tt>, <tt><=</tt>, <tt>>=</tt></p>
 */
-@interface PKSymbolState : PKTokenizerState {
-    PKSymbolRootNode *rootNode;
-    NSMutableArray *addedSymbols;
-}
+@interface PKSymbolState : PKTokenizerState
 
 /*!
     @brief      Adds the given string as a multi-character symbol.
@@ -41,4 +42,7 @@
     @param      s a multi-character symbol that should no longer be recognized as a single symbol token by this state
 */
 - (void)remove:(NSString *)s;
+
+
+- (void)prevent:(PKUniChar)c;
 @end

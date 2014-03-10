@@ -37,9 +37,6 @@
 
 
 - (void)setUp {
-    self.tab = [NSMutableDictionary dictionary];
-    self.openCurly = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"{" floatValue:0];
-
     self.factory = [PKParserFactory factory];
     _factory.collectTokenKinds = YES;
 
@@ -54,21 +51,24 @@
     self.visitor = [[[PKSParserGenVisitor alloc] init] autorelease];
     [_root visit:_visitor];
     
-    self.parser = [[[TDNSPredicateParser alloc] init] autorelease];
-
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/TDNSPredicateParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/TDNSPredicateParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/TDNSPredicateParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/TDNSPredicateParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 #endif
+
+    self.tab = [NSMutableDictionary dictionary];
+    self.openCurly = [PKToken tokenWithTokenType:PKTokenTypeSymbol stringValue:@"{" floatValue:0];
+    
+    self.parser = [[[TDNSPredicateParser alloc] init] autorelease];
 }
 
 
@@ -88,13 +88,13 @@
 
 
 //- (void)testKeyPath {
+//    NSError *err = nil;
+//    
 //    [_tab setObject:[NSNumber numberWithBool:YES] forKey:@"foo"];
 //    [_tab setObject:[NSNumber numberWithBool:NO] forKey:@"baz"];
 //    
-//    t.string = @"foo";
-//    a = [PKTokenAssembly assemblyWithTokenizer:t];
-//    res = [[eval.parser parserNamed:@"keyPath"] completeMatchFor:a];
-//    TDEqualObjects(@"[1]foo^", [res description]);
+//    _res = [_parser parseString:@"foo" assembler:self error:&err];
+//    TDEqualObjects(@"[1]foo^", [_res description]);
 //    
 //    t.string = @"bar";
 //    a = [PKTokenAssembly assemblyWithTokenizer:t];

@@ -9,8 +9,8 @@
 #import "PKSParserGenVisitor.h"
 #import <ParseKit/ParseKit.h>
 
-#import <ParseKit/PKSParser.h>
-#import "PKSTokenKindDescriptor.h"
+#import <ParseKit/PEGParser.h>
+#import "PEGTokenKindDescriptor.h"
 #import "NSString+ParseKitAdditions.h"
 
 #import "MGTemplateEngine.h"
@@ -24,6 +24,7 @@
 #define ENABLE_MEMOIZATION @"enableMemoization"
 #define ENABLE_ERROR_RECOVERY @"enableAutomaticErrorRecovery"
 #define PARSE_TREE @"parseTree"
+#define START_METHOD @"startMethod"
 #define METHODS @"methods"
 #define METHOD_NAME @"methodName"
 #define METHOD_BODY @"methodBody"
@@ -79,6 +80,7 @@
     self.interfaceOutputString = nil;
     self.implementationOutputString = nil;
     self.ruleMethodNames = nil;
+    self.startMethodName = nil;
     self.outputStringStack = nil;
     self.currentDefName = nil;
     [super dealloc];
@@ -127,7 +129,7 @@
 
 
 - (NSArray *)sortedArrayFromLookaheadSet:(NSSet *)set {
-    NSArray *result = [[set allObjects] sortedArrayUsingComparator:^NSComparisonResult(PKSTokenKindDescriptor *desc1, PKSTokenKindDescriptor *desc2) {
+    NSArray *result = [[set allObjects] sortedArrayUsingComparator:^NSComparisonResult(PEGTokenKindDescriptor *desc1, PEGTokenKindDescriptor *desc2) {
         return [desc1.name compare:desc2.name];
     }];
     
@@ -157,10 +159,10 @@
         case PKNodeTypeReference: {
             NSString *name = node.token.stringValue;
             PKDefinitionNode *defNode = self.symbolTable[name];
+            //NSAssert1(defNode, @"Grammar is missing rule named: `%@`", name);
             if (!defNode) {
-                NSLog(@"missing rule named: `%@`", name);
+                [NSException raise:@"PKParseException" format:@"Unknown rule name: `%@` in rule: `%@`", name, _currentDefName];
             }
-            NSAssert1(defNode, @"missing: %@", name);
             [set unionSet:[self lookaheadSetForNode:defNode]];
         } break;
         case PKNodeTypeAlternation: {
@@ -168,6 +170,19 @@
                 [set unionSet:[self lookaheadSetForNode:child]];
             }
         } break;
+//        case PKNodeTypeDefinition:
+//        case PKNodeTypeCollection: {
+//            for (PKBaseNode *child in node.children) {
+//                NSSet *childSet = [self lookaheadSetForNode:child];
+//                [set unionSet:childSet];
+//                PKBaseNode *concreteChild = [self concreteNodeForNode:child];
+//                if ([concreteChild isKindOfClass:[PKOptionalNode class]]) {
+//                    continue;
+//                } else {
+//                    break; // single look ahead. to implement full LL(*), this would need to be enhanced here.
+//                }
+//            }
+//        } break;
         default: {
             for (PKBaseNode *child in node.children) {
                 [set unionSet:[self lookaheadSetForNode:child]];
@@ -201,6 +216,7 @@
 - (void)visitRoot:(PKRootNode *)node {
     //NSLog(@"%s %@", __PRETTY_FUNCTION__, node);
     NSParameterAssert(node);
+    //NSAssert(_enableHybridDFA ,@"");
     
     // setup symbol table
     [self setUpSymbolTableFromRoot:node];
@@ -209,9 +225,10 @@
     self.outputStringStack = [NSMutableArray array];
     
     self.ruleMethodNames = [NSMutableArray array];
+    self.startMethodName = node.startMethodName;
     
     // add namespace to token kinds
-    for (PKSTokenKindDescriptor *desc in node.tokenKinds) {
+    for (PEGTokenKindDescriptor *desc in node.tokenKinds) {
         NSString *newName = [NSString stringWithFormat:@"%@_%@", [node.grammarName uppercaseString], desc.name];
         desc.name = newName;
     }
@@ -244,6 +261,7 @@
     }
     
     // merge
+    vars[START_METHOD] = _startMethodName;
     vars[METHODS] = childStr;
     vars[RULE_METHOD_NAMES] = self.ruleMethodNames;
     vars[ENABLE_MEMOIZATION] = @(self.enableMemoization);
@@ -320,12 +338,9 @@
     id vars = [NSMutableDictionary dictionary];
     NSString *methodName = node.token.stringValue;
     
-    BOOL isStartMethod = [methodName isEqualToString:@"@start"];
-    if (isStartMethod) {
-        methodName = @"_start";
-    } else {
-        [self.ruleMethodNames addObject:methodName];
-    }
+    BOOL isStartMethod = [methodName isEqualToString:_startMethodName];
+    [self.ruleMethodNames addObject:methodName];
+
     vars[METHOD_NAME] = methodName;
     self.currentDefName = methodName;
 
@@ -373,16 +388,14 @@
     NSString *preCallbackStr = @"";
     NSString *postCallbackStr = @"";
 
-    if (!isStartMethod) {
-        preCallbackStr = [self callbackStringForNode:node methodName:methodName isPre:YES];
-        postCallbackStr = [self callbackStringForNode:node methodName:methodName isPre:NO];
-    }
+    preCallbackStr = [self callbackStringForNode:node methodName:methodName isPre:YES];
+    postCallbackStr = [self callbackStringForNode:node methodName:methodName isPre:NO];
 
     vars[PRE_CALLBACK] = preCallbackStr;
     vars[POST_CALLBACK] = postCallbackStr;
 
     NSString *templateName = nil;
-    if (!isStartMethod && self.enableMemoization) {
+    if (self.enableMemoization) {
         templateName = @"PKSMethodMemoizationTemplate";
     } else {
         templateName = @"PKSMethodTemplate";
@@ -509,11 +522,8 @@
     // Only need to speculate if this repetition's child is non-terminal
     BOOL isLL1 = (_enableHybridDFA && [self isLL1:child]);
     
-    // rep body is always wrapped in an while AND an IF. so increase depth twice
-    NSInteger depth = isLL1 ? 1 : 2;
-
     // recurse first and get entire child str
-    self.depth += depth;
+    self.depth += 1;
     
     // visit for speculative if test
     self.isSpeculating = YES;
@@ -524,7 +534,7 @@
     // visit for child body
     [child visit:self];
 
-    self.depth -= depth;
+    self.depth -= 1;
     
     // pop
     NSMutableString *childStr = [self pop];
@@ -588,7 +598,11 @@
     NSMutableArray *concreteChildren = [NSMutableArray arrayWithCapacity:[node.children count]];
     for (PKBaseNode *child in node.children) {
         PKBaseNode *concreteNode = [self concreteNodeForNode:child];
-        if (concreteNode.isTerminal && [concreteChildren count]) hasTerminal = YES;
+        if (!concreteNode) {
+            NSString *missingName = [child.name substringFromIndex:1];
+            [NSException raise:@"PKParseException" format:@"Unknown rule name: `%@` in rule: `%@`", missingName, _currentDefName];
+        }
+        if ([concreteNode isKindOfClass:[PKLiteralNode class]] && [concreteChildren count]) hasTerminal = YES;
         [concreteChildren addObject:concreteNode];
     }
 
@@ -596,7 +610,12 @@
     BOOL depthIncreased = NO;
     NSUInteger i = 0;
     for (PKBaseNode *child in node.children) {
-        PKBaseNode *concreteNode = concreteChildren[i++];
+        PKBaseNode *concreteNode = concreteChildren[i];
+        
+        BOOL isCurrentChildLiteral = [concreteNode isKindOfClass:[PKLiteralNode class]];
+        if (0 == i && !isCurrentChildLiteral) {
+            partialCount++;
+        }
         
         if (_enableAutomaticErrorRecovery && hasTerminal && partialCount == 1) {
             [childStr appendString:partialChildStr];
@@ -611,16 +630,16 @@
         NSString *terminalCallStr = [self pop];
         [partialChildStr appendString:terminalCallStr];
         
-        if (_enableAutomaticErrorRecovery && concreteNode.isTerminal && partialCount > 0) {
+        if (_enableAutomaticErrorRecovery && isCurrentChildLiteral && partialCount > 0) {
             
-            PKSTokenKindDescriptor *desc = [(PKConstantNode *)concreteNode tokenKind];
+            PEGTokenKindDescriptor *desc = [(PKConstantNode *)concreteNode tokenKind];
             id resyncVars = @{TOKEN_KIND: desc, DEPTH: @(_depth - 1), CHILD_STRING: partialChildStr, TERMINAL_CALL_STRING: terminalCallStr};
             NSString *tryAndResyncStr = [_engine processTemplate:[self templateStringNamed:@"PKSTryAndRecoverTemplate"] withVariables:resyncVars];
             
             [childStr appendString:tryAndResyncStr];
             
             // reset
-            partialCount = 0;
+            partialCount = 1;
             [partialChildStr setString:@""];
             if (depthIncreased) {
                 self.depth--;
@@ -630,6 +649,8 @@
             NSAssert([partialChildStr length], @"");
             ++partialCount;
         }
+        
+        ++i;
     }
 
     //if (_enableAutomaticErrorRecovery && [node.children count] > 1) self.depth--;

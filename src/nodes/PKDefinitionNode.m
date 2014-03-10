@@ -45,20 +45,10 @@
 
 
 - (NSString *)name {
-    NSString *prefix = nil;
-    
     NSString *pname = self.token.stringValue;
     NSAssert([pname length], @"");
     
-    if ('@' == [pname characterAtIndex:0]) {
-        NSAssert([@"@start" isEqualToString:pname], @"");
-        
-        prefix = @"";
-    } else {
-        prefix = @"$";
-    }
-    
-    NSString *str = [NSString stringWithFormat:@"%@%@", prefix, pname];
+    NSString *str = [NSString stringWithFormat:@"$%@", pname];
     
     if (_callbackName) {
         str = [NSString stringWithFormat:@"%@(%@)", str, _callbackName];

@@ -52,6 +52,8 @@
     [self define:[PKBuiltInTypeSymbol symbolWithName:@"Negation"]];
     [self define:[PKBuiltInTypeSymbol symbolWithName:@"Intersction"]];
     [self define:[PKBuiltInTypeSymbol symbolWithName:@"Difference"]];
+    [self define:[PKBuiltInTypeSymbol symbolWithName:@"URL"]];
+    [self define:[PKBuiltInTypeSymbol symbolWithName:@"Email"]];
 }
 
 @end

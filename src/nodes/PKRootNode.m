@@ -12,6 +12,7 @@
 
 - (void)dealloc {
     self.grammarName = nil;
+    self.startMethodName = nil;
     self.tokenKinds = nil;
     [super dealloc];
 }

@@ -40,13 +40,13 @@
     self.parser = [[[NamedActionParser alloc] init] autorelease];
 
 #if TD_EMIT
-    path = [@"~/work/parsekit/trunk/test/NamedActionParser.h" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/NamedActionParser.h", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.interfaceOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);
     }
 
-    path = [@"~/work/parsekit/trunk/test/NamedActionParser.m" stringByExpandingTildeInPath];
+    path = [[NSString stringWithFormat:@"%s/test/NamedActionParser.m", getenv("PWD")] stringByExpandingTildeInPath];
     err = nil;
     if (![_visitor.implementationOutputString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
         NSLog(@"%@", err);

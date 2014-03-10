@@ -12,10 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#if PEGKIT
+#import <PEGKit/PKTokenizerState.h>
+#import <PEGKit/PKTokenizer.h>
+#import <PEGKit/PKReader.h>
+#else
 #import <ParseKit/PKTokenizerState.h>
 #import <ParseKit/PKTokenizer.h>
 #import <ParseKit/PKReader.h>
-#import <ParseKit/PKTypes.h>
+#endif
 
 #define STATE_COUNT 256
 
@@ -114,4 +119,5 @@
 @synthesize offset;
 @synthesize fallbackState;
 @synthesize fallbackStates;
+@synthesize disabled;
 @end

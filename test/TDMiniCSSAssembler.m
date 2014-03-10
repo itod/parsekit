@@ -44,7 +44,7 @@
 #pragma mark -
 #pragma mark Assembler Callbacks
 
-//    @start      = ruleset*;
+//    start       = ruleset*;
 //    ruleset     = selector '{' decls >'}';
 //    selector    = LowercaseWord;            // forcing selectors to be lowercase words for use in a future syntax-highlight framework where i want that
 //    decls       = Empty | actualDecls;

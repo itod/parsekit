@@ -1,4 +1,4 @@
-#import <ParseKit/PKSParser.h>
+#import <PEGKit/PEGParser.h>
 
 enum {
     CSS_TOKEN_KIND_COMMA = 14,
@@ -10,7 +10,7 @@ enum {
     CSS_TOKEN_KIND_FWDSLASH,
     CSS_TOKEN_KIND_EQ,
     CSS_TOKEN_KIND_GT,
-    CSS_TOKEN_KIND_HASHSYM,
+    CSS_TOKEN_KIND_HASH,
     CSS_TOKEN_KIND_OPENBRACKET,
     CSS_TOKEN_KIND_AT,
     CSS_TOKEN_KIND_CLOSEBRACKET,
@@ -23,7 +23,7 @@ enum {
     CSS_TOKEN_KIND_CLOSECURLY,
 };
 
-@interface CSSParser : PKSParser
+@interface CSSParser : PEGParser
 
 @end
 

@@ -30,11 +30,11 @@
     tok = [t nextToken];
     
     TDTrue(tok.isTwitter);
-    TDEqualObjects(tok.stringValue, s);
+    TDEqualObjects(s, tok.stringValue);
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -58,7 +58,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -77,7 +77,7 @@
     TDEquals(tok.floatValue, (PKFloat)0.0);
     
     tok = [t nextToken];
-    TDEqualObjects(tok, [PKToken EOFToken]);
+    TDEqualObjects([PKToken EOFToken], tok);
 }
 
 
@@ -102,7 +102,7 @@
 //    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
-//    TDEqualObjects(tok, [PKToken EOFToken]);
+//    TDEqualObjects([PKToken EOFToken], tok);
 //}
 //
 //
@@ -141,7 +141,7 @@
 //    TDEquals(tok.floatValue, (PKFloat)0.0);
 //    
 //    tok = [t nextToken];
-//    TDEqualObjects(tok, [PKToken EOFToken]);
+//    TDEqualObjects([PKToken EOFToken], tok);
 //}
 
 @end

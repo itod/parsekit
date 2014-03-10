@@ -1,4 +1,4 @@
-@start = method+;
+start = method+;
 
 method = type Word '(' args ')' (';' | '{' '}')
        ;

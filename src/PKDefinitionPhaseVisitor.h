@@ -17,5 +17,6 @@
 
 @property (nonatomic, retain) NSMutableDictionary *tokenKinds;
 @property (nonatomic, assign) BOOL collectTokenKinds;
-@property (nonatomic, retain) NSDictionary *defaultDefNameTab;
+@property (nonatomic, retain) NSMutableDictionary *defaultDefNameTab;
+@property (nonatomic, assign) NSUInteger fallbackDefNameCounter;
 @end

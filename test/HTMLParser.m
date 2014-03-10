@@ -1,5 +1,5 @@
 #import "HTMLParser.h"
-#import <ParseKit/ParseKit.h>
+#import <PEGKit/PEGKit.h>
 
 #define LT(i) [self LT:(i)]
 #define LA(i) [self LA:(i)]
@@ -7,42 +7,52 @@
 #define LF(i) [self LF:(i)]
 
 #define POP()       [self.assembly pop]
-#define POP_STR()   [self _popString]
-#define POP_TOK()   [self _popToken]
-#define POP_BOOL()  [self _popBool]
-#define POP_INT()   [self _popInteger]
-#define POP_FLOAT() [self _popDouble]
+#define POP_STR()   [self popString]
+#define POP_TOK()   [self popToken]
+#define POP_BOOL()  [self popBool]
+#define POP_INT()   [self popInteger]
+#define POP_FLOAT() [self popDouble]
 
 #define PUSH(obj)     [self.assembly push:(id)(obj)]
-#define PUSH_BOOL(yn) [self _pushBool:(BOOL)(yn)]
-#define PUSH_INT(i)   [self _pushInteger:(NSInteger)(i)]
-#define PUSH_FLOAT(f) [self _pushDouble:(double)(f)]
+#define PUSH_BOOL(yn) [self pushBool:(BOOL)(yn)]
+#define PUSH_INT(i)   [self pushInteger:(NSInteger)(i)]
+#define PUSH_FLOAT(f) [self pushDouble:(double)(f)]
 
 #define EQ(a, b) [(a) isEqual:(b)]
 #define NE(a, b) (![(a) isEqual:(b)])
 #define EQ_IGNORE_CASE(a, b) (NSOrderedSame == [(a) compare:(b)])
+
+#define MATCHES(pattern, str)               ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:0                                  error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
+#define MATCHES_IGNORE_CASE(pattern, str)   ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:NSRegularExpressionCaseInsensitive error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
 
 #define ABOVE(fence) [self.assembly objectsAbove:(fence)]
 
 #define LOG(obj) do { NSLog(@"%@", (obj)); } while (0);
 #define PRINT(str) do { printf("%s\n", (str)); } while (0);
 
-@interface PKSParser ()
-@property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
-@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
+@interface PEGParser ()
+@property (nonatomic, retain) NSMutableDictionary *tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *tokenKindNameTab;
+@property (nonatomic, retain) NSString *startRuleName;
+@property (nonatomic, retain) NSString *statementTerminator;
+@property (nonatomic, retain) NSString *singleLineCommentMarker;
+@property (nonatomic, retain) NSString *blockStartMarker;
+@property (nonatomic, retain) NSString *blockEndMarker;
+@property (nonatomic, retain) NSString *braces;
 
-- (BOOL)_popBool;
-- (NSInteger)_popInteger;
-- (double)_popDouble;
-- (PKToken *)_popToken;
-- (NSString *)_popString;
+- (BOOL)popBool;
+- (NSInteger)popInteger;
+- (double)popDouble;
+- (PKToken *)popToken;
+- (NSString *)popString;
 
-- (void)_pushBool:(BOOL)yn;
-- (void)_pushInteger:(NSInteger)i;
-- (void)_pushDouble:(double)d;
+- (void)pushBool:(BOOL)yn;
+- (void)pushInteger:(NSInteger)i;
+- (void)pushDouble:(double)d;
 @end
 
 @interface HTMLParser ()
+@property (nonatomic, retain) NSMutableDictionary *start_memo;
 @property (nonatomic, retain) NSMutableDictionary *anything_memo;
 @property (nonatomic, retain) NSMutableDictionary *scriptElement_memo;
 @property (nonatomic, retain) NSMutableDictionary *scriptStartTag_memo;
@@ -77,24 +87,26 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self._tokenKindTab[@"script"] = @(HTML_TOKEN_KIND_SCRIPTTAGNAME);
-        self._tokenKindTab[@"style"] = @(HTML_TOKEN_KIND_STYLETAGNAME);
-        self._tokenKindTab[@"<!DOCTYPE,>"] = @(HTML_TOKEN_KIND_DOCTYPE);
-        self._tokenKindTab[@"<"] = @(HTML_TOKEN_KIND_LT);
-        self._tokenKindTab[@"<?,?>"] = @(HTML_TOKEN_KIND_PROCINSTR);
-        self._tokenKindTab[@"="] = @(HTML_TOKEN_KIND_EQ);
-        self._tokenKindTab[@"/"] = @(HTML_TOKEN_KIND_FWDSLASH);
-        self._tokenKindTab[@">"] = @(HTML_TOKEN_KIND_GT);
+        self.startRuleName = @"start";
+        self.tokenKindTab[@"script"] = @(HTML_TOKEN_KIND_SCRIPTTAGNAME);
+        self.tokenKindTab[@"style"] = @(HTML_TOKEN_KIND_STYLETAGNAME);
+        self.tokenKindTab[@"<!DOCTYPE,>"] = @(HTML_TOKEN_KIND_DOCTYPE);
+        self.tokenKindTab[@"<"] = @(HTML_TOKEN_KIND_LT);
+        self.tokenKindTab[@"<?,?>"] = @(HTML_TOKEN_KIND_PROCINSTR);
+        self.tokenKindTab[@"="] = @(HTML_TOKEN_KIND_EQ);
+        self.tokenKindTab[@"/"] = @(HTML_TOKEN_KIND_FWDSLASH);
+        self.tokenKindTab[@">"] = @(HTML_TOKEN_KIND_GT);
 
-        self._tokenKindNameTab[HTML_TOKEN_KIND_SCRIPTTAGNAME] = @"script";
-        self._tokenKindNameTab[HTML_TOKEN_KIND_STYLETAGNAME] = @"style";
-        self._tokenKindNameTab[HTML_TOKEN_KIND_DOCTYPE] = @"<!DOCTYPE,>";
-        self._tokenKindNameTab[HTML_TOKEN_KIND_LT] = @"<";
-        self._tokenKindNameTab[HTML_TOKEN_KIND_PROCINSTR] = @"<?,?>";
-        self._tokenKindNameTab[HTML_TOKEN_KIND_EQ] = @"=";
-        self._tokenKindNameTab[HTML_TOKEN_KIND_FWDSLASH] = @"/";
-        self._tokenKindNameTab[HTML_TOKEN_KIND_GT] = @">";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_SCRIPTTAGNAME] = @"script";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_STYLETAGNAME] = @"style";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_DOCTYPE] = @"<!DOCTYPE,>";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_LT] = @"<";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_PROCINSTR] = @"<?,?>";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_EQ] = @"=";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_FWDSLASH] = @"/";
+        self.tokenKindNameTab[HTML_TOKEN_KIND_GT] = @">";
 
+        self.start_memo = [NSMutableDictionary dictionary];
         self.anything_memo = [NSMutableDictionary dictionary];
         self.scriptElement_memo = [NSMutableDictionary dictionary];
         self.scriptStartTag_memo = [NSMutableDictionary dictionary];
@@ -127,6 +139,7 @@
 }
 
 - (void)dealloc {
+    self.start_memo = nil;
     self.anything_memo = nil;
     self.scriptElement_memo = nil;
     self.scriptStartTag_memo = nil;
@@ -159,6 +172,7 @@
 }
 
 - (void)_clearMemo {
+    [_start_memo removeAllObjects];
     [_anything_memo removeAllObjects];
     [_scriptElement_memo removeAllObjects];
     [_scriptStartTag_memo removeAllObjects];
@@ -188,7 +202,11 @@
     [_comment_memo removeAllObjects];
 }
 
-- (void)_start {
+- (void)start {
+    [self start_];
+}
+
+- (void)__start {
     
     [self execute:(id)^{
     
@@ -220,84 +238,80 @@
     [t.delimitState setFallbackState:t.symbolState from:'<' to:'<'];
 
     }];
-    while ([self predicts:HTML_TOKEN_KIND_DOCTYPE, HTML_TOKEN_KIND_LT, HTML_TOKEN_KIND_PROCINSTR, TOKEN_KIND_BUILTIN_ANY, TOKEN_KIND_BUILTIN_COMMENT, 0]) {
-        if ([self speculate:^{ [self anything]; }]) {
-            [self anything]; 
-        } else {
-            break;
-        }
+    while ([self speculate:^{ [self anything_]; }]) {
+        [self anything_]; 
     }
     [self matchEOF:YES]; 
 
 }
 
+- (void)start_ {
+    [self parseRule:@selector(__start) withMemo:_start_memo];
+}
+
 - (void)__anything {
     
-    if ([self speculate:^{ [self scriptElement]; }]) {
-        [self scriptElement]; 
-    } else if ([self speculate:^{ [self styleElement]; }]) {
-        [self styleElement]; 
-    } else if ([self speculate:^{ [self tag]; }]) {
-        [self tag]; 
-    } else if ([self speculate:^{ [self procInstr]; }]) {
-        [self procInstr]; 
-    } else if ([self speculate:^{ [self comment]; }]) {
-        [self comment]; 
-    } else if ([self speculate:^{ [self doctype]; }]) {
-        [self doctype]; 
-    } else if ([self speculate:^{ [self text]; }]) {
-        [self text]; 
+    if ([self speculate:^{ [self scriptElement_]; }]) {
+        [self scriptElement_]; 
+    } else if ([self speculate:^{ [self styleElement_]; }]) {
+        [self styleElement_]; 
+    } else if ([self speculate:^{ [self tag_]; }]) {
+        [self tag_]; 
+    } else if ([self speculate:^{ [self procInstr_]; }]) {
+        [self procInstr_]; 
+    } else if ([self speculate:^{ [self comment_]; }]) {
+        [self comment_]; 
+    } else if ([self speculate:^{ [self doctype_]; }]) {
+        [self doctype_]; 
+    } else if ([self speculate:^{ [self text_]; }]) {
+        [self text_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'anything'."];
     }
 
 }
 
-- (void)anything {
+- (void)anything_ {
     [self parseRule:@selector(__anything) withMemo:_anything_memo];
 }
 
 - (void)__scriptElement {
     
-    [self scriptStartTag]; 
-    [self scriptElementContent]; 
-    [self scriptEndTag]; 
+    [self scriptStartTag_]; 
+    [self scriptElementContent_]; 
+    [self scriptEndTag_]; 
 
 }
 
-- (void)scriptElement {
+- (void)scriptElement_ {
     [self parseRule:@selector(__scriptElement) withMemo:_scriptElement_memo];
 }
 
 - (void)__scriptStartTag {
     
-    [self lt]; 
-    [self scriptTagName]; 
-    while ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        if ([self speculate:^{ [self attr]; }]) {
-            [self attr]; 
-        } else {
-            break;
-        }
+    [self lt_]; 
+    [self scriptTagName_]; 
+    while ([self speculate:^{ [self attr_]; }]) {
+        [self attr_]; 
     }
-    [self gt]; 
+    [self gt_]; 
 
 }
 
-- (void)scriptStartTag {
+- (void)scriptStartTag_ {
     [self parseRule:@selector(__scriptStartTag) withMemo:_scriptStartTag_memo];
 }
 
 - (void)__scriptEndTag {
     
-    [self lt]; 
-    [self fwdSlash]; 
-    [self scriptTagName]; 
-    [self gt]; 
+    [self lt_]; 
+    [self fwdSlash_]; 
+    [self scriptTagName_]; 
+    [self gt_]; 
 
 }
 
-- (void)scriptEndTag {
+- (void)scriptEndTag_ {
     [self parseRule:@selector(__scriptEndTag) withMemo:_scriptEndTag_memo];
 }
 
@@ -308,13 +322,13 @@
     [self fireAssemblerSelector:@selector(parser:didMatchScriptTagName:)];
 }
 
-- (void)scriptTagName {
+- (void)scriptTagName_ {
     [self parseRule:@selector(__scriptTagName) withMemo:_scriptTagName_memo];
 }
 
 - (void)__scriptElementContent {
     
-    if (![self speculate:^{ [self scriptEndTag]; }]) {
+    if (![self speculate:^{ [self scriptEndTag_]; }]) {
         [self match:TOKEN_KIND_BUILTIN_ANY discard:NO];
     } else {
         [self raise:@"negation test failed in scriptElementContent"];
@@ -322,51 +336,47 @@
 
 }
 
-- (void)scriptElementContent {
+- (void)scriptElementContent_ {
     [self parseRule:@selector(__scriptElementContent) withMemo:_scriptElementContent_memo];
 }
 
 - (void)__styleElement {
     
-    [self styleStartTag]; 
-    [self styleElementContent]; 
-    [self styleEndTag]; 
+    [self styleStartTag_]; 
+    [self styleElementContent_]; 
+    [self styleEndTag_]; 
 
 }
 
-- (void)styleElement {
+- (void)styleElement_ {
     [self parseRule:@selector(__styleElement) withMemo:_styleElement_memo];
 }
 
 - (void)__styleStartTag {
     
-    [self lt]; 
-    [self styleTagName]; 
-    while ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        if ([self speculate:^{ [self attr]; }]) {
-            [self attr]; 
-        } else {
-            break;
-        }
+    [self lt_]; 
+    [self styleTagName_]; 
+    while ([self speculate:^{ [self attr_]; }]) {
+        [self attr_]; 
     }
-    [self gt]; 
+    [self gt_]; 
 
 }
 
-- (void)styleStartTag {
+- (void)styleStartTag_ {
     [self parseRule:@selector(__styleStartTag) withMemo:_styleStartTag_memo];
 }
 
 - (void)__styleEndTag {
     
-    [self lt]; 
-    [self fwdSlash]; 
-    [self styleTagName]; 
-    [self gt]; 
+    [self lt_]; 
+    [self fwdSlash_]; 
+    [self styleTagName_]; 
+    [self gt_]; 
 
 }
 
-- (void)styleEndTag {
+- (void)styleEndTag_ {
     [self parseRule:@selector(__styleEndTag) withMemo:_styleEndTag_memo];
 }
 
@@ -377,13 +387,13 @@
     [self fireAssemblerSelector:@selector(parser:didMatchStyleTagName:)];
 }
 
-- (void)styleTagName {
+- (void)styleTagName_ {
     [self parseRule:@selector(__styleTagName) withMemo:_styleTagName_memo];
 }
 
 - (void)__styleElementContent {
     
-    if (![self speculate:^{ [self styleEndTag]; }]) {
+    if (![self speculate:^{ [self styleEndTag_]; }]) {
         [self match:TOKEN_KIND_BUILTIN_ANY discard:NO];
     } else {
         [self raise:@"negation test failed in styleElementContent"];
@@ -391,7 +401,7 @@
 
 }
 
-- (void)styleElementContent {
+- (void)styleElementContent_ {
     [self parseRule:@selector(__styleElementContent) withMemo:_styleElementContent_memo];
 }
 
@@ -402,7 +412,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchProcInstr:)];
 }
 
-- (void)procInstr {
+- (void)procInstr_ {
     [self parseRule:@selector(__procInstr) withMemo:_procInstr_memo];
 }
 
@@ -413,7 +423,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchDoctype:)];
 }
 
-- (void)doctype {
+- (void)doctype_ {
     [self parseRule:@selector(__doctype) withMemo:_doctype_memo];
 }
 
@@ -424,77 +434,69 @@
     [self fireAssemblerSelector:@selector(parser:didMatchText:)];
 }
 
-- (void)text {
+- (void)text_ {
     [self parseRule:@selector(__text) withMemo:_text_memo];
 }
 
 - (void)__tag {
     
-    if ([self speculate:^{ [self emptyTag]; }]) {
-        [self emptyTag]; 
-    } else if ([self speculate:^{ [self startTag]; }]) {
-        [self startTag]; 
-    } else if ([self speculate:^{ [self endTag]; }]) {
-        [self endTag]; 
+    if ([self speculate:^{ [self emptyTag_]; }]) {
+        [self emptyTag_]; 
+    } else if ([self speculate:^{ [self startTag_]; }]) {
+        [self startTag_]; 
+    } else if ([self speculate:^{ [self endTag_]; }]) {
+        [self endTag_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'tag'."];
     }
 
 }
 
-- (void)tag {
+- (void)tag_ {
     [self parseRule:@selector(__tag) withMemo:_tag_memo];
 }
 
 - (void)__emptyTag {
     
-    [self lt]; 
-    [self tagName]; 
-    while ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        if ([self speculate:^{ [self attr]; }]) {
-            [self attr]; 
-        } else {
-            break;
-        }
+    [self lt_]; 
+    [self tagName_]; 
+    while ([self speculate:^{ [self attr_]; }]) {
+        [self attr_]; 
     }
-    [self fwdSlash]; 
-    [self gt]; 
+    [self fwdSlash_]; 
+    [self gt_]; 
 
 }
 
-- (void)emptyTag {
+- (void)emptyTag_ {
     [self parseRule:@selector(__emptyTag) withMemo:_emptyTag_memo];
 }
 
 - (void)__startTag {
     
-    [self lt]; 
-    [self tagName]; 
-    while ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        if ([self speculate:^{ [self attr]; }]) {
-            [self attr]; 
-        } else {
-            break;
-        }
+    [self lt_]; 
+    [self tagName_]; 
+    while ([self speculate:^{ [self attr_]; }]) {
+        [self attr_]; 
     }
-    [self gt]; 
+    [self gt_]; 
 
 }
 
-- (void)startTag {
+- (void)startTag_ {
     [self parseRule:@selector(__startTag) withMemo:_startTag_memo];
 }
 
 - (void)__endTag {
     
-    [self lt]; 
-    [self fwdSlash]; 
-    [self tagName]; 
-    [self gt]; 
+    [self lt_]; 
+    [self fwdSlash_]; 
+    [self tagName_]; 
+    [self gt_]; 
 
 }
 
-- (void)endTag {
+- (void)endTag_ {
     [self parseRule:@selector(__endTag) withMemo:_endTag_memo];
 }
 
@@ -505,23 +507,23 @@
     [self fireAssemblerSelector:@selector(parser:didMatchTagName:)];
 }
 
-- (void)tagName {
+- (void)tagName_ {
     [self parseRule:@selector(__tagName) withMemo:_tagName_memo];
 }
 
 - (void)__attr {
     
-    [self attrName]; 
-    if ([self speculate:^{ [self eq]; if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {[self attrValue]; }}]) {
-        [self eq]; 
+    [self attrName_]; 
+    if ([self speculate:^{ [self eq_]; if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {[self attrValue_]; }}]) {
+        [self eq_]; 
         if ([self predicts:TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
-            [self attrValue]; 
+            [self attrValue_]; 
         }
     }
 
 }
 
-- (void)attr {
+- (void)attr_ {
     [self parseRule:@selector(__attr) withMemo:_attr_memo];
 }
 
@@ -532,7 +534,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAttrName:)];
 }
 
-- (void)attrName {
+- (void)attrName_ {
     [self parseRule:@selector(__attrName) withMemo:_attrName_memo];
 }
 
@@ -548,7 +550,7 @@
 
 }
 
-- (void)attrValue {
+- (void)attrValue_ {
     [self parseRule:@selector(__attrValue) withMemo:_attrValue_memo];
 }
 
@@ -559,7 +561,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchEq:)];
 }
 
-- (void)eq {
+- (void)eq_ {
     [self parseRule:@selector(__eq) withMemo:_eq_memo];
 }
 
@@ -570,7 +572,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchLt:)];
 }
 
-- (void)lt {
+- (void)lt_ {
     [self parseRule:@selector(__lt) withMemo:_lt_memo];
 }
 
@@ -581,7 +583,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchGt:)];
 }
 
-- (void)gt {
+- (void)gt_ {
     [self parseRule:@selector(__gt) withMemo:_gt_memo];
 }
 
@@ -592,7 +594,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchFwdSlash:)];
 }
 
-- (void)fwdSlash {
+- (void)fwdSlash_ {
     [self parseRule:@selector(__fwdSlash) withMemo:_fwdSlash_memo];
 }
 
@@ -603,7 +605,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchComment:)];
 }
 
-- (void)comment {
+- (void)comment_ {
     [self parseRule:@selector(__comment) withMemo:_comment_memo];
 }
 

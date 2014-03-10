@@ -4,6 +4,6 @@
 {{preCallback}}{{methodBody}}{{postCallback}}
 }
 
-- (void){{methodName}} {
+- (void){{methodName}}_ {
     [self parseRule:@selector(__{{methodName}}) withMemo:_{{methodName}}_memo];
 }

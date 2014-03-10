@@ -1,5 +1,5 @@
 #import "ExpressionParser.h"
-#import <ParseKit/ParseKit.h>
+#import <PEGKit/PEGKit.h>
 
 #define LT(i) [self LT:(i)]
 #define LA(i) [self LA:(i)]
@@ -7,39 +7,48 @@
 #define LF(i) [self LF:(i)]
 
 #define POP()       [self.assembly pop]
-#define POP_STR()   [self _popString]
-#define POP_TOK()   [self _popToken]
-#define POP_BOOL()  [self _popBool]
-#define POP_INT()   [self _popInteger]
-#define POP_FLOAT() [self _popDouble]
+#define POP_STR()   [self popString]
+#define POP_TOK()   [self popToken]
+#define POP_BOOL()  [self popBool]
+#define POP_INT()   [self popInteger]
+#define POP_FLOAT() [self popDouble]
 
 #define PUSH(obj)     [self.assembly push:(id)(obj)]
-#define PUSH_BOOL(yn) [self _pushBool:(BOOL)(yn)]
-#define PUSH_INT(i)   [self _pushInteger:(NSInteger)(i)]
-#define PUSH_FLOAT(f) [self _pushDouble:(double)(f)]
+#define PUSH_BOOL(yn) [self pushBool:(BOOL)(yn)]
+#define PUSH_INT(i)   [self pushInteger:(NSInteger)(i)]
+#define PUSH_FLOAT(f) [self pushDouble:(double)(f)]
 
 #define EQ(a, b) [(a) isEqual:(b)]
 #define NE(a, b) (![(a) isEqual:(b)])
 #define EQ_IGNORE_CASE(a, b) (NSOrderedSame == [(a) compare:(b)])
+
+#define MATCHES(pattern, str)               ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:0                                  error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
+#define MATCHES_IGNORE_CASE(pattern, str)   ([[NSRegularExpression regularExpressionWithPattern:(pattern) options:NSRegularExpressionCaseInsensitive error:nil] numberOfMatchesInString:(str) options:0 range:NSMakeRange(0, [(str) length])] > 0)
 
 #define ABOVE(fence) [self.assembly objectsAbove:(fence)]
 
 #define LOG(obj) do { NSLog(@"%@", (obj)); } while (0);
 #define PRINT(str) do { printf("%s\n", (str)); } while (0);
 
-@interface PKSParser ()
-@property (nonatomic, retain) NSMutableDictionary *_tokenKindTab;
-@property (nonatomic, retain) NSMutableArray *_tokenKindNameTab;
+@interface PEGParser ()
+@property (nonatomic, retain) NSMutableDictionary *tokenKindTab;
+@property (nonatomic, retain) NSMutableArray *tokenKindNameTab;
+@property (nonatomic, retain) NSString *startRuleName;
+@property (nonatomic, retain) NSString *statementTerminator;
+@property (nonatomic, retain) NSString *singleLineCommentMarker;
+@property (nonatomic, retain) NSString *blockStartMarker;
+@property (nonatomic, retain) NSString *blockEndMarker;
+@property (nonatomic, retain) NSString *braces;
 
-- (BOOL)_popBool;
-- (NSInteger)_popInteger;
-- (double)_popDouble;
-- (PKToken *)_popToken;
-- (NSString *)_popString;
+- (BOOL)popBool;
+- (NSInteger)popInteger;
+- (double)popDouble;
+- (PKToken *)popToken;
+- (NSString *)popString;
 
-- (void)_pushBool:(BOOL)yn;
-- (void)_pushInteger:(NSInteger)i;
-- (void)_pushDouble:(double)d;
+- (void)pushBool:(BOOL)yn;
+- (void)pushInteger:(NSInteger)i;
+- (void)pushDouble:(double)d;
 @end
 
 @interface ExpressionParser ()
@@ -80,35 +89,36 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self._tokenKindTab[@">="] = @(EXPRESSION_TOKEN_KIND_GE);
-        self._tokenKindTab[@","] = @(EXPRESSION_TOKEN_KIND_COMMA);
-        self._tokenKindTab[@"or"] = @(EXPRESSION_TOKEN_KIND_OR);
-        self._tokenKindTab[@"<"] = @(EXPRESSION_TOKEN_KIND_LT);
-        self._tokenKindTab[@"<="] = @(EXPRESSION_TOKEN_KIND_LE);
-        self._tokenKindTab[@"="] = @(EXPRESSION_TOKEN_KIND_EQ);
-        self._tokenKindTab[@"."] = @(EXPRESSION_TOKEN_KIND_DOT);
-        self._tokenKindTab[@">"] = @(EXPRESSION_TOKEN_KIND_GT);
-        self._tokenKindTab[@"("] = @(EXPRESSION_TOKEN_KIND_OPENPAREN);
-        self._tokenKindTab[@"yes"] = @(EXPRESSION_TOKEN_KIND_YES);
-        self._tokenKindTab[@"no"] = @(EXPRESSION_TOKEN_KIND_NO);
-        self._tokenKindTab[@")"] = @(EXPRESSION_TOKEN_KIND_CLOSEPAREN);
-        self._tokenKindTab[@"!="] = @(EXPRESSION_TOKEN_KIND_NE);
-        self._tokenKindTab[@"and"] = @(EXPRESSION_TOKEN_KIND_AND);
+        self.startRuleName = @"expr";
+        self.tokenKindTab[@">="] = @(EXPRESSION_TOKEN_KIND_GE);
+        self.tokenKindTab[@","] = @(EXPRESSION_TOKEN_KIND_COMMA);
+        self.tokenKindTab[@"or"] = @(EXPRESSION_TOKEN_KIND_OR);
+        self.tokenKindTab[@"<"] = @(EXPRESSION_TOKEN_KIND_LT);
+        self.tokenKindTab[@"<="] = @(EXPRESSION_TOKEN_KIND_LE);
+        self.tokenKindTab[@"="] = @(EXPRESSION_TOKEN_KIND_EQ);
+        self.tokenKindTab[@"."] = @(EXPRESSION_TOKEN_KIND_DOT);
+        self.tokenKindTab[@">"] = @(EXPRESSION_TOKEN_KIND_GT);
+        self.tokenKindTab[@"("] = @(EXPRESSION_TOKEN_KIND_OPENPAREN);
+        self.tokenKindTab[@"yes"] = @(EXPRESSION_TOKEN_KIND_YES);
+        self.tokenKindTab[@"no"] = @(EXPRESSION_TOKEN_KIND_NO);
+        self.tokenKindTab[@")"] = @(EXPRESSION_TOKEN_KIND_CLOSEPAREN);
+        self.tokenKindTab[@"!="] = @(EXPRESSION_TOKEN_KIND_NE);
+        self.tokenKindTab[@"and"] = @(EXPRESSION_TOKEN_KIND_AND);
 
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_GE] = @">=";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_COMMA] = @",";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_OR] = @"or";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_LT] = @"<";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_LE] = @"<=";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_EQ] = @"=";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_DOT] = @".";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_GT] = @">";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_OPENPAREN] = @"(";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_YES] = @"yes";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_NO] = @"no";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_CLOSEPAREN] = @")";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_NE] = @"!=";
-        self._tokenKindNameTab[EXPRESSION_TOKEN_KIND_AND] = @"and";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_GE] = @">=";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_COMMA] = @",";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_OR] = @"or";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_LT] = @"<";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_LE] = @"<=";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_EQ] = @"=";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_DOT] = @".";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_GT] = @">";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_OPENPAREN] = @"(";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_YES] = @"yes";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_NO] = @"no";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_CLOSEPAREN] = @")";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_NE] = @"!=";
+        self.tokenKindNameTab[EXPRESSION_TOKEN_KIND_AND] = @"and";
 
         self.expr_memo = [NSMutableDictionary dictionary];
         self.orExpr_memo = [NSMutableDictionary dictionary];
@@ -212,117 +222,103 @@
     [_and_memo removeAllObjects];
 }
 
-- (void)_start {
-    
-    [self expr]; 
-    [self matchEOF:YES]; 
-
+- (void)start {
+    [self expr_];
 }
 
 - (void)__expr {
     
-    [self orExpr]; 
+    [self orExpr_]; 
+    [self matchEOF:YES]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchExpr:)];
 }
 
-- (void)expr {
+- (void)expr_ {
     [self parseRule:@selector(__expr) withMemo:_expr_memo];
 }
 
 - (void)__orExpr {
     
-    [self andExpr]; 
-    while ([self predicts:EXPRESSION_TOKEN_KIND_OR, 0]) {
-        if ([self speculate:^{ [self orTerm]; }]) {
-            [self orTerm]; 
-        } else {
-            break;
-        }
+    [self andExpr_]; 
+    while ([self speculate:^{ [self orTerm_]; }]) {
+        [self orTerm_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchOrExpr:)];
 }
 
-- (void)orExpr {
+- (void)orExpr_ {
     [self parseRule:@selector(__orExpr) withMemo:_orExpr_memo];
 }
 
 - (void)__orTerm {
     
-    [self or]; 
-    [self andExpr]; 
+    [self or_]; 
+    [self andExpr_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchOrTerm:)];
 }
 
-- (void)orTerm {
+- (void)orTerm_ {
     [self parseRule:@selector(__orTerm) withMemo:_orTerm_memo];
 }
 
 - (void)__andExpr {
     
-    [self relExpr]; 
-    while ([self predicts:EXPRESSION_TOKEN_KIND_AND, 0]) {
-        if ([self speculate:^{ [self andTerm]; }]) {
-            [self andTerm]; 
-        } else {
-            break;
-        }
+    [self relExpr_]; 
+    while ([self speculate:^{ [self andTerm_]; }]) {
+        [self andTerm_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchAndExpr:)];
 }
 
-- (void)andExpr {
+- (void)andExpr_ {
     [self parseRule:@selector(__andExpr) withMemo:_andExpr_memo];
 }
 
 - (void)__andTerm {
     
-    [self and]; 
-    [self relExpr]; 
+    [self and_]; 
+    [self relExpr_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchAndTerm:)];
 }
 
-- (void)andTerm {
+- (void)andTerm_ {
     [self parseRule:@selector(__andTerm) withMemo:_andTerm_memo];
 }
 
 - (void)__relExpr {
     
-    [self callExpr]; 
-    while ([self predicts:EXPRESSION_TOKEN_KIND_EQ, EXPRESSION_TOKEN_KIND_GE, EXPRESSION_TOKEN_KIND_GT, EXPRESSION_TOKEN_KIND_LE, EXPRESSION_TOKEN_KIND_LT, EXPRESSION_TOKEN_KIND_NE, 0]) {
-        if ([self speculate:^{ [self relOp]; [self callExpr]; }]) {
-            [self relOp]; 
-            [self callExpr]; 
-        } else {
-            break;
-        }
+    [self callExpr_]; 
+    while ([self speculate:^{ [self relOp_]; [self callExpr_]; }]) {
+        [self relOp_]; 
+        [self callExpr_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchRelExpr:)];
 }
 
-- (void)relExpr {
+- (void)relExpr_ {
     [self parseRule:@selector(__relExpr) withMemo:_relExpr_memo];
 }
 
 - (void)__relOp {
     
     if ([self predicts:EXPRESSION_TOKEN_KIND_LT, 0]) {
-        [self lt]; 
+        [self lt_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_GT, 0]) {
-        [self gt]; 
+        [self gt_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_EQ, 0]) {
-        [self eq]; 
+        [self eq_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_NE, 0]) {
-        [self ne]; 
+        [self ne_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_LE, 0]) {
-        [self le]; 
+        [self le_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_GE, 0]) {
-        [self ge]; 
+        [self ge_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'relOp'."];
     }
@@ -330,55 +326,51 @@
     [self fireAssemblerSelector:@selector(parser:didMatchRelOp:)];
 }
 
-- (void)relOp {
+- (void)relOp_ {
     [self parseRule:@selector(__relOp) withMemo:_relOp_memo];
 }
 
 - (void)__callExpr {
     
-    [self primary]; 
-    if ([self speculate:^{ [self openParen]; if ([self speculate:^{ [self argList]; }]) {[self argList]; }[self closeParen]; }]) {
-        [self openParen]; 
-        if ([self speculate:^{ [self argList]; }]) {
-            [self argList]; 
+    [self primary_]; 
+    if ([self speculate:^{ [self openParen_]; if ([self speculate:^{ [self argList_]; }]) {[self argList_]; }[self closeParen_]; }]) {
+        [self openParen_]; 
+        if ([self speculate:^{ [self argList_]; }]) {
+            [self argList_]; 
         }
-        [self closeParen]; 
+        [self closeParen_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchCallExpr:)];
 }
 
-- (void)callExpr {
+- (void)callExpr_ {
     [self parseRule:@selector(__callExpr) withMemo:_callExpr_memo];
 }
 
 - (void)__argList {
     
-    [self atom]; 
-    while ([self predicts:EXPRESSION_TOKEN_KIND_COMMA, 0]) {
-        if ([self speculate:^{ [self comma]; [self atom]; }]) {
-            [self comma]; 
-            [self atom]; 
-        } else {
-            break;
-        }
+    [self atom_]; 
+    while ([self speculate:^{ [self comma_]; [self atom_]; }]) {
+        [self comma_]; 
+        [self atom_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchArgList:)];
 }
 
-- (void)argList {
+- (void)argList_ {
     [self parseRule:@selector(__argList) withMemo:_argList_memo];
 }
 
 - (void)__primary {
     
     if ([self predicts:EXPRESSION_TOKEN_KIND_NO, EXPRESSION_TOKEN_KIND_YES, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self atom]; 
+        [self atom_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_OPENPAREN, 0]) {
-        [self openParen]; 
-        [self expr]; 
-        [self closeParen]; 
+        [self openParen_]; 
+        [self expr_]; 
+        [self closeParen_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'primary'."];
     }
@@ -386,16 +378,16 @@
     [self fireAssemblerSelector:@selector(parser:didMatchPrimary:)];
 }
 
-- (void)primary {
+- (void)primary_ {
     [self parseRule:@selector(__primary) withMemo:_primary_memo];
 }
 
 - (void)__atom {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
-        [self obj]; 
+        [self obj_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_NO, EXPRESSION_TOKEN_KIND_YES, TOKEN_KIND_BUILTIN_NUMBER, TOKEN_KIND_BUILTIN_QUOTEDSTRING, 0]) {
-        [self literal]; 
+        [self literal_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'atom'."];
     }
@@ -403,25 +395,21 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAtom:)];
 }
 
-- (void)atom {
+- (void)atom_ {
     [self parseRule:@selector(__atom) withMemo:_atom_memo];
 }
 
 - (void)__obj {
     
-    [self id]; 
-    while ([self predicts:EXPRESSION_TOKEN_KIND_DOT, 0]) {
-        if ([self speculate:^{ [self member]; }]) {
-            [self member]; 
-        } else {
-            break;
-        }
+    [self id_]; 
+    while ([self speculate:^{ [self member_]; }]) {
+        [self member_]; 
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchObj:)];
 }
 
-- (void)obj {
+- (void)obj_ {
     [self parseRule:@selector(__obj) withMemo:_obj_memo];
 }
 
@@ -432,19 +420,19 @@
     [self fireAssemblerSelector:@selector(parser:didMatchId:)];
 }
 
-- (void)id {
+- (void)id_ {
     [self parseRule:@selector(__id) withMemo:_id_memo];
 }
 
 - (void)__member {
     
-    [self dot]; 
-    [self id]; 
+    [self dot_]; 
+    [self id_]; 
 
     [self fireAssemblerSelector:@selector(parser:didMatchMember:)];
 }
 
-- (void)member {
+- (void)member_ {
     [self parseRule:@selector(__member) withMemo:_member_memo];
 }
 
@@ -455,7 +443,7 @@
     } else if ([self predicts:TOKEN_KIND_BUILTIN_NUMBER, 0]) {
         [self matchNumber:NO]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_NO, EXPRESSION_TOKEN_KIND_YES, 0]) {
-        [self bool]; 
+        [self bool_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'literal'."];
     }
@@ -463,16 +451,16 @@
     [self fireAssemblerSelector:@selector(parser:didMatchLiteral:)];
 }
 
-- (void)literal {
+- (void)literal_ {
     [self parseRule:@selector(__literal) withMemo:_literal_memo];
 }
 
 - (void)__bool {
     
     if ([self predicts:EXPRESSION_TOKEN_KIND_YES, 0]) {
-        [self yes]; 
+        [self yes_]; 
     } else if ([self predicts:EXPRESSION_TOKEN_KIND_NO, 0]) {
-        [self no]; 
+        [self no_]; 
     } else {
         [self raise:@"No viable alternative found in rule 'bool'."];
     }
@@ -480,7 +468,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchBool:)];
 }
 
-- (void)bool {
+- (void)bool_ {
     [self parseRule:@selector(__bool) withMemo:_bool_memo];
 }
 
@@ -491,7 +479,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchLt:)];
 }
 
-- (void)lt {
+- (void)lt_ {
     [self parseRule:@selector(__lt) withMemo:_lt_memo];
 }
 
@@ -502,7 +490,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchGt:)];
 }
 
-- (void)gt {
+- (void)gt_ {
     [self parseRule:@selector(__gt) withMemo:_gt_memo];
 }
 
@@ -513,7 +501,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchEq:)];
 }
 
-- (void)eq {
+- (void)eq_ {
     [self parseRule:@selector(__eq) withMemo:_eq_memo];
 }
 
@@ -524,7 +512,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchNe:)];
 }
 
-- (void)ne {
+- (void)ne_ {
     [self parseRule:@selector(__ne) withMemo:_ne_memo];
 }
 
@@ -535,7 +523,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchLe:)];
 }
 
-- (void)le {
+- (void)le_ {
     [self parseRule:@selector(__le) withMemo:_le_memo];
 }
 
@@ -546,7 +534,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchGe:)];
 }
 
-- (void)ge {
+- (void)ge_ {
     [self parseRule:@selector(__ge) withMemo:_ge_memo];
 }
 
@@ -557,7 +545,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchOpenParen:)];
 }
 
-- (void)openParen {
+- (void)openParen_ {
     [self parseRule:@selector(__openParen) withMemo:_openParen_memo];
 }
 
@@ -568,7 +556,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchCloseParen:)];
 }
 
-- (void)closeParen {
+- (void)closeParen_ {
     [self parseRule:@selector(__closeParen) withMemo:_closeParen_memo];
 }
 
@@ -579,7 +567,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchYes:)];
 }
 
-- (void)yes {
+- (void)yes_ {
     [self parseRule:@selector(__yes) withMemo:_yes_memo];
 }
 
@@ -590,7 +578,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchNo:)];
 }
 
-- (void)no {
+- (void)no_ {
     [self parseRule:@selector(__no) withMemo:_no_memo];
 }
 
@@ -601,7 +589,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchDot:)];
 }
 
-- (void)dot {
+- (void)dot_ {
     [self parseRule:@selector(__dot) withMemo:_dot_memo];
 }
 
@@ -612,7 +600,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchComma:)];
 }
 
-- (void)comma {
+- (void)comma_ {
     [self parseRule:@selector(__comma) withMemo:_comma_memo];
 }
 
@@ -623,7 +611,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchOr:)];
 }
 
-- (void)or {
+- (void)or_ {
     [self parseRule:@selector(__or) withMemo:_or_memo];
 }
 
@@ -634,7 +622,7 @@
     [self fireAssemblerSelector:@selector(parser:didMatchAnd:)];
 }
 
-- (void)and {
+- (void)and_ {
     [self parseRule:@selector(__and) withMemo:_and_memo];
 }
 

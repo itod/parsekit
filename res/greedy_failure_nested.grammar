@@ -1,0 +1,35 @@
+/*
+- (void)structure {
+    
+    [self lcurly]; 
+    [self tryAndRecover:GREEDYFAILURE_TOKEN_KIND_COLON block:^{
+        [self name]; 
+        [self colon];
+    } completion:^{
+        [self colon];
+    }];
+
+    [self tryAndRecover:GREEDYFAILURE_TOKEN_KIND_RCURLY block:^{
+        [self value];
+        [self rcurly];
+    } completion:^{
+        [self rcurly];
+    }];
+
+    [self fireAssemblerSelector:@selector(parser:didMatchStructure:)];
+}
+*/
+
+structs = structure+;
+
+structure = lcurly pair (comma pair)* rcurly;
+
+pair = name colon value;
+
+name = QuotedString;
+value = Word;
+
+comma = ',';
+lcurly = '{';
+rcurly = '}';
+colon = ':';

@@ -12,7 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#if PEGKIT
+#import <PEGKit/PKReader.h>
+#else
 #import <ParseKit/PKReader.h>
+#endif
 
 @implementation PKReader
 
@@ -43,6 +47,12 @@
     self.string = nil;
     self.stream = nil;
     [super dealloc];
+}
+
+
+- (NSString *)debugDescription {
+    NSString *buff = [NSString stringWithFormat:@"%@^%@", [string substringToIndex:offset], [string substringFromIndex:offset]];
+    return [NSString stringWithFormat:@"<%@ %p `%@`>", [self class], self, buff];
 }
 
 

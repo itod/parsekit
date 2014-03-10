@@ -32,8 +32,6 @@
     (Is this the first XML parser implemented directly in Objective-C?)
 */
 
-@start = document;
-
 @reportsWhitespaceTokens = YES;
 
 @symbols = '&#' '&#x' '</' '/>' '<![' '<?' '?>' '<?xml';

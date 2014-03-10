@@ -1,4 +1,3 @@
-@start         = expr;
 expr           = term (plusTerm | minusTerm)*;
 term           = factor (timesFactor | divFactor)*;
 plusTerm       = '+' term;

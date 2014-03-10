@@ -6,7 +6,7 @@
 @singleLineComments = '#';
 @multiLineComments = '/*' '*/';
 
-@start        
+start
 @before {
 	PKTokenizer *t = self.tokenizer;
 	
@@ -35,14 +35,14 @@ arrayContent  = Empty | actualArray;
 actualArray   = value commaValue*;
 commaValue    = comma comment? value;
 
-value         = (nullLiteral | trueLiteral | falseLiteral | number | string | array | object) comment?;
+value         = (nullLiteral | true | false | number | string | array | object) comment?;
 
 comment       = Comment;
 string        = QuotedString;
 number        = Number;
 nullLiteral   = 'null';
-trueLiteral   = 'true';
-falseLiteral  = 'false';
+true   = 'true';
+false  = 'false';
 
 openCurly     = '{';
 closeCurly    = '}';
@@ -56,7 +56,7 @@ colon         = ':';
 
     The built-in terminal production types are (note titlecase) : Empty, Number, QuotedString, Word, etc.
     You define collections (alternations, repetitions or sequences) and literal terminals (in quotes). These should be lowercase.
-    The special '@start' production is the outermost production.
+    The special 'start' production is the outermost production.
     
     you can discard tokens by following them with a bang ('!') like:
     
