@@ -13,7 +13,7 @@ My new PEKit library eschews all of the dynamic aspects of the original ParseKit
 1. There is no longer an explicit (redundant) `@start` rule. The first rule defined in your grammar is implicitly recognized as your **start** rule. This simplifies your grammar slightly.
 1. **Tokenizer Directives** are removed. Instead, use a `@before` block on your *start* rule to configure your tokenizer behavior with Objective-C code. [An example](https://github.com/itod/pegkit/blob/master/res/crockford.grammar).
 
-The highly dynamic nature of the original ParseKit library may still be usefull in some rare circumstances, but you almost certainly want to use PEGKit for all new development.
+The highly dynamic nature of the original ParseKit library may still be usefull in some rare circumstances, but you almost certainly want to [use PEGKit](https://github.com/itod/pegkit) for all new development. [See this PEGKit tutorial](http://itod.github.io/PEGKitMiniMathTutorial/).
 
 ## ParseKit
 
