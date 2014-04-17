@@ -16,7 +16,7 @@
 
 @class PKTokenizer;
 
-@interface TDTokenizerTest : SenTestCase {
+@interface TDTokenizerTest : XCTestCase {
     PKTokenizer *t;
     NSString *s;
 }

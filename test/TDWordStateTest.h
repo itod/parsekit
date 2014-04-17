@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDWordStateTest : SenTestCase {
+@interface TDWordStateTest : XCTestCase {
     PKWordState *wordState;
     PKReader *r;
     NSString *s;

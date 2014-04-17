@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDTrackTest : SenTestCase {
+@interface TDTrackTest : XCTestCase {
 
 }
 

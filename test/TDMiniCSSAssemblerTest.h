@@ -16,7 +16,7 @@
 #import "PKParserFactory.h"
 #import "TDMiniCSSAssembler.h"
 
-@interface TDMiniCSSAssemblerTest : SenTestCase {
+@interface TDMiniCSSAssemblerTest : XCTestCase {
     NSString *path;
     NSString *grammarString;
     NSString *s;

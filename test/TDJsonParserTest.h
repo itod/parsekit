@@ -16,7 +16,7 @@
 
 @class TDJsonParser;
 
-@interface TDJsonParserTest : SenTestCase {
+@interface TDJsonParserTest : XCTestCase {
     TDJsonParser *p;
     NSString *s;
     PKAssembly *a;

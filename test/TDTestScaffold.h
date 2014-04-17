@@ -13,14 +13,14 @@
 //  limitations under the License.
 
 #import <Foundation/Foundation.h>
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import <ParseKit/ParseKit.h>
 
-#define TDTrue(e) STAssertTrue((e), @"")
-#define TDFalse(e) STAssertFalse((e), @"")
-#define TDNil(e) STAssertNil((e), @"")
-#define TDNotNil(e) STAssertNotNil((e), @"")
-#define TDEquals(e1, e2) STAssertEquals((e1), (e2), @"")
-#define TDEqualObjects(e1, e2) STAssertEqualObjects((e1), (e2), @"")
+#define TDTrue(e) XCTAssertTrue((e), @"")
+#define TDFalse(e) XCTAssertFalse((e), @"")
+#define TDNil(e) XCTAssertNil((e), @"")
+#define TDNotNil(e) XCTAssertNotNil((e), @"")
+#define TDEquals(e1, e2) XCTAssertEqual((e1), (e2), @"")
+#define TDEqualObjects(e1, e2) XCTAssertEqualObjects((e1), (e2), @"")
 
 #define TD_EMIT 1

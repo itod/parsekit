@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDSymbolStateTest : SenTestCase {
+@interface TDSymbolStateTest : XCTestCase {
     PKSymbolState *symbolState;
     PKReader *r;
     NSString *s;

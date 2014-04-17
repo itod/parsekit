@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface SemanticPredicateParserTest : SenTestCase
+@interface SemanticPredicateParserTest : XCTestCase
 
 @end

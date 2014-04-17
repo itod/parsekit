@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDNumberStateTest : SenTestCase {
+@interface TDNumberStateTest : XCTestCase {
     PKNumberState *numberState;
     PKTokenizer *t;
     PKReader *r;

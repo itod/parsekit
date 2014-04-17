@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface CSSParserTest : SenTestCase
+@interface CSSParserTest : XCTestCase
 
 @end

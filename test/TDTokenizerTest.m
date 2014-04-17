@@ -258,7 +258,7 @@
     t = [PKTokenizer tokenizerWithString:s];
     
     PKToken *tok = [t nextToken];
-    STAssertEqualsWithAccuracy((PKFloat)0.999, tok.floatValue, 0.01, @"");
+    XCTAssertEqualWithAccuracy((PKFloat)0.999, tok.floatValue, 0.01, @"");
     TDTrue(tok.isNumber);
     TDEquals(tok.offset, (NSUInteger)3);
 

@@ -8,7 +8,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDURLStateTest : SenTestCase {
+@interface TDURLStateTest : XCTestCase {
     PKURLState *URLState;
     PKTokenizer *t;
     NSString *s;

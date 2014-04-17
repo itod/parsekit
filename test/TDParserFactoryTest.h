@@ -9,7 +9,7 @@
 #import "TDTestScaffold.h"
 #import "PKParserFactory.h"
 
-@interface TDParserFactoryTest : SenTestCase {
+@interface TDParserFactoryTest : XCTestCase {
     NSString *s;
     PKTokenAssembly *a;
     PKParserFactory *factory;

@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "XMLReader.h"
 
-@interface XMLReaderTest : SenTestCase {
+@interface XMLReaderTest : XCTestCase {
 
 }
 

@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface LabelRecursiveParserTest : SenTestCase
+@interface LabelRecursiveParserTest : XCTestCase
 
 @end

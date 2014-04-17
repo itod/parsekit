@@ -16,7 +16,7 @@
 
 #import "XPathParser.h"
 
-@interface XPathParserTest : SenTestCase {
+@interface XPathParserTest : XCTestCase {
     NSString *s;
     XPathParser *p;
     PKAssembly *a;

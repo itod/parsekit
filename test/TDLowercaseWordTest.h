@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDLowercaseWordTest : SenTestCase {
+@interface TDLowercaseWordTest : XCTestCase {
     
 }
 @end

@@ -35,7 +35,7 @@
     self = [super init];
     if (self) {
         self.productionNames = [NSMutableDictionary dictionary];
-        self.defaultProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+        self.defaultProperties = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                   [NSColor blackColor], NSForegroundColorAttributeName,
                                   [NSColor whiteColor], NSBackgroundColorAttributeName,
                                   [NSFont fontWithName:@"Monaco" size:11.0], NSFontAttributeName,

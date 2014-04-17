@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 
 
-@interface TDSpecificCharTest : SenTestCase {
+@interface TDSpecificCharTest : XCTestCase {
     NSString *s;
     PKCharacterAssembly *a;
     PKSpecificChar *p;

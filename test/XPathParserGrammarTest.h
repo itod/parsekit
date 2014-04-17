@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface XPathParserGrammarTest : SenTestCase {
+@interface XPathParserGrammarTest : XCTestCase {
     NSString *s;
     PKParser *p;
     PKTokenizer *t;

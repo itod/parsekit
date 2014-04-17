@@ -16,7 +16,7 @@
 #import "TDRegexAssembler.h"
 #import "TDRegularParser.h"
 
-@interface TDRegularParserTest : SenTestCase {
+@interface TDRegularParserTest : XCTestCase {
     NSString *s;
     PKCharacterAssembly *a;
     PKParser *p;

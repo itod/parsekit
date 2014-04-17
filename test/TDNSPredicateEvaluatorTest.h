@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "TDNSPredicateEvaluator.h"
 
-@interface TDNSPredicateEvaluatorTest : SenTestCase <TDKeyPathResolver> {
+@interface TDNSPredicateEvaluatorTest : XCTestCase <TDKeyPathResolver> {
     TDNSPredicateEvaluator *eval;
     NSString *s;
     PKAssembly *a;

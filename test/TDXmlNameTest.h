@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 //
 
-@interface TDXmlNameTest : SenTestCase {
+@interface TDXmlNameTest : XCTestCase {
 
 }
 

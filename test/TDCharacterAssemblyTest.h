@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 
 
-@interface TDCharacterAssemblyTest : SenTestCase {
+@interface TDCharacterAssemblyTest : XCTestCase {
     NSString *s;
     PKCharacterAssembly *a;
     PKAssembly *result;

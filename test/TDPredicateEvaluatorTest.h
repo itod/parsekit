@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "TDPredicateEvaluator.h"
 
-@interface TDPredicateEvaluatorTest : SenTestCase <TDPredicateEvaluatorDelegate> {
+@interface TDPredicateEvaluatorTest : XCTestCase <TDPredicateEvaluatorDelegate> {
     TDPredicateEvaluator *p;
     NSString *s;
     PKAssembly *a;

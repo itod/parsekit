@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDTokenTest : SenTestCase {
+@interface TDTokenTest : XCTestCase {
     PKToken *eof;
 }
 

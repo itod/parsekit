@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDAlternationTest : SenTestCase {
+@interface TDAlternationTest : XCTestCase {
     PKCollectionParser *p;
     PKAssembly *a;
     NSString *s;

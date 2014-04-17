@@ -16,7 +16,7 @@
 
 #import "SRGSParser.h"
 
-@interface SRGSParserTest : SenTestCase {
+@interface SRGSParserTest : XCTestCase {
     NSString *s;
     SRGSParser *p;
     PKAssembly *a;

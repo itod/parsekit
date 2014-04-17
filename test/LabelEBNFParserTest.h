@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface LabelEBNFParserTest : SenTestCase
+@interface LabelEBNFParserTest : XCTestCase
 
 @end

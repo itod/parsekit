@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDWhitespaceStateTest : SenTestCase {
+@interface TDWhitespaceStateTest : XCTestCase {
     PKWhitespaceState *whitespaceState;
     PKReader *r;
     NSString *s;

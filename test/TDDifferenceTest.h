@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDDifferenceTest : SenTestCase {
+@interface TDDifferenceTest : XCTestCase {
     PKTokenizer *t;
     PKDifference *d;
     PKParser *minus;

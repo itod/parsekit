@@ -20,12 +20,12 @@
 #define RUN_ALL_TEST_CASES 1
 #define SOLO_TEST_CASE @"JavaScriptParserTest" // TDParserFactoryASTTest TDParserFactorySymbolTableTest TDParserFactoryParserTest TDParseTreeTest TDParserFactoryASTRewriteTest
 
-@interface SenTestSuite (TDAdditions)
+@interface XCTestSuite (TDAdditions)
 - (void)addSuitesForClassNames:(NSArray *)classNames;
 @end
 
-SenTestSuite *TDSoloTestSuite() {
-    SenTestSuite *suite = [SenTestSuite testSuiteWithName:@"Solo Test Suite"];
+XCTestSuite *TDSoloTestSuite() {
+    XCTestSuite *suite = [XCTestSuite testSuiteWithName:@"Solo Test Suite"];
     
     NSArray *classNames = [NSArray arrayWithObject:SOLO_TEST_CASE];
     
@@ -33,8 +33,8 @@ SenTestSuite *TDSoloTestSuite() {
     return suite;
 }
 
-SenTestSuite *TDTokensTestSuite() {
-    SenTestSuite *suite = [SenTestSuite testSuiteWithName:@"Tokens Test Suite"];
+XCTestSuite *TDTokensTestSuite() {
+    XCTestSuite *suite = [XCTestSuite testSuiteWithName:@"Tokens Test Suite"];
     
     NSArray *classNames = [NSArray arrayWithObjects:
                            @"TDReaderTest",
@@ -60,8 +60,8 @@ SenTestSuite *TDTokensTestSuite() {
     return suite;
 }
 
-SenTestSuite *TDCharsTestSuite() {
-    SenTestSuite *suite = [SenTestSuite testSuiteWithName:@"Chars Test Suite"];
+XCTestSuite *TDCharsTestSuite() {
+    XCTestSuite *suite = [XCTestSuite testSuiteWithName:@"Chars Test Suite"];
     
     NSArray *classNames = [NSArray arrayWithObjects:
                            @"TDCharacterAssemblyTest",
@@ -75,8 +75,8 @@ SenTestSuite *TDCharsTestSuite() {
     return suite;
 }
 
-SenTestSuite *TDParseTestSuite() {
-    SenTestSuite *suite = [SenTestSuite testSuiteWithName:@"Parse Test Suite"];
+XCTestSuite *TDParseTestSuite() {
+    XCTestSuite *suite = [XCTestSuite testSuiteWithName:@"Parse Test Suite"];
     
     NSArray *classNames = [NSArray arrayWithObjects:
                            @"TDParserTest",
@@ -111,8 +111,8 @@ SenTestSuite *TDParseTestSuite() {
     return suite;
 }
 
-SenTestSuite *TDParserFactoryTestSuite() {
-    SenTestSuite *suite = [SenTestSuite testSuiteWithName:@"ParserFactory Test Suite"];
+XCTestSuite *TDParserFactoryTestSuite() {
+    XCTestSuite *suite = [XCTestSuite testSuiteWithName:@"ParserFactory Test Suite"];
     
     NSArray *classNames = [NSArray arrayWithObjects:
                            @"TDParserFactoryTest",
@@ -134,10 +134,10 @@ SenTestSuite *TDParserFactoryTestSuite() {
     return suite;
 }
 
-@implementation SenTestSuite (TDAdditions)
+@implementation XCTestSuite (TDAdditions)
 
 + (id)testSuiteForBundlePath:(NSString *)path {
-    SenTestSuite *suite = nil;
+    XCTestSuite *suite = nil;
     
 #if RUN_ALL_TEST_CASES
     suite = [self defaultTestSuite];
@@ -156,7 +156,7 @@ SenTestSuite *TDParserFactoryTestSuite() {
 
 - (void)addSuitesForClassNames:(NSArray *)classNames {
     for (NSString *className in classNames) {
-        SenTestSuite *suite = [SenTestSuite testSuiteForTestCaseWithName:className];
+        XCTestSuite *suite = [XCTestSuite testSuiteForTestCaseWithName:className];
         [self addTest:suite];
     }
 }

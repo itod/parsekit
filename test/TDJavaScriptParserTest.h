@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "TDJavaScriptParser.h"
 
-@interface TDJavaScriptParserTest : SenTestCase {
+@interface TDJavaScriptParserTest : XCTestCase {
     TDJavaScriptParser *jsp;
     NSString *s;
     PKTokenAssembly *a;

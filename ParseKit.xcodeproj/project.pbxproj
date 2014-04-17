@@ -394,7 +394,6 @@
 		D375DACF173C64C000A5E050 /* ParseKitParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D375DACB173C64A600A5E050 /* ParseKitParser.m */; };
 		D375DAD0173C64C000A5E050 /* ParseKitParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D375DACB173C64A600A5E050 /* ParseKitParser.m */; };
 		D375DAD1173C64C000A5E050 /* ParseKitParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D375DACB173C64A600A5E050 /* ParseKitParser.m */; };
-		D37D8DC91571A4F700CDB822 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D37D8DC81571A4F700CDB822 /* SenTestingKit.framework */; };
 		D37D8DDE1571A57300CDB822 /* PKParseTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D36934561038DE5300527AF3 /* PKParseTree.m */; };
 		D37D8DDF1571A57300CDB822 /* PKParseTreeAssembler.m in Sources */ = {isa = PBXBuildFile; fileRef = D36934581038DE5300527AF3 /* PKParseTreeAssembler.m */; };
 		D37D8DE01571A57300CDB822 /* PKRuleNode.m in Sources */ = {isa = PBXBuildFile; fileRef = D369345A1038DE5300527AF3 /* PKRuleNode.m */; };
@@ -722,6 +721,7 @@
 		D3C4FAEB173C40E8006B7654 /* PKNodeVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = D3C4FAEA173C40E8006B7654 /* PKNodeVisitor.h */; };
 		D3C4FAEC173C40E8006B7654 /* PKNodeVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = D3C4FAEA173C40E8006B7654 /* PKNodeVisitor.h */; };
 		D3C4FAED173C40E8006B7654 /* PKNodeVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = D3C4FAEA173C40E8006B7654 /* PKNodeVisitor.h */; };
+		D3C7983419006F6500EC8CB2 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3C7983319006F6500EC8CB2 /* XCTest.framework */; };
 		D3CF38761571A7EC0089A070 /* TDXmlAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = D31FE5BA0E60E69E00A0803E /* TDXmlAttribute.m */; };
 		D3CF38771571A7EC0089A070 /* TDXmlCdata.m in Sources */ = {isa = PBXBuildFile; fileRef = D31FE5BC0E60E69E00A0803E /* TDXmlCdata.m */; };
 		D3CF38791571A7F00089A070 /* TDXmlComment.m in Sources */ = {isa = PBXBuildFile; fileRef = D31FE5BE0E60E69E00A0803E /* TDXmlComment.m */; };
@@ -1444,8 +1444,7 @@
 		D375DAC2173C645C00A5E050 /* PKAST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PKAST.m; path = src/PKAST.m; sourceTree = "<group>"; };
 		D375DACA173C649900A5E050 /* ParseKitParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParseKitParser.h; path = src/ParseKitParser.h; sourceTree = "<group>"; };
 		D375DACB173C64A600A5E050 /* ParseKitParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ParseKitParser.m; path = src/ParseKitParser.m; sourceTree = "<group>"; };
-		D37D8DC61571A4F700CDB822 /* ParseKitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParseKitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D37D8DC81571A4F700CDB822 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		D37D8DC61571A4F700CDB822 /* ParseKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParseKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D37F23201453841100A98014 /* PKHashtagState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PKHashtagState.m; path = src/PKHashtagState.m; sourceTree = "<group>"; };
 		D37F232A1453842800A98014 /* PKHashtagState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PKHashtagState.h; path = include/ParseKit/PKHashtagState.h; sourceTree = "<group>"; };
 		D380AFBB0F0C54B60009EC13 /* html.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = html.css; path = res/html.css; sourceTree = "<group>"; };
@@ -1687,6 +1686,7 @@
 		D3C222260FFE8D6B004514FE /* PKSpecificChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PKSpecificChar.h; path = include/ParseKit/PKSpecificChar.h; sourceTree = "<group>"; };
 		D3C222290FFE8DAC004514FE /* PKParserFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PKParserFactory.h; path = include/ParseKit/PKParserFactory.h; sourceTree = "<group>"; };
 		D3C4FAEA173C40E8006B7654 /* PKNodeVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PKNodeVisitor.h; path = src/PKNodeVisitor.h; sourceTree = "<group>"; };
+		D3C7983319006F6500EC8CB2 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		D3C85C790E63B438000445FD /* TDArithmeticParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDArithmeticParser.h; path = test/TDArithmeticParser.h; sourceTree = "<group>"; };
 		D3C85C7A0E63B438000445FD /* TDArithmeticParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDArithmeticParser.m; path = test/TDArithmeticParser.m; sourceTree = "<group>"; };
 		D3C85C7E0E63B9E9000445FD /* TDArithmeticParserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDArithmeticParserTest.h; path = test/TDArithmeticParserTest.h; sourceTree = "<group>"; };
@@ -1811,8 +1811,8 @@
 				D381AADC15D5953A004F690C /* libxml2.dylib in Frameworks */,
 				D30DA1A417284F9900A1A3EC /* libicucore.dylib in Frameworks */,
 				D30DA1A117284EFF00A1A3EC /* Cocoa.framework in Frameworks */,
-				D37D8DC91571A4F700CDB822 /* SenTestingKit.framework in Frameworks */,
 				D3D975D516E8067300D55EAB /* ParseKit.framework in Frameworks */,
+				D3C7983419006F6500EC8CB2 /* XCTest.framework in Frameworks */,
 				D3BD3A6F172DC43300FC6549 /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1845,7 +1845,7 @@
 				D33494100E2963FD00406085 /* DemoApp.app */,
 				D34185040E520D3F0081B0DC /* DebugApp.app */,
 				D3FDC5830FFC4BFC00F1F797 /* libParseKitMobile.a */,
-				D37D8DC61571A4F700CDB822 /* ParseKitTests.octest */,
+				D37D8DC61571A4F700CDB822 /* ParseKitTests.xctest */,
 				D3D9753216E7F36700D55EAB /* libParseKit.a */,
 				D338302F171C923700CCE513 /* ParserGenApp.app */,
 			);
@@ -1910,9 +1910,9 @@
 			children = (
 				D36E9F860E5A795400496BD3 /* libxml2.dylib */,
 				D36C560B0FD363D500141CB7 /* libicucore.dylib */,
+				D3C7983319006F6500EC8CB2 /* XCTest.framework */,
 				D30DA1A017284EFF00A1A3EC /* Cocoa.framework */,
 				D30DA19E17284EC100A1A3EC /* Foundation.framework */,
-				D37D8DC81571A4F700CDB822 /* SenTestingKit.framework */,
 				D3BD3A6E172DC43300FC6549 /* OCMock.framework */,
 			);
 			name = Desktop;
@@ -3580,8 +3580,8 @@
 			);
 			name = ParseKitTests;
 			productName = NewTests;
-			productReference = D37D8DC61571A4F700CDB822 /* ParseKitTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = D37D8DC61571A4F700CDB822 /* ParseKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		D3D9753116E7F36700D55EAB /* libParseKit */ = {
 			isa = PBXNativeTarget;
@@ -3623,7 +3623,8 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastTestingUpgradeCheck = 0510;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "ParseKit" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -4520,6 +4521,7 @@
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -4543,6 +4545,7 @@
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "$(TDPARSEKIT_FRAMEWORK_TARGET_PATH)";
@@ -4568,7 +4571,6 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -4582,7 +4584,6 @@
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -4758,6 +4759,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks/\"",
 					"\"$(SRCROOT)/lib\"",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -4784,7 +4787,6 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -4797,6 +4799,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks/\"",
 					"\"$(SRCROOT)/lib\"",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -4816,7 +4820,6 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -4871,7 +4874,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -4887,7 +4889,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface EBNFParserTest : SenTestCase {
+@interface EBNFParserTest : XCTestCase {
 
 }
 

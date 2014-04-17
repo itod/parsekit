@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "TDArithmeticParser.h"
 
-@interface TDArithmeticParserTest : SenTestCase {
+@interface TDArithmeticParserTest : XCTestCase {
     NSString *s;
     TDArithmeticParser *p;
     double result;

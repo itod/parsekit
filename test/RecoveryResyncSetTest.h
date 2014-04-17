@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface RecoveryResyncSetTest : SenTestCase
+@interface RecoveryResyncSetTest : XCTestCase
 
 @end

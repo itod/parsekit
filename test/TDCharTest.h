@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 
 
-@interface TDCharTest : SenTestCase {
+@interface TDCharTest : XCTestCase {
     NSString *s;
     PKCharacterAssembly *a;
     PKChar *p;

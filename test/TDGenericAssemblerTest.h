@@ -17,7 +17,7 @@
 #import "TDMiniCSSAssembler.h"
 #import "TDGenericAssembler.h"
 
-@interface TDGenericAssemblerTest : SenTestCase {
+@interface TDGenericAssemblerTest : XCTestCase {
     NSString *path;
     NSString *grammarString;
     NSString *s;

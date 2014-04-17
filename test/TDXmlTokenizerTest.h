@@ -16,7 +16,7 @@
 #import "TDXmlTokenizer.h"
 #import "TDXmlToken.h"
 
-@interface TDXmlTokenizerTest : SenTestCase {
+@interface TDXmlTokenizerTest : XCTestCase {
 
 }
 

@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "TDNSPredicateBuilder.h"
 
-@interface TDNSPredicateBuilderTest : SenTestCase {
+@interface TDNSPredicateBuilderTest : XCTestCase {
     TDNSPredicateBuilder *b;
     NSString *s;
     PKAssembly *a;

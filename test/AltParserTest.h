@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface AltParserTest : SenTestCase
+@interface AltParserTest : XCTestCase
 
 @end

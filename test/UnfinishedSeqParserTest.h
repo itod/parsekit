@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface UnfinishedSeqParserTest : SenTestCase
+@interface UnfinishedSeqParserTest : XCTestCase
 
 @end

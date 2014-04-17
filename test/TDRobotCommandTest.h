@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDRobotCommandTest : SenTestCase {
+@interface TDRobotCommandTest : XCTestCase {
 
 }
 

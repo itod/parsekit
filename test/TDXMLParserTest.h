@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDXMLParserTest : SenTestCase {
+@interface TDXMLParserTest : XCTestCase {
     NSString *s;
     NSString *g;
     PKParserFactory *factory;

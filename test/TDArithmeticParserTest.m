@@ -255,14 +255,14 @@
 - (void)testNegativeZeroDivZero {
     s = @"-0 / 0";
     result = [p parse:s];
-    TDEquals((double)NAN, result);
+    TDTrue(isnan(result));
 }
 
 
 - (void)testNegativeZeroDivNegativeZero {
     s = @"-0 / -0";
     result = [p parse:s];
-    TDEquals((double)NAN, result);
+    TDTrue(isnan(result));
 }
 
 
@@ -328,7 +328,7 @@
 - (void)test100minus25times3 { // precedence
     s = @"100 - 25*3";
     result = [p parse:s];
-    STAssertEqualsWithAccuracy((double)25.0, result, 1.0, @"");
+    XCTAssertEqualWithAccuracy((double)25.0, result, 1.0, @"");
 }
 
 

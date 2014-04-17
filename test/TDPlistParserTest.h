@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "TDPlistParser.h"
 
-@interface TDPlistParserTest : SenTestCase {
+@interface TDPlistParserTest : XCTestCase {
     TDPlistParser *p;
     NSString *s;
     PKTokenAssembly *a;

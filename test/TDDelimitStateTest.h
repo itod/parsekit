@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDDelimitStateTest : SenTestCase {
+@interface TDDelimitStateTest : XCTestCase {
     PKDelimitState *delimitState;
     PKTokenizer *t;
     NSString *s;

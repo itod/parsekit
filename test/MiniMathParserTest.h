@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface MiniMathParserTest : SenTestCase
+@interface MiniMathParserTest : XCTestCase
 
 @end

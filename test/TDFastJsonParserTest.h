@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "ParseKit.h"
 
-@interface TDFastJsonParserTest : SenTestCase {
+@interface TDFastJsonParserTest : XCTestCase {
 
 }
 

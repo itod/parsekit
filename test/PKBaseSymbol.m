@@ -69,15 +69,15 @@
         return NO;
     }
     
-    if (_type != _type) {
+    if (_type != that->_type) {
         return NO;
     }
     
-    if (_def != _def) {
+    if (_def != that->_def) {
         return NO;
     }
     
-    if (_scope != _scope) {
+    if (_scope != that->_scope) {
         return NO;
     }
     

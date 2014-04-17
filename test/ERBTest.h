@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 #import "PKParserFactory.h"
 
-@interface ERBTest : SenTestCase {
+@interface ERBTest : XCTestCase {
     NSString *g;
     NSString *s;
     PKAssembly *res;

@@ -15,7 +15,7 @@
 #import "TDTestScaffold.h"
 
 
-@interface TDQuoteStateTest : SenTestCase {
+@interface TDQuoteStateTest : XCTestCase {
     PKQuoteState *quoteState;
     PKTokenizer *t;
     PKReader *r;

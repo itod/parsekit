@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDReaderTest : SenTestCase {
+@interface TDReaderTest : XCTestCase {
     PKReader *reader;
     NSString *string;
 }

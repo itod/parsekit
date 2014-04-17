@@ -43,9 +43,9 @@
     
     NSColor *color = [props objectForKey:NSForegroundColorAttributeName];
     TDNotNil(color);
-    STAssertEqualsWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
 }
 
 
@@ -63,18 +63,18 @@
     
     NSColor *color = [props objectForKey:NSForegroundColorAttributeName];
     TDNotNil(color);
-    STAssertEqualsWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
 
     props = [ass.attributes objectForKey:@"foo"];
     TDNotNil(props);
     
     color = [props objectForKey:NSForegroundColorAttributeName];
     TDNotNil(color);
-    STAssertEqualsWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
 }
 
 
@@ -92,9 +92,9 @@
     
     NSColor *color = [props objectForKey:NSBackgroundColorAttributeName];
     TDNotNil(color);
-    STAssertEqualsWithAccuracy([color redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
 }
 
 
@@ -174,15 +174,15 @@
 
     NSColor *bgColor = [props objectForKey:NSBackgroundColorAttributeName];
     TDNotNil(bgColor);
-    STAssertEqualsWithAccuracy([bgColor redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([bgColor greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([bgColor blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
 
     NSColor *color = [props objectForKey:NSForegroundColorAttributeName];
     TDNotNil(color);
-    STAssertEqualsWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
 }
 
 
@@ -205,15 +205,15 @@
     
     NSColor *bgColor = [props objectForKey:NSBackgroundColorAttributeName];
     TDNotNil(bgColor);
-    STAssertEqualsWithAccuracy([bgColor redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([bgColor greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([bgColor blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
     
     NSColor *color = [props objectForKey:NSForegroundColorAttributeName];
     TDNotNil(color);
-    STAssertEqualsWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
 
     props = [ass.attributes objectForKey:@"decl"];
     TDNotNil(props);
@@ -225,15 +225,15 @@
     
     bgColor = [props objectForKey:NSBackgroundColorAttributeName];
     TDNotNil(bgColor);
-    STAssertEqualsWithAccuracy([bgColor redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([bgColor greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([bgColor blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor redComponent], (CGFloat)(255.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor greenComponent], (CGFloat)(0.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([bgColor blueComponent], (CGFloat)(255.0/255.0), 0.001, @"");
     
     color = [props objectForKey:NSForegroundColorAttributeName];
     TDNotNil(color);
-    STAssertEqualsWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
-    STAssertEqualsWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color redComponent], (CGFloat)(10.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color greenComponent], (CGFloat)(200.0/255.0), 0.001, @"");
+    XCTAssertEqualWithAccuracy([color blueComponent], (CGFloat)(30.0/255.0), 0.001, @"");
 }
 
 @end

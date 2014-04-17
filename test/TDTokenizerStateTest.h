@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDTokenizerStateTest : SenTestCase {
+@interface TDTokenizerStateTest : XCTestCase {
     PKTokenizer *t;
     NSString *s;
     PKToken *tok;

@@ -8,6 +8,6 @@
 
 #import "TDTestScaffold.h"
 
-@interface RecoverySingleTokenDeletionTest : SenTestCase
+@interface RecoverySingleTokenDeletionTest : XCTestCase
 
 @end

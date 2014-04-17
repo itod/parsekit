@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface SAXTest : SenTestCase {
+@interface SAXTest : XCTestCase {
     NSString *s;
     NSString *g;
     PKParserFactory *factory;

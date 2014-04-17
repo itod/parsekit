@@ -14,7 +14,7 @@
 
 #import "TDTestScaffold.h"
 
-@interface TDNegationTest : SenTestCase {
+@interface TDNegationTest : XCTestCase {
     PKNegation *n;
     PKTokenizer *t;
     PKAssembly *a;

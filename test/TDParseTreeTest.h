@@ -19,7 +19,7 @@
 #import "PKParseTreeAssembler.h"
 
 
-@interface TDParseTreeTest : SenTestCase {
+@interface TDParseTreeTest : XCTestCase {
     PKParserFactory *factory;
     PKParseTreeAssembler *as;
     NSString *g;

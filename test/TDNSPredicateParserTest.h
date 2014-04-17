@@ -12,6 +12,6 @@
 - (id)resolvedValueForKeyPath:(NSString *)s;
 @end
 
-@interface TDNSPredicateParserTest : SenTestCase <TDKeyPathResolver>
+@interface TDNSPredicateParserTest : XCTestCase <TDKeyPathResolver>
 
 @end
