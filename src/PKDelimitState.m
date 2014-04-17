@@ -1,24 +1,32 @@
-//  Copyright 2010 Todd Ditchendorf
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//  http://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
+// The MIT License (MIT)
+// 
+// Copyright (c) 2014 Todd Ditchendorf
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy 
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is 
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
-#import <ParseKit/PKDelimitState.h>
-#import <ParseKit/PKReader.h>
-#import <ParseKit/PKTokenizer.h>
-#import <ParseKit/PKToken.h>
-#import <ParseKit/PKWhitespaceState.h>
-#import <ParseKit/PKSymbolRootNode.h>
-#import <ParseKit/PKTypes.h>
+#import <PEGKit/PKDelimitState.h>
+#import <PEGKit/PKReader.h>
+#import <PEGKit/PKTokenizer.h>
+#import <PEGKit/PKToken.h>
+#import <PEGKit/PKWhitespaceState.h>
+#import <PEGKit/PKTypes.h>
+#import "PKSymbolRootNode.h"
 
 #import "PKDelimitDescriptorCollection.h"
 #import "PKDelimitDescriptor.h"
@@ -38,6 +46,7 @@
 - (NSString *)bufferedString;
 - (PKTokenizerState *)nextTokenizerStateFor:(PKUniChar)c tokenizer:(PKTokenizer *)t;
 - (void)addStartMarker:(NSString *)start endMarker:(NSString *)end allowedCharacterSet:(NSCharacterSet *)set tokenKind:(NSInteger)kind;
+@property (nonatomic) NSUInteger offset;
 @end
 
 @interface PKDelimitState ()
@@ -51,6 +60,7 @@
     self = [super init];
     if (self) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
+        _rootNode.reportsAddedSymbolsOnly = YES;
         self.collection = [[[PKDelimitDescriptorCollection alloc] init] autorelease];
     }
     return self;
@@ -68,15 +78,15 @@
     NSParameterAssert([start length]);
 
     // add markers to root node
-    [rootNode add:start];
+    [_rootNode add:start];
     if ([end length]) {
-        [rootNode add:end];
+        [_rootNode add:end];
     }
     
     // add descriptor to collection
     PKDelimitDescriptor *desc = [PKDelimitDescriptor descriptorWithStartMarker:start endMarker:end characterSet:set];
-    NSAssert(collection, @"");
-    [collection add:desc];
+    NSAssert(_collection, @"");
+    [_collection add:desc];
 }
 
 
@@ -84,131 +94,124 @@
     NSParameterAssert(r);
     NSParameterAssert(t);
     
-    NSString *startMarker = [rootNode nextSymbol:r startingWith:cin];
-    NSArray *descs = nil;
+    NSString *startMarker = [_rootNode nextSymbol:r startingWith:cin];
+    NSMutableArray *matchingDescs = nil;
     
+    // check for false match
     if ([startMarker length]) {
-        descs = [collection descriptorsForStartMarker:startMarker];
+        matchingDescs = [[[_collection descriptorsForStartMarker:startMarker] mutableCopy] autorelease];
         
-        if (![descs count]) {
+        if (![matchingDescs count]) {
             [r unread:[startMarker length] - 1];
             return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
         }
     }
     
+    // reset
     [self resetWithReader:r];
+    self.offset = r.offset - [startMarker length];
     [self appendString:startMarker];
     
-    NSUInteger count = [descs count];
-    BOOL hasEndMarkers = NO;
-    PKUniChar endChars[count];
-    PKDelimitDescriptor *selectedDesc = nil;
-
-    NSUInteger i = 0;
-    for (PKDelimitDescriptor *desc in descs) {
-        NSString *endMarker = desc.endMarker;
-        PKUniChar e = PKEOF;
-        
-        if ([endMarker length]) {
-            e = [endMarker characterAtIndex:0];
-            hasEndMarkers = YES;
-        }
-        endChars[i++] = e;
-    }
+    NSUInteger stackCount = 0;
     
+    // setup a temp root node with current start and end markers
+    PKSymbolRootNode *currRootNode = [[[PKSymbolRootNode alloc] init] autorelease];
+    currRootNode.reportsAddedSymbolsOnly = YES;
+    
+    for (PKDelimitDescriptor *desc in matchingDescs) {
+        [currRootNode add:desc.startMarker];
+        if (desc.endMarker) {
+            [currRootNode add:desc.endMarker];
+        }
+    }
+
     PKUniChar c;
+    PKDelimitDescriptor *matchedDesc = nil;
+    
     for (;;) {
         c = [r read];
-        //NSLog(@"%C", (UniChar)c);
+        if ('\\' == c) {
+            c = [r read];
+            [self append:c];
+            continue;
+        }
+        
         if (PKEOF == c) {
-            if (hasEndMarkers && balancesEOFTerminatedStrings) {
-                [self appendString:[descs[0] endMarker]];
-            } else if (hasEndMarkers) {
-                [r unread:[[self bufferedString] length] - 1];
-                return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+            if (!_balancesEOFTerminatedStrings) {
+                for (PKDelimitDescriptor *desc in [[matchingDescs copy] autorelease]) {
+                    if (desc.endMarker) {
+                        [matchingDescs removeObject:desc];
+                    }
+                }
             }
-            break;
-        }
-        
-        if (!hasEndMarkers && [t.whitespaceState isWhitespaceChar:c]) {
-            // if only the start marker was matched, dont return delimited string token. instead, defer tokenization
-            if ([startMarker isEqualToString:[self bufferedString]]) {
-                [r unread:[startMarker length] - 1];
-                return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
-            }
-            // else, return delimited string tok
             break;
         }
 
-        BOOL done = NO;
-        NSString *endMarker = nil;
-        NSCharacterSet *charSet = nil;
-        
-        for (NSUInteger i = 0; i < count; ++i) {
-            PKUniChar e = endChars[i];
-            
-            if (e == c) {
-                selectedDesc = descs[i];
-                endMarker = [selectedDesc endMarker];
-                charSet = [selectedDesc characterSet];
-                
-                NSString *peek = [rootNode nextSymbol:r startingWith:e];
-                if (endMarker && [endMarker isEqualToString:peek]) {
-                    [self appendString:endMarker];
-                    c = [r read];
-                    done = YES;
+        NSString *marker = [currRootNode nextSymbol:r startingWith:c];
+        if ([marker length]) {
+            for (PKDelimitDescriptor *desc in matchingDescs) {
+                if (_allowsNestedMarkers && [marker isEqualToString:desc.startMarker] && ![desc.startMarker isEqualToString:desc.endMarker]) {
+                    ++stackCount;
                     break;
-                } else {
-                    [r unread:[peek length] - 1];
-                    if (e != [peek characterAtIndex:0]) {
-                        [self append:c];
-                        c = [r read];
+                } else if ([marker isEqualToString:desc.endMarker]) {
+                    if (_allowsNestedMarkers && stackCount > 0 && ![desc.startMarker isEqualToString:desc.endMarker]) {
+                        --stackCount;
+                        break;
+                    } else {
+                        matchedDesc = desc;
+                        [self appendString:desc.endMarker];
+                        break;
                     }
                 }
             }
-        }
-
-        if (done) {
-            if (charSet) {
-                NSString *contents = [self bufferedString];
-                NSUInteger loc = [startMarker length];
-                NSUInteger len = [contents length] - (loc + [endMarker length]);
-                contents = [contents substringWithRange:NSMakeRange(loc, len)];
-                
-                for (NSUInteger i = 0; i < len; ++i) {
-                    PKUniChar c = [contents characterAtIndex:i];
-
-                    // check if char is not in allowed character set (if given)
-                    if (![charSet characterIsMember:c]) {
-                        // if not, unwind and return a symbol tok for cin
-                        [r unread:[[self bufferedString] length] - 1];
-                        return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
-                    }
-                }
+            if (matchedDesc) {
+                break;
             }
-
-            break;
         }
         
+        for (PKDelimitDescriptor *desc in [[matchingDescs copy] autorelease]) {
+            if (desc.characterSet && ![desc.characterSet characterIsMember:c]) {
+                [matchingDescs removeObject:desc];
+            }
+        }
+        
+        // no remaining matches. bail
+        if (![matchingDescs count]) {
+            break;
+        }
         
         [self append:c];
     }
     
-    if (PKEOF != c) {
-        [r unread];
+    if (!matchedDesc && [matchingDescs count]) {
+        matchedDesc = matchingDescs[0];
+
+        if (PKEOF == c && _balancesEOFTerminatedStrings && matchedDesc.endMarker) {
+            [self appendString:matchedDesc.endMarker];
+        }
     }
     
-    PKToken *tok = [PKToken tokenWithTokenType:PKTokenTypeDelimitedString stringValue:[self bufferedString] floatValue:0.0];
-    tok.offset = offset;
+    PKToken *tok = nil;
     
-    NSString *tokenKindKey = [NSString stringWithFormat:@"%@,%@", selectedDesc.startMarker, selectedDesc.endMarker];
-    NSInteger tokenKind = [t tokenKindForStringValue:tokenKindKey];
-    tok.tokenKind = tokenKind; //selectedDesc.tokenKind;
+    if (matchedDesc) {
+        tok = [PKToken tokenWithTokenType:PKTokenTypeDelimitedString stringValue:[self bufferedString] doubleValue:0.0];
+        tok.offset = self.offset;
+        
+        NSString *tokenKindKey = [NSString stringWithFormat:@"%@,%@", matchedDesc.startMarker, matchedDesc.endMarker];
+        NSInteger tokenKind = [t tokenKindForStringValue:tokenKindKey];
+        tok.tokenKind = tokenKind; //selectedDesc.tokenKind;
+    } else {
+        if (PKEOF != c) {
+            [r unread];
+        }
+        
+        NSUInteger buffLen = [[self bufferedString] length];
+        [r unread:buffLen - 1];
+        
+        tok = [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+    }
 
     return tok;
 }
 
-@synthesize rootNode;
-@synthesize balancesEOFTerminatedStrings;
-@synthesize collection;
 @end
