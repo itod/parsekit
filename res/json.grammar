@@ -7,15 +7,15 @@
 
 object        = openCurly (Empty | objectContent) closeCurly;
 objectContent = property commaProperty*;
-property      = propertyName colon value;
+property      = propertyName colon val;
 commaProperty = comma property;
 propertyName  = QuotedString;         // NOTE: property names are quoted in JSON
 
 array         = openBracket (Empty | arrayContent) closeBracket;
-arrayContent  = value commaValue*;
-commaValue    = comma value;
+arrayContent  = val commaValue*;
+commaValue    = comma val;
 
-value         = null | boolean | array | object | number | string;
+val           = null | boolean | array | object | number | string;
 
 string        = QuotedString;
 number        = Number;

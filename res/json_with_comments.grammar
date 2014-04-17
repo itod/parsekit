@@ -26,16 +26,16 @@
 object        = openCurly comment? objectContent closeCurly;
 objectContent = Empty | actualObject;
 actualObject  = property commaProperty*;
-property      = propertyName colon comment? value;
+property      = propertyName colon comment? val;
 commaProperty = comma comment? property;
 propertyName  = QuotedString;         // NOTE: property names are quoted in JSON
 
 array         = openBracket comment? arrayContent closeBracket;
 arrayContent  = Empty | actualArray;
-actualArray   = value commaValue*;
-commaValue    = comma comment? value;
+actualArray   = val commaValue*;
+commaValue    = comma comment? val;
 
-value         = (nullLiteral | trueLiteral | falseLiteral | number | string | array | object) comment?;
+val           = (nullLiteral | trueLiteral | falseLiteral | number | string | array | object) comment?;
 
 comment       = Comment;
 string        = QuotedString;

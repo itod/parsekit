@@ -26,7 +26,7 @@ See: http://developer.apple.com/documentation/Cocoa/Conceptual/Predicates/Articl
 
 
 // values
-    value   = keyPath | string | num | bool | array;
+    val     = keyPath | string | num | bool | array;
 
     string  = QuotedString;
     num     = Number;
@@ -37,8 +37,8 @@ See: http://developer.apple.com/documentation/Cocoa/Conceptual/Predicates/Articl
 // arrays
     array               = '{' arrayContentsOpt '}'!;
     arrayContentsOpt    = Empty | arrayContents;
-    arrayContents       = value commaValue*;
-    commaValue          = ','! value;
+    arrayContents       = val commaValue*;
+    commaValue          = ','! val;
 
 
 // keyPaths
@@ -70,12 +70,12 @@ See: http://developer.apple.com/documentation/Cocoa/Conceptual/Predicates/Articl
 // breaking these out to make the assembler callbacks simpler
     collectionComparisonPredicate   = collectionLtPredicate | collectionGtPredicate | collectionLtEqPredicate | collectionGtEqPredicate | collectionEqPredicate | collectionNotEqPredicate;
     
-    collectionLtPredicate           = aggregateOp collection lt value;
-    collectionGtPredicate           = aggregateOp collection gt value;
-    collectionLtEqPredicate         = aggregateOp collection ltEq value;
-    collectionGtEqPredicate         = aggregateOp collection gtEq value;
-    collectionEqPredicate           = aggregateOp collection eq value;
-    collectionNotEqPredicate        = aggregateOp collection notEq value;
+    collectionLtPredicate           = aggregateOp collection lt val;
+    collectionGtPredicate           = aggregateOp collection gt val;
+    collectionLtEqPredicate         = aggregateOp collection ltEq val;
+    collectionGtEqPredicate         = aggregateOp collection gtEq val;
+    collectionEqPredicate           = aggregateOp collection eq val;
+    collectionNotEqPredicate        = aggregateOp collection notEq val;
     
 
 
@@ -95,7 +95,7 @@ See: http://developer.apple.com/documentation/Cocoa/Conceptual/Predicates/Articl
 
 
 // String Tests
-    stringTestPredicate = string stringTestOp value;
+    stringTestPredicate = string stringTestOp val;
 
     stringTestOp = beginswith | contains | endswith | like | matches;
 
@@ -107,7 +107,7 @@ See: http://developer.apple.com/documentation/Cocoa/Conceptual/Predicates/Articl
 
 
 // Collection Tests
-    collectionTestPredicate = value in collection;
+    collectionTestPredicate = val in collection;
     collection              = keyPath | array;
     in                      = 'IN'!;
 

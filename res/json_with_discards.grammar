@@ -26,14 +26,14 @@ object        = '{' objectContent '}'!;
 objectContent = Empty | actualObject;
 actualObject  = property commaProperty*;
 commaProperty = ','! property;
-property      = QuotedString ':'! value;         // NOTE: property names are quoted in JSON
+property      = QuotedString ':'! val;         // NOTE: property names are quoted in JSON
 
 array         = '[' arrayContent ']'!;
 arrayContent  = Empty | actualArray;
-actualArray   = value commaValue*;
-commaValue    = ','! value;
+actualArray   = val commaValue*;
+commaValue    = ','! val;
 
-value         = null | true | false | array | object | Number | QuotedString;
+val           = null | true | false | array | object | Number | QuotedString;
 null          = 'null'!;
 true          = 'true'!;
 false         = 'false'!;

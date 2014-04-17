@@ -144,7 +144,7 @@
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
         [self comment]; 
     }
-    [self value]; 
+    [self val];
 
 }
 
@@ -186,7 +186,7 @@
 
 - (void)actualArray {
     
-    [self value]; 
+    [self val];
     while ([self predicts:JSON_TOKEN_KIND_COMMA, 0]) {
         if ([self speculate:^{ [self commaValue]; }]) {
             [self commaValue]; 
@@ -203,11 +203,11 @@
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
         [self comment]; 
     }
-    [self value]; 
+    [self val];
 
 }
 
-- (void)value {
+- (void)val {
     
     if ([self predicts:JSON_TOKEN_KIND_NULLLITERAL, 0]) {
         [self nullLiteral]; 
@@ -224,7 +224,7 @@
     } else if ([self predicts:JSON_TOKEN_KIND_OPENCURLY, 0]) {
         [self object]; 
     } else {
-        [self raise:@"No viable alternative found in rule 'value'."];
+        [self raise:@"No viable alternative found in rule 'val'."];
     }
     if ([self predicts:TOKEN_KIND_BUILTIN_COMMENT, 0]) {
         [self comment]; 

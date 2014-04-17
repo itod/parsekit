@@ -538,7 +538,7 @@
     [self parseRule:@selector(__predicate) withMemo:_predicate_memo];
 }
 
-- (void)__value {
+- (void)__val {
     
     if ([self predicts:TOKEN_KIND_BUILTIN_WORD, 0]) {
         [self keyPath]; 
@@ -551,14 +551,14 @@
     } else if ([self predicts:TDNSPREDICATE_TOKEN_KIND_OPEN_CURLY, 0]) {
         [self array]; 
     } else {
-        [self raise:@"No viable alternative found in rule 'value'."];
+        [self raise:@"No viable alternative found in rule 'val'."];
     }
 
     [self fireAssemblerSelector:@selector(parser:didMatchValue:)];
 }
 
-- (void)value {
-    [self parseRule:@selector(__value) withMemo:_value_memo];
+- (void)val {
+    [self parseRule:@selector(__val) withMemo:_value_memo];
 }
 
 - (void)__string {
@@ -650,7 +650,7 @@
 
 - (void)__arrayContents {
     
-    [self value]; 
+    [self val];
     while ([self predicts:TDNSPREDICATE_TOKEN_KIND_COMMA, 0]) {
         if ([self speculate:^{ [self commaValue]; }]) {
             [self commaValue]; 
@@ -669,7 +669,7 @@
 - (void)__commaValue {
     
     [self match:TDNSPREDICATE_TOKEN_KIND_COMMA discard:YES]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchCommaValue:)];
 }
@@ -894,7 +894,7 @@
     [self aggregateOp]; 
     [self collection]; 
     [self lt]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionLtPredicate:)];
 }
@@ -908,7 +908,7 @@
     [self aggregateOp]; 
     [self collection]; 
     [self gt]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionGtPredicate:)];
 }
@@ -922,7 +922,7 @@
     [self aggregateOp]; 
     [self collection]; 
     [self ltEq]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionLtEqPredicate:)];
 }
@@ -936,7 +936,7 @@
     [self aggregateOp]; 
     [self collection]; 
     [self gtEq]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionGtEqPredicate:)];
 }
@@ -950,7 +950,7 @@
     [self aggregateOp]; 
     [self collection]; 
     [self eq]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionEqPredicate:)];
 }
@@ -964,7 +964,7 @@
     [self aggregateOp]; 
     [self collection]; 
     [self notEq]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchCollectionNotEqPredicate:)];
 }
@@ -1067,7 +1067,7 @@
     
     [self string]; 
     [self stringTestOp]; 
-    [self value]; 
+    [self val];
 
     [self fireAssemblerSelector:@selector(parser:didMatchStringTestPredicate:)];
 }
@@ -1156,7 +1156,7 @@
 
 - (void)__collectionTestPredicate {
     
-    [self value]; 
+    [self val];
     [self inKeyword]; 
     [self collection]; 
 
