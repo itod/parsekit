@@ -169,17 +169,17 @@ Open the **MiniMath** Xcode project, then select and run the **ParserGenApp** ta
 
 Paste the *MiniMath* grammar into the large text area at the bottom of the ParserGenApp window, and select the options shown below.
 
-![ParserGenApp](http://parsekit.com/github/parsergen.png)
+![ParserGenApp](http://http://github.com/itod/parsekit/github/parsergen.png)
 
 Click the **Generate** button and notice that [MiniMathParser.h](https://github.com/itod/ParseKitMiniMathExample/blob/master/MiniMath/MiniMathParser.h) and [MiniMathParser.m](https://github.com/itod/ParseKitMiniMathExample/blob/master/MiniMath/MiniMathParser.m) files have been created, and appear on your Desktop. Normally, you'd need to drag these source code files into your app's Xcode project, but in the case of *MiniMath*, I've included the files already (cooking show style!).
 
-![Produced Files](http://parsekit.com/github/files.png)
+![Produced Files](http://http://github.com/itod/parsekit/github/files.png)
 
 ### Run the MiniMath Example iOS App
 
 Back in Xcode, switch to the **MiniMath** target. This target is an example iOS app with an **Input** textfield, **Calc** button, and a **Result** textfield:
 
-![MiniMathApp](http://parsekit.com/github/app_empty.png)
+![MiniMathApp](http://http://github.com/itod/parsekit/github/app_empty.png)
 
 Here's the implementation of the `-calc:` Action attached to the **Calc** button, showing how to use the `MiniMathParser` we just created:
 
@@ -204,7 +204,7 @@ Here's the implementation of the `-calc:` Action attached to the **Calc** button
 
 Run the app (make sure you've selected the **iPhone Simulator** as your run destination), and you'll see the input field is pre-populated with an example expression. Click the **Calc** button to compute and display the result:
 
-![MiniMathApp](http://parsekit.com/github/app.png)
+![MiniMathApp](http://http://github.com/itod/parsekit/github/app.png)
 
 This displayed result deserves a bit of explanation. 
 

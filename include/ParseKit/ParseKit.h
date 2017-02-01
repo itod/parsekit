@@ -22,7 +22,7 @@
                 Classes in the ParseKit Framework offer 2 basic services of general use to Cocoa developers:
     @li Tokenization via a tokenizer class
     @li Parsing via a high-level parser-building toolkit
-                Learn more on the <a target="_top" href="http://parsekit.com">project site</a>
+                Learn more on the <a target="_top" href="http://http://github.com/itod/parsekit">project site</a>
 */
  
 #import <Foundation/Foundation.h>
