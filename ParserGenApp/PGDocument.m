@@ -72,6 +72,7 @@
 - (void)windowControllerDidLoadNib:(NSWindowController *)wc {
     [super windowControllerDidLoadNib:wc];
     
+    [_textView setEnabledTextCheckingTypes:0];
     [_textView setFont:[NSFont fontWithName:@"Monaco" size:12.0]];
 }
 
